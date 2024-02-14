@@ -9,6 +9,7 @@ public class BINGO {
     static final int ASCIIMIN = 1, ASCIIMAX = 75;
     static String rolledNumbersRepr = "";
     static String bingoCardRepr = "";
+    static String bingoWinningPattern;
 
     public static void main(String[] args) {
         // WELCOME SCREEN
@@ -31,14 +32,26 @@ public class BINGO {
         int randomNumber;
 
         while (true) {
-            randomNumberRepr = getRandomNumberRepr(0, 75);
+            char letter;
+            randomNumberRepr = getRandomNumberRepr(0, ASCIIMAX);
             randomNumber = randomNumberRepr - 33;
             if (rolledNumbersRepr.contains(randomNumberRepr+"")) {
                 continue;
             }
-            System.out.println("Taya taya... " + randomNumber + "!");
+            if (randomNumber > 1 && randomNumber <= 15) {
+                letter = 'B';
+            } else if (randomNumber > 15 && randomNumber <= 30) {
+                letter = 'I';
+            } else if (randomNumber > 30 && randomNumber <= 45) {
+                letter = 'N';
+            } else if (randomNumber > 45 && randomNumber <= 60) {
+                letter = 'G';
+            } else {
+                letter = 'O';
+            }
+            System.out.println("Taya taya... Sa letra sang " + letter + "... " + randomNumber + "!");
             if (bingoCardRepr.contains(randomNumberRepr+"")) {
-                System.out.println("May ara " + randomNumber + ".");
+                System.out.println("May " + randomNumber + "!");
             } else {
                 System.out.println("Wala " + randomNumber + ".");
 
@@ -47,14 +60,13 @@ public class BINGO {
             printBingoCard();
             System.out.println("\nPress enter to roll again. ");
             scanner.nextLine();
-            System.out.println(rolledNumbersRepr);
         }
     }
 
     static void createBingoCard() {
         int max, min;
         char randNumberRepr;
-        String sep = "\t\t\t";
+        String sep = "\t\t\t\t\t";
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; ) {
@@ -71,7 +83,7 @@ public class BINGO {
                     j++;
                 }
             }
-            bingoCardRepr += "\n";
+            bingoCardRepr += "\n\n";
         }
     }
 
@@ -83,17 +95,14 @@ public class BINGO {
             currentNumRepr = bingoCardRepr.charAt(i);
             currentNum = currentNumRepr - 33;
 
-            if (currentNumRepr == '\n') {
-                System.out.println();
-            }
-            else if (currentNumRepr == ' ') {
+            if (currentNumRepr == ' ') {
                 System.out.print("B");
+            } else if (currentNumRepr == '\n' || currentNumRepr == '\t') {
+                System.out.print(currentNumRepr);
             } else if (rolledNumbersRepr.contains(currentNumRepr+"")) {
                 System.out.print("(" + currentNum + ")");
-            } else if (currentNumRepr >= '!' && currentNumRepr <= '~') {
-                System.out.print(currentNum);
             } else {
-                System.out.print(currentNumRepr);
+                System.out.print(currentNum);
             }
         }
     }
