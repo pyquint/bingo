@@ -19,8 +19,7 @@ public class BINGO {
         scanner.nextLine();
 
         // HELP MODULE
-//        playTutorial();
-        System.out.println("Testing. 123. Fork and pull.");
+        playTutorial();
 
         // INITIALIZATION OF VARIABLES
         createBingoCard();
