@@ -10,12 +10,12 @@ public class BINGO {
     static String rolledNumbersRepr = "";
     static String bingoCardRepr = "";
     static String bingoWinningPattern;
-
+    
     public static void main(String[] args) {
         // WELCOME SCREEN
 
         // HELP MODULE
-
+        System.out.println("asdasda");
         // INITIALIZATION OF VARIABLES
         createBingoCard();
 
