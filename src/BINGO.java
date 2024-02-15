@@ -15,7 +15,7 @@ public class BINGO {
         // WELCOME SCREEN
 
         // HELP MODULE
-        System.out.println("asdasda");
+        System.out.println("nothing");
         // INITIALIZATION OF VARIABLES
         createBingoCard();
 
