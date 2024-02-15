@@ -19,7 +19,7 @@ public class BINGO {
         scanner.nextLine();
 
         // HELP MODULE
-        playTutorial();
+        // playTutorial();
 
         // INITIALIZATION OF VARIABLES
         createBingoCard();
