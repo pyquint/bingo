@@ -20,7 +20,7 @@ public class BINGO {
 
         // HELP MODULE
 //        playTutorial();
-        System.out.println("Testing. 123. Fork and pull. More editing. Test");
+        System.out.println("Testing. 123. Fork and pull. More editing. Test. SSH WORKS!");
 
         // INITIALIZATION OF VARIABLES
         createBingoCard();
