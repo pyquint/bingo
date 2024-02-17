@@ -113,6 +113,11 @@ public class BINGO {
                 letter = 'O';
             }
 
+            if (rowCheck() == true) {
+                System.out.println("BINGO!");
+                break;
+            }
+
             printBingoCardRepr();
             printlnInteractive("Taya taya...");
             printInteractive("Sa letra sang...");
@@ -247,5 +252,21 @@ public class BINGO {
                 either vertically, horizontally, or diagonally.""");
         printlnInteractive("Good luck and have fun!");
         cls();
+    }
+
+    static boolean rowCheck() {
+        boolean completeMark = true;
+
+        for (int i = 0; i < bingoCardRepr.length(); i++) {
+            if (!rolledNumbersRepr.contains(bingoCardRepr.charAt(i) + "")) {
+                completeMark = false;
+                break;
+            }
+            if (bingoCardRepr.charAt(i) == '\n') {
+                continue;
+            }
+        }
+        System.out.println(completeMark);
+        return completeMark;
     }
 }
