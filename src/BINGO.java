@@ -27,6 +27,7 @@ public class BINGO {
             Tara BINGO! (ENTER to continue)""");
 
         // HELP MODULE
+        // playTutorial();
 
         // INITIALIZATION OF VARIABLES
         createBingoCardRepr();
