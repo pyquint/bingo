@@ -13,6 +13,59 @@ public class BINGO {
     static String bingoWinningPattern;
     static String sep = "\t\t";
 
+    // SHAKER TOO BIG?
+    static String  BingoShake = "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                           @                                                                        \r\n" + //
+                "                          @@@                                                                       \r\n" + //
+                "                        @@  @@                          @@   @@@@@                                  \r\n" + //
+                "                       @@   @@@@                                   @@@                              \r\n" + //
+                "                     @@    @   @@                                     @@@                           \r\n" + //
+                "                    @@   @@     @@@                                      @@                         \r\n" + //
+                "                   @@@@@          @@                             @@        @@                       \r\n" + //
+                "                       @@          +@@               @@@@@@        @@        @@                     \r\n" + //
+                "                         @@           @@@     @@@@@@@    @@          @         @@                   \r\n" + //
+                "                           @@           @@@@@@-         @  @          @@         @                  \r\n" + //
+                "                             @@         @@             @@  @@           @         @@                \r\n" + //
+                "                               @@       .             @@    @            @                          \r\n" + //
+                "                                 @@@@@@              @       @                                      \r\n" + //
+                "                                 @                 @@        =@                                     \r\n" + //
+                "                                 @                @@          @                                     \r\n" + //
+                "                                 @               @@            @%                                   \r\n" + //
+                "                                 @             @@               @                                   \r\n" + //
+                "                                 @          @@@                  @                                  \r\n" + //
+                "                                @@       @@@                      @                                 \r\n" + //
+                "                                @     @@@                         @@                                \r\n" + //
+                "                               @@ @@@@                           @@                                 \r\n" + //
+                "                                @@@                             @@                                  \r\n" + //
+                "                                    @@@@                       @                                    \r\n" + //
+                "                     @                  @@@@                 @@                                     \r\n" + //
+                "                     @                      @@@@@          @@                                       \r\n" + //
+                "                     @       @                   @@@@@   @@                                         \r\n" + //
+                "                     @@      #@                       @@@                                           \r\n" + //
+                "                      @        @                                                                    \r\n" + //
+                "                       @        @@                                                                  \r\n" + //
+                "                        @         @@@                                                               \r\n" + //
+                "                         @@          @@@                                                            \r\n" + //
+                "                           @              @                                                         \r\n" + //
+                "                            @@                                                                      \r\n" + //
+                "                              @@                                                                    \r\n" + //
+                "                                @@@                                                                 \r\n" + //
+                "                                   @@@                                                              \r\n" + //
+                "                                       @@@@                                                         \r\n" + //
+                "                                               @@                                                   \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                             ";
+
     public static void main(String[] args) throws IOException, InterruptedException {
         // WELCOME SCREEN
         printlnInteractive("""
@@ -138,6 +191,16 @@ public class BINGO {
     static int getRandomNumber(int min, int max) {
         // .nextInt((max-min) + min) --> range between min (inclusive) and max (exclusive)
         return rand.nextInt(max - min) + min;
+    }
+
+    static void contains(char repr) {
+    }
+
+    static boolean horizontalCheck(){
+        for (int i = 0; i < 5; i++){
+            int j;
+        }
+        return false;
     }
 
     static char getNumberRepr(int number) {
