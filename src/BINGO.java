@@ -41,13 +41,14 @@ public class BINGO {
         char randomNumberRepr;
         int randomNumber;
 
+        cls();
         while (true) {
-            randomNumberRepr = getNumberRepr(getRandomNumber(0, BINGOMAX + 1));
-            randomNumber = randomNumberRepr - 33;
+            randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
+            randomNumber = randomNumberRepr - ASCIIMIN;
 
             if (rolledNumbersRepr.contains(randomNumberRepr+"")) {
                 continue;
-            } else if (randomNumber > 1 && randomNumber <= 15) {
+            } else if (randomNumber >= 1 && randomNumber <= 15) {
                 letter = 'B';
             } else if (randomNumber > 15 && randomNumber <= 30) {
                 letter = 'I';
@@ -62,11 +63,11 @@ public class BINGO {
             printBingoCardRepr();
             printlnInteractive("Taya taya...");
             printInteractive("Sa letra sang...");
-            printlnInteractive(letter + "!");
-            printlnInteractive(randomNumber + "!");
-            System.out.println((bingoCardRepr.contains(randomNumberRepr+"") ? "May " : "Wala ") + randomNumber + "!\n");
+            printInteractive(letter + "!");
+            printInteractive(randomNumber + "!");
+            System.out.println((bingoCardRepr.contains(randomNumberRepr+"") ? "May " : "Wala ") + randomNumber + "!");
             rolledNumbersRepr += randomNumberRepr + " ";
-            printlnInteractive("\nRoll again >>>");
+            printInteractive("\nRoll again >>>");
             cls();
         }
     }
@@ -82,7 +83,7 @@ public class BINGO {
          *
          * What I came up with and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
          * The number is always converted to its associated character, and vice versa.
-         * We start the mapping at the 33rd character ('!') up to 108 ('k', 33 + 75 - 1).
+         * We start the mapping at the 33rd character ('!') up to 107 ('k', 33 + 75 - 1).
          * The SPACE, is reserved to the middle FREE SQUARE of the card.
          *
          * But I am open to suggestions. Is there a better way of doing this?
@@ -91,20 +92,17 @@ public class BINGO {
         int min, max;
 
         for (int row = 0; row < 5; row++) {
-            for (int col = 0; col < 5;) {
+            for (int col = 0; col < 5; col++) {
                  if (row == 2 && col == 2) {
                     bingoCardRepr += ' ';
-                    col++;
                     continue;
                 }
-                min = col * 15 + 1; max = (col + 1) * 15 + 1;
-                randNumberRepr = getNumberRepr(getRandomNumber(min, max));
-                if (bingoCardRepr.contains(randNumberRepr+"")) {
-                    continue;
-                } else {
-                    bingoCardRepr += randNumberRepr+"";
-                    col++;
-                }
+                min = col * 15 + 1;
+                max = (col + 1) * 15 + 1;
+                do {
+                    randNumberRepr = getNumberRepr(getRandomNumber(min, max));
+                } while (bingoCardRepr.contains(randNumberRepr+""));
+                bingoCardRepr += randNumberRepr+"";
             }
             bingoCardRepr += '\n';
         }
