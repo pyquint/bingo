@@ -10,6 +10,58 @@ public class BINGO {
     static String rolledNumbersRepr = "";
     static String bingoCardRepr = "";
     static String bingoWinningPattern;
+    // SHAKER TOO BIG?
+    static String  BingoShake = "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                           @                                                                        \r\n" + //
+                "                          @@@                                                                       \r\n" + //
+                "                        @@  @@                          @@   @@@@@                                  \r\n" + //
+                "                       @@   @@@@                                   @@@                              \r\n" + //
+                "                     @@    @   @@                                     @@@                           \r\n" + //
+                "                    @@   @@     @@@                                      @@                         \r\n" + //
+                "                   @@@@@          @@                             @@        @@                       \r\n" + //
+                "                       @@          +@@               @@@@@@        @@        @@                     \r\n" + //
+                "                         @@           @@@     @@@@@@@    @@          @         @@                   \r\n" + //
+                "                           @@           @@@@@@-         @  @          @@         @                  \r\n" + //
+                "                             @@         @@             @@  @@           @         @@                \r\n" + //
+                "                               @@       .             @@    @            @                          \r\n" + //
+                "                                 @@@@@@              @       @                                      \r\n" + //
+                "                                 @                 @@        =@                                     \r\n" + //
+                "                                 @                @@          @                                     \r\n" + //
+                "                                 @               @@            @%                                   \r\n" + //
+                "                                 @             @@               @                                   \r\n" + //
+                "                                 @          @@@                  @                                  \r\n" + //
+                "                                @@       @@@                      @                                 \r\n" + //
+                "                                @     @@@                         @@                                \r\n" + //
+                "                               @@ @@@@                           @@                                 \r\n" + //
+                "                                @@@                             @@                                  \r\n" + //
+                "                                    @@@@                       @                                    \r\n" + //
+                "                     @                  @@@@                 @@                                     \r\n" + //
+                "                     @                      @@@@@          @@                                       \r\n" + //
+                "                     @       @                   @@@@@   @@                                         \r\n" + //
+                "                     @@      #@                       @@@                                           \r\n" + //
+                "                      @        @                                                                    \r\n" + //
+                "                       @        @@                                                                  \r\n" + //
+                "                        @         @@@                                                               \r\n" + //
+                "                         @@          @@@                                                            \r\n" + //
+                "                           @              @                                                         \r\n" + //
+                "                            @@                                                                      \r\n" + //
+                "                              @@                                                                    \r\n" + //
+                "                                @@@                                                                 \r\n" + //
+                "                                   @@@                                                              \r\n" + //
+                "                                       @@@@                                                         \r\n" + //
+                "                                               @@                                                   \r\n" + //
+                "                                                                                                    \r\n" + //
+                "                                                             ";
     
     public static void main(String[] args) {
         // WELCOME SCREEN
@@ -50,7 +102,8 @@ public class BINGO {
             } else {
                 letter = 'O';
             }
-            System.out.println("Taya taya... Sa letra sang " + letter + "... " + randomNumber + "!");
+            //System.out.println(BingoShake); 
+            System.out.println(" Sa Lettra SANG! " + letter + "!" + "... " + randomNumber + "!");
             if (bingoCardRepr.contains(randomNumberRepr+"")) {
                 System.out.println("May " + randomNumber + "!");
             } else {
@@ -113,6 +166,14 @@ public class BINGO {
     }
 
     static void contains(char repr) {
-        int i;
+        
     }
-}
+    static boolean horizontalCheck(){
+        for (int i = 0; i < 5; i++){
+            if 
+        }
+    }
+    
+
+
+    }
