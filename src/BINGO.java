@@ -24,7 +24,7 @@ public class BINGO {
             | |_|   ||   | | | |   ||   |_| ||       | __
             |_______||___| |_|  |__||_______||_______||__|
 
-            Tara BINGO! (ENTER to continue)""");
+            Tara BINGO! (ENTER)""");
 
         // HELP MODULE
         // playTutorial();
