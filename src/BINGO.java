@@ -7,10 +7,11 @@ public class BINGO {
     static Random rand = new Random();
     static Scanner scanner = new Scanner(System.in);
     static final String BINGO = "BINGO";
-    static final int ASCIIMIN = 1, ASCIIMAX = 75;
+    static final int ASCIIMIN = 32, BINGOMAX = 75;
     static String rolledNumbersRepr = "";
     static String bingoCardRepr = "";
     static String bingoWinningPattern;
+    static String sep = "\t\t";
 
     public static void main(String[] args) throws IOException, InterruptedException {
         // WELCOME SCREEN
@@ -41,7 +42,7 @@ public class BINGO {
         int randomNumber;
 
         while (true) {
-            randomNumberRepr = getRandomNumberRepr(0, ASCIIMAX + 1);
+            randomNumberRepr = getNumberRepr(getRandomNumber(0, BINGOMAX + 1));
             randomNumber = randomNumberRepr - 33;
 
             if (rolledNumbersRepr.contains(randomNumberRepr+"")) {
@@ -59,7 +60,7 @@ public class BINGO {
             }
 
             printBingoCardRepr();
-            printlnInteractive("Taya taya...\n");
+            printlnInteractive("Taya taya...");
             printInteractive("Sa letra sang...");
             printlnInteractive(letter + "!");
             printlnInteractive(randomNumber + "!");
@@ -72,85 +73,81 @@ public class BINGO {
 
     static void createBingoCardRepr() {
         /*
-         * bingoCardRepr is a one-directional string separated by `sep` between numbers and `\n` between rows
-         * We cannot naively store the card numbers as they are, or check the card by membership.
-         * Single digits cannot be verified if it is on the card.
-         * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will accept 1, 12, 13, ..., 21, 22, and so on.
+         * bingoCardRepr is a one-directional string which includes five rows (separated by newline) of five characters
+         * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
+         * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
          *
-         * One technique I could think is we could change the way we check the membership of rolled numbers.
+         * One technique I could think of is we could change the way we check the membership of rolled numbers.
          * But as of right now I cannot think of anything about this.
          *
-         * What I thought of and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
-         * The number, when converted, will always be its associated character and vice versa.
-         * We start the mapping at the 33rd character, second printable character in ASCII, up to 75 (the maximum in BINGO).
-         * The first printable character, the SPACE, is reserved to the middle square of the card.
+         * What I came up with and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
+         * The number is always converted to its associated character, and vice versa.
+         * We start the mapping at the 33rd character ('!') up to 108 ('k', 33 + 75 - 1).
+         * The SPACE, is reserved to the middle FREE SQUARE of the card.
          *
-         * But I am open to suggestions. Is there a bettew way of doing this?
+         * But I am open to suggestions. Is there a better way of doing this?
          */
         char randNumberRepr;
-        String sep = "\t\t";
+        int min, max;
 
         for (int row = 0; row < 5; row++) {
-            int col = 0;
-            while (col < 5) {
+            for (int col = 0; col < 5;) {
                  if (row == 2 && col == 2) {
-                    bingoCardRepr += ' ' + sep;
-                } else {
-                    randNumberRepr = getRandomNumberRepr(col * 15 + 1, (col + 1) * 15 + 1);
-                    if (bingoCardRepr.contains(randNumberRepr+"")) {
-                        continue;
-                    }
-                    bingoCardRepr += randNumberRepr + ((col != 4) ? sep : "");
+                    bingoCardRepr += ' ';
+                    col++;
+                    continue;
                 }
-                col++;
+                min = col * 15 + 1; max = (col + 1) * 15 + 1;
+                randNumberRepr = getNumberRepr(getRandomNumber(min, max));
+                if (bingoCardRepr.contains(randNumberRepr+"")) {
+                    continue;
+                } else {
+                    bingoCardRepr += randNumberRepr+"";
+                    col++;
+                }
             }
-            bingoCardRepr += "\n";
+            bingoCardRepr += '\n';
         }
     }
 
     static void printBingoCardRepr() {
         /*
-         * Since bingoCardRepr is a 1-directional form, there is no need for nested loops.
+         * Since bingoCardRepr is a 1-dimentional form, there is no need for nested loops.
          * I instead used conditionals to further control the printing of the card.
          *
-         * Ugly code, need refactoring.
          * TODO row and column separation
          */
         char currentNumRepr;
         int currentNum;
 
-        System.out.println("B\t\tI\t\tN\t\tG\t\tO\n");
+        System.out.println("B" + sep + "I" + sep + "N" + sep + "G" + sep + "O\n");
         for (int i = 0; i < bingoCardRepr.length(); i++) {
             currentNumRepr = bingoCardRepr.charAt(i);
-            currentNum = currentNumRepr - 33;
 
             if (currentNumRepr == ' ') {
-                System.out.print("B");
+                System.out.print("FS" + sep);
             } else if (currentNumRepr == '\n') {
-                // TODO row separation
-                System.out.print(currentNumRepr);
-                // System.out.print("-----------------------------------------------------------------------\n");
-            } else if (currentNumRepr == '\t') {
-                System.out.print(currentNumRepr);
-                // TODO column separation
-                // if (i % 2 == 1) {
-                //     System.out.print("|");
-                // }
-            } else if (rolledNumbersRepr.contains(currentNumRepr+"")) {
-                System.out.print("(" + currentNum + ")");
+                System.out.println(currentNumRepr);
             } else {
-                System.out.print(currentNum);
+                currentNum = getReprNumber(currentNumRepr);
+                // enclose the number with parentheses if the number is already called out
+                System.out.print(rolledNumbersRepr.contains(currentNumRepr+"") ? "(" + currentNum + ")" : currentNum);
+                System.out.print(sep);
             }
         }
     }
 
-    static char getRandomNumberRepr(int min, int max) {
+    static int getRandomNumber(int min, int max) {
         // .nextInt((max-min) + min) --> range between min (inclusive) and max (exclusive)
-        return (char) ((rand.nextInt(max - min) + min) + 33);
+        return rand.nextInt(max - min) + min;
     }
 
-    static int getNumberFromRepr(char repr) {
-        return repr - 33;
+    static char getNumberRepr(int number) {
+        return (char) (number + ASCIIMIN);
+    }
+
+    static int getReprNumber(char repr) {
+        return repr - ASCIIMIN;
     }
 
     static void cls() throws IOException, InterruptedException {
@@ -158,12 +155,12 @@ public class BINGO {
     }
 
     static void printlnInteractive(String s) {
-        System.out.println(s + " (ENTER)");
+        System.out.println(s + " (ENTER) ");
         scanner.nextLine();
     }
 
     static void printInteractive(String s) {
-        System.out.print(s + " (ENTER)");
+        System.out.print(s + " (ENTER) ");
         scanner.nextLine();
     }
 
