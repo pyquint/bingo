@@ -6,78 +6,82 @@ public class BINGO {
     // GLOBAL VARIABLES
     static Random rand = new Random();
     static Scanner scanner = new Scanner(System.in);
-    static final String BINGO = "BINGO";
+
     static final int ASCIIMIN = 32, BINGOMAX = 75;
-    static String rolledNumbersRepr = "";
-    static String bingoCardRepr = "";
-    static String bingoWinningPattern;
+    static String rolledNumbersRepr = "", bingoCardRepr = "";
+    static String bingoCardPattern = "", bingoWinningPatterns = "";
     static String sep = "\t\t";
 
+    static String bingo = """
+        _______  ___   __    _  _______  _______  __
+        |  _    ||   | |  |  | ||       ||       ||  |
+        | |_|   ||   | |   |_| ||    ___||   _   ||  |
+        |       ||   | |       ||   | __ |  | |  ||  |
+        |  _   | |   | |  _    ||   ||  ||  |_|  ||__|
+        | |_|   ||   | | | |   ||   |_| ||       | __
+        |_______||___| |_|  |__||_______||_______||__|
+            """;
+
     // SHAKER TOO BIG?
-    static String  BingoShake = "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                           @                                                                        \r\n" + //
-                "                          @@@                                                                       \r\n" + //
-                "                        @@  @@                          @@   @@@@@                                  \r\n" + //
-                "                       @@   @@@@                                   @@@                              \r\n" + //
-                "                     @@    @   @@                                     @@@                           \r\n" + //
-                "                    @@   @@     @@@                                      @@                         \r\n" + //
-                "                   @@@@@          @@                             @@        @@                       \r\n" + //
-                "                       @@          +@@               @@@@@@        @@        @@                     \r\n" + //
-                "                         @@           @@@     @@@@@@@    @@          @         @@                   \r\n" + //
-                "                           @@           @@@@@@-         @  @          @@         @                  \r\n" + //
-                "                             @@         @@             @@  @@           @         @@                \r\n" + //
-                "                               @@       .             @@    @            @                          \r\n" + //
-                "                                 @@@@@@              @       @                                      \r\n" + //
-                "                                 @                 @@        =@                                     \r\n" + //
-                "                                 @                @@          @                                     \r\n" + //
-                "                                 @               @@            @%                                   \r\n" + //
-                "                                 @             @@               @                                   \r\n" + //
-                "                                 @          @@@                  @                                  \r\n" + //
-                "                                @@       @@@                      @                                 \r\n" + //
-                "                                @     @@@                         @@                                \r\n" + //
-                "                               @@ @@@@                           @@                                 \r\n" + //
-                "                                @@@                             @@                                  \r\n" + //
-                "                                    @@@@                       @                                    \r\n" + //
-                "                     @                  @@@@                 @@                                     \r\n" + //
-                "                     @                      @@@@@          @@                                       \r\n" + //
-                "                     @       @                   @@@@@   @@                                         \r\n" + //
-                "                     @@      #@                       @@@                                           \r\n" + //
-                "                      @        @                                                                    \r\n" + //
-                "                       @        @@                                                                  \r\n" + //
-                "                        @         @@@                                                               \r\n" + //
-                "                         @@          @@@                                                            \r\n" + //
-                "                           @              @                                                         \r\n" + //
-                "                            @@                                                                      \r\n" + //
-                "                              @@                                                                    \r\n" + //
-                "                                @@@                                                                 \r\n" + //
-                "                                   @@@                                                              \r\n" + //
-                "                                       @@@@                                                         \r\n" + //
-                "                                               @@                                                   \r\n" + //
-                "                                                                                                    \r\n" + //
-                "                                                             ";
+    static String  BingoShake = """
+        @
+        @@@
+      @@  @@                          @@   @@@@@
+     @@   @@@@                                   @@@
+   @@    @   @@                                     @@@
+  @@   @@     @@@                                      @@
+ @@@@@          @@                             @@        @@
+     @@          +@@               @@@@@@        @@        @@
+       @@           @@@     @@@@@@@    @@          @         @@
+         @@           @@@@@@-         @  @          @@         @
+           @@         @@             @@  @@           @         @@
+             @@       .             @@    @            @
+               @@@@@@              @       @
+               @                 @@        =@
+               @                @@          @
+               @               @@            @%
+               @             @@               @
+               @          @@@                  @
+              @@       @@@                      @
+              @     @@@                         @@
+             @@ @@@@                           @@
+              @@@                             @@
+                  @@@@                       @
+   @                  @@@@                 @@
+   @                      @@@@@          @@
+   @       @                   @@@@@   @@
+   @@      #@                       @@@
+    @        @
+     @        @@
+      @         @@@
+       @@          @@@
+         @              @
+          @@
+            @@
+              @@@
+                 @@@
+                     @@@@
+                             @@
+""";
 
     public static void main(String[] args) throws IOException, InterruptedException {
         // WELCOME SCREEN
-        printlnInteractive("""
-            _______  ___   __    _  _______  _______  __
-            |  _    ||   | |  |  | ||       ||       ||  |
-            | |_|   ||   | |   |_| ||    ___||   _   ||  |
-            |       ||   | |       ||   | __ |  | |  ||  |
-            |  _   | |   | |  _    ||   ||  ||  |_|  ||__|
-            | |_|   ||   | | | |   ||   |_| ||       | __
-            |_______||___| |_|  |__||_______||_______||__|
+        System.out.println(bingo);
+        printlnInteractive("Tara BINGO! (ENTER)");
 
-            Tara BINGO! (ENTER)""");
+        // PATTERN CREATION
+        while (true) {
+            System.out.print("Do you want to create a custom winning pattern? (y/n): ");
+            String response = scanner.nextLine().toLowerCase().strip();
+            if (response.equals("y")) {
+                patternCreation();
+                break;
+            } else if (response == "n") {
+                break;
+            } else {
+                System.out.println("Invalid input.");
+            }
+        }
 
         // HELP MODULE
         // playTutorial();
@@ -93,15 +97,18 @@ public class BINGO {
         char letter;
         char randomNumberRepr;
         int randomNumber;
+        String membership;
 
         cls();
         while (true) {
-            randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
-            randomNumber = randomNumberRepr - ASCIIMIN;
+            do {
+                randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
+            } while (rolledNumbersRepr.contains(randomNumberRepr+""));
 
-            if (rolledNumbersRepr.contains(randomNumberRepr+"")) {
-                continue;
-            } else if (randomNumber >= 1 && randomNumber <= 15) {
+            randomNumber = randomNumberRepr - ASCIIMIN;
+            membership = (bingoCardRepr.contains(randomNumberRepr+"")) ? "May " : "Wala ";
+
+            if (randomNumber >= 1 && randomNumber <= 15) {
                 letter = 'B';
             } else if (randomNumber > 15 && randomNumber <= 30) {
                 letter = 'I';
@@ -113,17 +120,25 @@ public class BINGO {
                 letter = 'O';
             }
 
-            if (rowCheck() == true) {
-                System.out.println("BINGO!");
-                break;
-            }
+            updateBingoCardPattern();
 
+            System.out.println(bingoWinningPatterns);
+            System.out.println(bingoCardPattern);
+            if (winningPatternContainsCardPattern()) {
+                System.out.println("BINGO!!!");
+                printBingoCardRepr();
+                break;
+            };
+
+            // System.out.print(BingoShake);
             printBingoCardRepr();
+
             printlnInteractive("Taya taya...");
             printInteractive("Sa letra sang...");
             printInteractive(letter + "!");
             printInteractive(randomNumber + "!");
-            System.out.println((bingoCardRepr.contains(randomNumberRepr+"") ? "May " : "Wala ") + randomNumber + "!");
+            System.out.println(membership + randomNumber + "!");
+
             rolledNumbersRepr += randomNumberRepr + " ";
             printInteractive("\nRoll again >>>");
             cls();
@@ -132,7 +147,7 @@ public class BINGO {
 
     static void createBingoCardRepr() {
         /*
-         * bingoCardRepr is a one-directional string which includes five rows (separated by newline) of five characters
+        * bingoCardRepr is a one-directional string which includes five rows (separated by newline) of five characters.
          * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
          * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
          *
@@ -198,9 +213,6 @@ public class BINGO {
         return rand.nextInt(max - min) + min;
     }
 
-    static void contains(char repr) {
-    }
-
     static boolean horizontalCheck(){
         for (int i = 0; i < 5; i++){
             int j;
@@ -231,6 +243,7 @@ public class BINGO {
     }
 
     static void playTutorial() throws IOException, InterruptedException {
+        // QUEENIELYN
         cls();
         printlnInteractive("Hello! Welcome to the BINGO tutorial!");
         printInteractive("Let's start with the mechanics.");
@@ -254,6 +267,78 @@ public class BINGO {
         cls();
     }
 
+    static void patternCreation() {
+        /*
+         * A `pattern` is a string of '*'s and '-', where '*' is a marked square, while '-' is the default.
+         * All winning patterns, if there are multiple (to be implemented), are stored in a single `bingoWinningPatterns` String, separated by  ',' between.
+         *
+         * Player bingo cards are also converted into patterns, and we can simply iterate the cardPattern against the winningPatterns if the marks are matching.
+         * Feeling proud...
+         */
+
+        // TOOL TUTORIAL
+        patternCreationTutorial();
+        String response;
+
+        for (int i = 0; i < 25; i++) {
+            if (i == 12) {
+                bingoWinningPatterns += '*';
+                continue;
+            }
+
+            System.out.println("B" + sep + "I" + sep + "N" + sep + "G" + sep + "O");
+            for (int j = 0; j < 25; j++) {
+                if (j < i) {
+                    System.out.print(bingoWinningPatterns.charAt(j));
+                } else if (j == i) {
+                    System.out.print("[-]");
+                } else if (j == 12) {
+                    System.out.print("*");
+                } else {
+                    System.out.print("-");
+                }
+
+                if ((j+1) % 5 == 0) {
+                    System.out.println('\n');
+                } else {
+                    System.out.print(sep);
+                }
+            }
+            System.out.println();
+
+            do {
+                System.out.print("Mark current spot as winning pattern? (y/n): ");
+                response = scanner.nextLine().toLowerCase().strip();
+            } while (!(response.equals("y") || response.equals("n")));
+
+            bingoWinningPatterns += (response.equals("y")) ? '*' : '-';
+        }
+        bingoWinningPatterns += ',';
+    }
+
+    static void updateBingoCardPattern() {
+        bingoCardPattern = "";
+        for (int i = 0; i < bingoCardRepr.length(); i++) {
+            char currentChar = bingoCardRepr.charAt(i);
+            if (currentChar == '\n') continue;
+            bingoCardPattern += (rolledNumbersRepr.contains(currentChar+"")) ? '*' : '-';
+        }
+    }
+
+    static boolean winningPatternContainsCardPattern() {
+        boolean won = true;
+        for (int i = 0; i < bingoCardPattern.length(); i++) {
+            char currCard = bingoCardPattern.charAt(i);
+            char currPatt = bingoWinningPatterns.charAt(i);
+            if (currPatt == '*' && currCard != '*') return false;
+        }
+        return won;
+    }
+
+    static void patternCreationTutorial () {
+        System.out.println("TODO");
+    }
+
     static boolean rowCheck() {
         boolean completeMark = true;
 
@@ -262,9 +347,7 @@ public class BINGO {
                 completeMark = false;
                 break;
             }
-            if (bingoCardRepr.charAt(i) == '\n') {
-                continue;
-            }
+            if (bingoCardRepr.charAt(i) == '\n') continue;
         }
         System.out.println(completeMark);
         return completeMark;
