@@ -14,7 +14,7 @@ public class BINGO {
     static String BINGO_WINNING_PATTERNS = "*---*-*-*---*---*-*-*---*" + SEPARATOR;
     static String ROLLED_NUMBERS_REPR = "", BINGO_CARD_REPRS = "", BINGO_CARD_PATTERNS = "", CURRENT_PATTERN = "";
     static String GRID_SEP = "\t";
-    static int PATTERN_NUM = 1, MONEY = 5, CARD_NUM;
+    static int PATTERN_COUNT = 1, MONEY = 5, CARD_COUNT;
 
     static String BINGOASCII = """
         _______  ___   __    _  _______  _______  __
@@ -215,10 +215,9 @@ public class BINGO {
     static void patternCreation(int patternIndex) throws IOException, InterruptedException {
         /*
          * A `pattern` is a string of '*'s and '-', where '*' is a marked square, while '-' is the default.
-         * All winning patterns, if there are multiple (to be implemented), are stored in a single `bingoWinningPatterns` String, separated by  ',' between.
+         * All winning patterns, are stored in a single `bingoWinningPatterns` String, separated by  ',' between.
          *
          * Player bingo cards are also converted into patterns, and we can simply iterate the cardPattern against the winningPatterns if the marks are matching.
-         * Feeling proud...
          */
 
         // TOOL TUTORIAL
@@ -285,7 +284,7 @@ public class BINGO {
             }
         }
         BINGO_WINNING_PATTERNS += CURRENT_PATTERN + SEPARATOR;
-        PATTERN_NUM++;
+        PATTERN_COUNT++;
     }
 
     static String getTemplatePattern() {
@@ -313,7 +312,7 @@ public class BINGO {
         // somehow skip checking if there is no pattern (returns true because of free space spot)
         // maybe add default pattern or don't start the game if there is no pattern
         boolean won = true;
-        for (int i = (PATTERN_NUM - 1) * 25 + PATTERN_NUM; i < PATTERN_NUM + 1; i++) {
+        for (int i = (PATTERN_COUNT - 1) * 25 + PATTERN_COUNT; i < PATTERN_COUNT + 1; i++) {
             for (int j = 0; j < LENGTH; j++) {
                 char currCard = BINGO_CARD_PATTERNS.charAt(j);
                 char currPatt = BINGO_WINNING_PATTERNS.charAt(j);
