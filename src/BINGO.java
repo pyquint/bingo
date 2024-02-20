@@ -4,13 +4,17 @@ import java.util.Random;
 
 public class BINGO {
     // GLOBAL VARIABLES
-    static Random rand = new Random();
-    static Scanner scanner = new Scanner(System.in);
+    static Random RAND = new Random();
+    static Scanner SCANNER = new Scanner(System.in);
 
-    static final int ASCIIMIN = 32, BINGOMAX = 75, MIDDLE = 12, LENGTH = 25;
-    static String ROLLED_NUMBERS_REPR = "", bingoCardRepr = "";
-    static String bingoCardPattern = "", BINGO_WINNING_PATTERNS = "";
-    static String sep = "\t";
+    // " " AS SEPARATOR AND "!" AS FREE SPACE IN THE MIDDLE
+    static final char SEPARATOR = 32, FREE_SPACE = SEPARATOR + 1;
+    static final int ASCIIMIN = FREE_SPACE + 1, BINGOMAX = 75, MIDDLE = 12, LENGTH = 25;
+    static final String TEMPLATE_PATTERN = "------------*------------";
+    static String BINGO_WINNING_PATTERNS = "*---*-*-*---*---*-*-*---*" + SEPARATOR;
+    static String ROLLED_NUMBERS_REPR = "", BINGO_CARD_REPRS = "", BINGO_CARD_PATTERNS = "", CURRENT_PATTERN = "";
+    static String GRID_SEP = "\t";
+    static int PATTERN_NUM = 1, MONEY = 5, CARD_NUM;
 
     static String BINGOASCII = """
         _______  ___   __    _  _______  _______  __
@@ -57,18 +61,34 @@ public class BINGO {
         System.out.println(BINGOASCII);
         printInteractive("Tara BINGO!");
 
+        /* ONE CARD AT THE START. THE PLAYER CAN EARN MONEY BY WINNING
+         * PLAYERS CAN THEN BUY ADDITIONAL CARDS ???
+         */
+
         // INITIALIZATION OF VARIABLES
-        initializeBingoWinningPattern();
         createBingoCardRepr();
+
+        // TODO MONEYS
+        // while (true) {
+        //     System.out.println("(One card costs 2 MONEY. You currently have " + MONEY + "MONEY)");
+        //     System.out.print("How many cards do you want?: " );
+        //     CARD_NUM = SCANNER.nextInt();
+        // }
 
         // PATTERN CREATION
         String response;
         do {
             System.out.print("Do you want to create a custom winning pattern? (y/n): ");
-            response = scanner.nextLine().strip().toLowerCase();
+            response = SCANNER.nextLine().strip().toLowerCase();
         } while (!(response != "y" || response != "n"));
 
-        if (response.equals("y")) patternCreation();
+        int patternIndex = 0;
+        do {
+            patternIndex++;
+            if (response.equals("y")) patternCreation(patternIndex);
+            System.out.print("Create another pattern? (y/n): ");
+            response = SCANNER.nextLine();
+        } while (!response.equals("n"));
 
         // HELP MODULE
         // playTutorial();
@@ -91,8 +111,8 @@ public class BINGO {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
             } while (ROLLED_NUMBERS_REPR.contains(randomNumberRepr+""));
 
-            randomNumber = randomNumberRepr - ASCIIMIN;
-            membership = (bingoCardRepr.contains(randomNumberRepr+"")) ? "May " : "Wala ";
+            randomNumber = getReprNumber(randomNumberRepr);
+            membership = (BINGO_CARD_REPRS.contains(randomNumberRepr+"")) ? "May " : "Wala ";
 
             if (randomNumber >= 1 && randomNumber <= 15) {
                 letter = 'B';
@@ -106,9 +126,11 @@ public class BINGO {
                 letter = 'O';
             }
 
-            updateBingoCardPattern();
+            updateBingoCardPatterns();
+            System.out.println(BINGO_CARD_REPRS);
+            System.out.println(BINGO_CARD_PATTERNS);
 
-            if (winningPatternContainsCardPattern()) {
+            if (winningPatternsContainCardPatterns()) {
                 System.out.println("BINGO!!!");
                 printBingoCardRepr();
                 isPlaying = false;
@@ -124,7 +146,7 @@ public class BINGO {
             printInteractive(randomNumber + "!");
             System.out.println(membership + randomNumber + "!");
 
-            ROLLED_NUMBERS_REPR += randomNumberRepr + " ";
+            ROLLED_NUMBERS_REPR += randomNumberRepr;
             printInteractive("\nRoll again >>>");
             cls();
         }
@@ -132,7 +154,7 @@ public class BINGO {
 
     static void createBingoCardRepr() {
         /*
-        * bingoCardRepr is a one-directional string which includes five rows (separated by newline) of five characters.
+         * bingoCardRepr is a one-directional string which includes five rows (separated by newline) of five characters.
          * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
          * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
          *
@@ -141,28 +163,26 @@ public class BINGO {
          *
          * What I came up with and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
          * The number is always converted to its associated character, and vice versa.
-         * We start the mapping at the 33rd character ('!') up to 107 ('k', 33 + 75 - 1).
-         * The SPACE, is reserved to the middle FREE SQUARE of the card.
-         *
-         * But I am open to suggestions. Is there a better way of doing this?
+         * We start the mapping at the 34rd character ('"') up to 108 ('l', 33 + 75 - 1 because of indexing).
+         * The SPACE is reserved as the separator between player cards.
          */
         char randNumberRepr;
         int min, max;
-
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 5; col++) {
                  if (row == 2 && col == 2) {
-                    bingoCardRepr += ' ';
+                    BINGO_CARD_REPRS += FREE_SPACE;
                     continue;
                 }
                 min = col * 15 + 1;
                 max = (col + 1) * 15 + 1;
                 do {
                     randNumberRepr = getNumberRepr(getRandomNumber(min, max));
-                } while (bingoCardRepr.contains(randNumberRepr+""));
-                bingoCardRepr += randNumberRepr+"";
+                } while (BINGO_CARD_REPRS.contains(randNumberRepr+""));
+                BINGO_CARD_REPRS += randNumberRepr+"";
             }
         }
+        BINGO_CARD_PATTERNS += SEPARATOR;
     }
 
     static void printBingoCardRepr() {
@@ -173,18 +193,18 @@ public class BINGO {
         char currentNumRepr;
         int currentNum;
 
-        System.out.println("B" + sep + "I" + sep + "N" + sep + "G" + sep + "O");
+        System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
         for (int i = 0; i < LENGTH; i++) {
-            currentNumRepr = bingoCardRepr.charAt(i);
+            currentNumRepr = BINGO_CARD_REPRS.charAt(i);
 
-            if (currentNumRepr == ' ') {
-                System.out.print("FS" + sep);
+            if (currentNumRepr == FREE_SPACE) {
+                System.out.print("FS" + GRID_SEP);
             } else {
                 currentNum = getReprNumber(currentNumRepr);
                 // enclose the number with parentheses if the number is already called out, else print as it is
                 System.out.print(ROLLED_NUMBERS_REPR.contains(currentNumRepr+"") ? "(" + currentNum + ")" : currentNum);
-                System.out.print(sep);
+                System.out.print(GRID_SEP);
             }
             if (i % 5 == 4) {
                 System.out.print('\n');
@@ -192,59 +212,7 @@ public class BINGO {
         }
     }
 
-    static int getRandomNumber(int min, int max) {
-        // .nextInt((max-min) + min) --> range between min (inclusive) and max (exclusive)
-        return rand.nextInt(max - min) + min;
-    }
-
-    static char getNumberRepr(int number) {
-        return (char) (number + ASCIIMIN);
-    }
-
-    static int getReprNumber(char repr) {
-        return repr - ASCIIMIN;
-    }
-
-    static void cls() throws IOException, InterruptedException {
-        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    }
-
-    static void printlnInteractive(String s) {
-        System.out.println(s + " (ENTER) ");
-        scanner.nextLine();
-    }
-
-    static void printInteractive(String s) {
-        System.out.print(s + " (ENTER) ");
-        scanner.nextLine();
-    }
-
-    static void playTutorial() throws IOException, InterruptedException {
-        // QUEENIELYN
-        cls();
-        printlnInteractive("Hello! Welcome to the BINGO tutorial!");
-        printInteractive("Let's start with the mechanics.");
-        printlnInteractive("BINGO is a game of chance.");
-        printlnInteractive("Once every turn, a number is rolled randomly.");
-        printlnInteractive("""
-                On a BINGO card that looks something like this:
-                12\t\t22\t\t43\t\t51\t\t72\n
-                5\t\t23\t\t35\t\t57\t\t61\n
-                9\t\t28\t\tB\t\t48\t\t69\n
-                11\t\t29\t\t41\t\t49\t\t62\n
-                6\t\t19\t\t42\t\t50\t\t65\n
-                if the rolled number is present, that square gets marked.""");
-        printlnInteractive("""
-                The middle, denoted B, is a sort of free square.
-                Consider it already marked.""");
-        printlnInteractive("""
-                The game is won if five (5) marks in a row is achieved,
-                either vertically, horizontally, or diagonally.""");
-        printlnInteractive("Good luck and have fun!");
-        cls();
-    }
-
-    static void patternCreation() throws IOException, InterruptedException {
+    static void patternCreation(int patternIndex) throws IOException, InterruptedException {
         /*
          * A `pattern` is a string of '*'s and '-', where '*' is a marked square, while '-' is the default.
          * All winning patterns, if there are multiple (to be implemented), are stored in a single `bingoWinningPatterns` String, separated by  ',' between.
@@ -255,27 +223,28 @@ public class BINGO {
 
         // TOOL TUTORIAL
         patternCreationTutorial();
-        String response;
+
+        String action;
         boolean inTool = true;
         int currentSelection = 0;
+        CURRENT_PATTERN = TEMPLATE_PATTERN;
 
         while (inTool) {
             cls();
-
-            // PRINTING THE PATTERN MAKER CARD
+            // PRINTING THE CURRENT PATTERN MAKER CARD
             System.out.println("PATTERN MAKER TOOL\n");
-            System.out.println("B" + sep + "I" + sep + "N" + sep + "G" + sep + "O");
+            System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
             for (int j = 0; j < LENGTH; j++) {
                 if (j == currentSelection) {
-                    System.out.print("[" + BINGO_WINNING_PATTERNS.charAt(j) + "]");
+                    System.out.print("[" + CURRENT_PATTERN.charAt(j) + "]");
                 } else {
-                    System.out.print(BINGO_WINNING_PATTERNS.charAt(j));
+                    System.out.print(CURRENT_PATTERN.charAt(j));
                 }
 
-                if ((j+1) % 5 == 0) {
+                if (j % 5 == 4) {
                     System.out.println('\n');
                 } else {
-                    System.out.print(sep);
+                    System.out.print(GRID_SEP);
                 }
             }
             System.out.println();
@@ -287,67 +256,75 @@ public class BINGO {
                 System.out.println("[x] Mark whole column");
                 System.out.println("[e] Finish and exit");
                 System.out.println("[r] Reset");
+                System.out.print("Action: ");
+                action = SCANNER.nextLine().toLowerCase().strip();
 
-                response = scanner.nextLine().toLowerCase().strip();
-
-                if (response.equals("q")) {
-                    BINGO_WINNING_PATTERNS = replace(BINGO_WINNING_PATTERNS, currentSelection, "*");
-                } else if (response.equals("z")) {
-                    markWinningPatternRow(currentSelection);
-                } else if (response.equals("x")) {
-                    markWinningPatternColumn(currentSelection);
-                } else if (response.equals("e")) {
+                if (action.equals("q")) {
+                    CURRENT_PATTERN = replace(CURRENT_PATTERN, currentSelection, "*");
+                } else if (action.equals("z")) {
+                    markCurrentPatternRow(currentSelection);
+                } else if (action.equals("x")) {
+                    markCurrentPatternColumn(currentSelection);
+                } else if (action.equals("e")) {
                     System.out.println("Exiting pattern tool...");
                     inTool = false;
-                } else if (response.equals("r")) {
-                    initializeBingoWinningPattern();
-                } else if (response.equals("w") && currentSelection > 4) {
+                } else if (action.equals("r")) {
+                    resetCurrentTemplatePattern();
+                } else if (action.equals("w") && currentSelection > 4) {
                     currentSelection -= 5;
-                } else if (response.equals("a") && currentSelection % 5 > 0) {
+                } else if (action.equals("a") && currentSelection % 5 > 0) {
                     currentSelection -= 1;
-                } else if (response.equals("s") && currentSelection <= 20) {
+                } else if (action.equals("s") && currentSelection < 20) {
                     currentSelection += 5;
-                } else if (response.equals("d") && currentSelection % 5 < 4) {
+                } else if (action.equals("d") && currentSelection % 5 < 4) {
                     currentSelection += 1;
                 } else {
                     System.out.println("boop");
-                    break;
                 }
                 break;
             }
         }
-        BINGO_WINNING_PATTERNS += ',';
+        BINGO_WINNING_PATTERNS += CURRENT_PATTERN + SEPARATOR;
+        PATTERN_NUM++;
     }
 
-    static void initializeBingoWinningPattern() {
-        // INITIALIZE WINNING PATTERN
-        BINGO_WINNING_PATTERNS = "";
+    static String getTemplatePattern() {
+        String template = "";
         for (int i = 0; i < LENGTH; i++) {
-            BINGO_WINNING_PATTERNS += ((i == MIDDLE) ? "*" : "-");
+            template += ((i == MIDDLE) ? "*" : "-");
+        }
+        return template;
+    }
+
+    static void resetCurrentTemplatePattern() {
+        CURRENT_PATTERN = TEMPLATE_PATTERN;
+    }
+
+    static void updateBingoCardPatterns() {
+        BINGO_CARD_PATTERNS = "";
+        for (int i = 0; i < BINGO_CARD_REPRS.length(); i++) {
+            char currentChar = BINGO_CARD_REPRS.charAt(i);
+            if (currentChar == FREE_SPACE) BINGO_CARD_PATTERNS += "*";
+            BINGO_CARD_PATTERNS += (ROLLED_NUMBERS_REPR.contains(currentChar+"")) ? '*' : '-';
         }
     }
 
-    static void updateBingoCardPattern() {
-        bingoCardPattern = "";
-        for (int i = 0; i < bingoCardRepr.length(); i++) {
-            char currentChar = bingoCardRepr.charAt(i);
-            if (currentChar == '\n') continue;
-            bingoCardPattern += (ROLLED_NUMBERS_REPR.contains(currentChar+"")) ? '*' : '-';
-        }
-    }
-
-    static boolean winningPatternContainsCardPattern() {
+    static boolean winningPatternsContainCardPatterns() {
+        // somehow skip checking if there is no pattern (returns true because of free space spot)
+        // maybe add default pattern or don't start the game if there is no pattern
         boolean won = true;
-        for (int i = 0; i < LENGTH; i++) {
-            if (i == MIDDLE) continue;
-            char currCard = bingoCardPattern.charAt(i);
-            char currPatt = BINGO_WINNING_PATTERNS.charAt(i);
-            if (currPatt == '*' && currCard != '*') return false;
+        for (int i = (PATTERN_NUM - 1) * 25 + PATTERN_NUM; i < PATTERN_NUM + 1; i++) {
+            for (int j = 0; j < LENGTH; j++) {
+                char currCard = BINGO_CARD_PATTERNS.charAt(j);
+                char currPatt = BINGO_WINNING_PATTERNS.charAt(j);
+                if (currPatt == '*' && currCard != '*') won = false;
+            }
+            if (won) return won;
         }
         return won;
     }
 
-    static void markWinningPatternRow(int currentSelection) {
+    static void markCurrentPatternRow(int currentSelection) {
         int leftMostIndex = 0;
         if  (currentSelection <= 4) {
             leftMostIndex = 0;
@@ -360,19 +337,19 @@ public class BINGO {
         } else if (currentSelection <= 24) {
             leftMostIndex = 20;
         }
-        BINGO_WINNING_PATTERNS = BINGO_WINNING_PATTERNS.substring(0, leftMostIndex) + "*****" + BINGO_WINNING_PATTERNS.substring(leftMostIndex+5);
+        CURRENT_PATTERN = CURRENT_PATTERN.substring(0, leftMostIndex) + "*****" + CURRENT_PATTERN.substring(leftMostIndex+5);
     }
 
-    static void markWinningPatternColumn(int currentSelection) {
+    static void markCurrentPatternColumn(int currentSelection) {
         String temporaryString = "";
         for (int i = 0; i < LENGTH; i++) {
             if (i % 5 == currentSelection % 5) {
                 temporaryString += "*";
             } else {
-                temporaryString += BINGO_WINNING_PATTERNS.charAt(i);
+                temporaryString += CURRENT_PATTERN.charAt(i);
             }
         }
-        BINGO_WINNING_PATTERNS = temporaryString;
+        CURRENT_PATTERN = temporaryString;
     }
 
     static String replace(String s, int index, String replacement) {
@@ -380,6 +357,60 @@ public class BINGO {
     }
 
     static void patternCreationTutorial () {
+        // Queenielyn
         System.out.println("TODO PATTERN MAKER TUT");
+    }
+
+    static void playTutorial() throws IOException, InterruptedException {
+        // Queenielyn
+        cls();
+        printlnInteractive("Hello! Welcome to the BINGO tutorial!");
+        printInteractive("Let's start with the mechanics.");
+        printlnInteractive("BINGO is a game of chance.");
+        printlnInteractive("Once every turn, a number is rolled randomly.");
+        printlnInteractive("""
+                On a BINGO card that looks something like this:
+                12\t22\t43\t51\t72\n
+                5\t23\t35\t57\t61\n
+                9\t28\tB\t48\t69\n
+                11t29\t41\t49\t62\n
+                6\t19\t42\t50\t65\n
+                if the rolled number is present, that square gets marked.""");
+        printlnInteractive("""
+                The middle, denoted B, is a sort of free square.
+                Consider it already marked.""");
+        printlnInteractive("""
+                The game is won if five (5) marks in a row is achieved,
+                either vertically, horizontally, or diagonally.""");
+        // TODO
+        printlnInteractive("Good luck and have fun!");
+        cls();
+    }
+
+    static int getRandomNumber(int min, int max) {
+        // .nextInt((max-min) + min) --> range between min (inclusive) and max (exclusive)
+        return RAND.nextInt(max - min) + min;
+    }
+
+    static char getNumberRepr(int number) {
+        return (char) (number + ASCIIMIN);
+    }
+
+    static int getReprNumber(char repr) {
+        return repr - ASCIIMIN;
+    }
+
+    static void printlnInteractive(String s) {
+        System.out.println(s + " (ENTER) ");
+        SCANNER.nextLine();
+    }
+
+    static void printInteractive(String s) {
+        System.out.print(s + " (ENTER) ");
+        SCANNER.nextLine();
+    }
+
+    static void cls() throws IOException, InterruptedException {
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 }
