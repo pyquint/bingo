@@ -8,19 +8,27 @@ public class BINGO {
     static Scanner SCANNER = new Scanner(System.in);
 
     // " " (32 in ASCII) AS SEPARATOR FOR PATTERN AND  AND "!" AS FREE SPACE IN THE MIDDLE
-    static final char SEPARATOR = 32, FREE_SPACE = SEPARATOR + 1;
+    static final char SEPCHAR = 32, FREE_SPACE = SEPCHAR + 1;
+    static final String SEPSTR = SEPCHAR + "";
     static final int ASCIIMIN = FREE_SPACE + 1, BINGOMAX = 75, LENGTH = 25, MIDDLE = 12;
 
+    /*
+     * There is NO SEPARATOR between REPRS and SEQUENCES, only in INTS,
+     * since we can control the printing of card repr, and there is no need to print sequences (for now).
+     * Substring of each reprs and sequences is [start, start + LENGTH], where start = i * LENGTH.
+     * However, if you decided to add separation, use start = i * LENGTH + (i * 1).
+     */
+
     static final String TEMPLATE_PATTERN = "------------*------------";
-    static String WINNING_PATTERNS_SEQUENCES = "";
-    static String WINNING_PATTERNS_INTS = "";
-    static String ROLLED_NUMBERS_REPR = "";
-    static String CARDS_REPR = "";
-    static String CARD_PATTERNS_SEQUENCES = "";
-    static String CARD_PATTERNS_INTS = "";
+    static String ROLLED_NUMBERS_REPR;
+    static String WINNING_PATTERNS_SEQUENCES;
+    static String WINNING_PATTERNS_INTS;
+    static String CARDS_REPR;
+    static String CARD_PATTERNS_SEQUENCES;
+    static String CARD_PATTERNS_INTS;
     static String GRID_SEP = "\t";
 
-    static int PATTERN_COUNT = 1, CARD_COUNT;
+    static int PATTERN_COUNT = 0, CARD_COUNT;
 
     static String BINGOASCII = """
         _______  ___   __    _  _______  _______  __
@@ -72,6 +80,11 @@ public class BINGO {
          */
 
         // INITIALIZATION OF VARIABLES
+        CARDS_REPR = "";
+        WINNING_PATTERNS_INTS = "";
+        WINNING_PATTERNS_SEQUENCES = "";
+        ROLLED_NUMBERS_REPR = "";
+
         System.out.print("How many cards? ");
         CARD_COUNT = SCANNER.nextInt();
         createBingoCardRepr(CARD_COUNT);
@@ -86,11 +99,11 @@ public class BINGO {
 
         if (response.equals("n")) {
             WINNING_PATTERNS_SEQUENCES = "*---*-*-*---*---*-*-*---*";
+            PATTERN_COUNT++;
         }
 
-        while (response == "y") {
+        while (response.equals("y")) {
             patternCreation();
-            PATTERN_COUNT++;
             do {
                 System.out.print("Create another pattern? (y/n): ");
                 response = SCANNER.nextLine().strip().toLowerCase();
@@ -171,11 +184,11 @@ public class BINGO {
          * What I came up with and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
          * The number is always converted to its associated character, and vice versa.
          * We start the mapping at the 34rd character ('"') up to 108 ('l', 33 + 75 - 1 because of indexing).
-         * The SPACE is reserved as the separator between player cards.
          */
-        int min, max;
-        char randNumberRepr;
         String card;
+        char randNumberRepr;
+        int min, max;
+
         for (int i = 0; i < cardCount; i++) {
             card = "";
             for (int row = 0; row < 5; row++) {
@@ -204,8 +217,8 @@ public class BINGO {
         char currentNumRepr;
         int currentNum;
 
-
         for (int i = 0; i < CARD_COUNT; i++) {
+            System.out.println("CARD NO. " + (i + 1));
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
             for (int j = i * LENGTH; j < i * LENGTH + LENGTH; j++) {
             currentNumRepr = CARDS_REPR.charAt(j);
@@ -228,14 +241,20 @@ public class BINGO {
 
     static void patternCreation() throws IOException, InterruptedException {
         /*
-        * A `pattern` is a string composed of '*'s and '-', where '*' is a marked square, while '-' is the default.
-        * All winning patterns, are stored in a single `bingoWinningPatterns` String, separated by  ',' between.
+        * A `pattern` is a representation of the marked squares in a player card and a winning pattern.
+        * It has has two forms, a SEQUENCE and an INT.
+        * A SEQUENCE is a String composed of '*'s and '-' (where '*' is marked and '-' is the default).
+        * An INT is a String of the integer equivalent of a pattern's SEQUENCE when converted into bits.
         *
-        * Player bingo cards are also converted into patterns, and we can simply iterate the cardPattern against the winningPatterns if the marks are matching.
+        * Checking for a matching pattern in the card involves converting that String integer into int and perform bitwise AND
+        * (see the pattern checking function for actual implementation).
+        *
+        * TODO directly store pattern as int instead of intermediary sequence?
+        * Would require changing the printing of pattern in the pattern maker tool.
         */
 
         // TOOL TUTORIAL
-        patternCreationTutorial();
+        // patternCreationTutorial();
 
         String action;
         boolean inTool = true;
@@ -273,7 +292,7 @@ public class BINGO {
                 action = SCANNER.nextLine().toLowerCase().strip();
 
                 if (action.equals("q")) {
-                    pattern = replace(pattern, currentSelection, "*");
+                    pattern = pattern.substring(0, currentSelection) + "*" + pattern.substring(currentSelection+1);
                 } else if (action.equals("z")) {
                     int leftMostIndex = 0;
                     if (currentSelection <= 4) {
@@ -323,6 +342,7 @@ public class BINGO {
 
     static void updateCardPatterns() {
         CARD_PATTERNS_SEQUENCES = "";
+        CARD_PATTERNS_INTS = "";
         char currentChar;
         for (int i = 0; i < CARD_COUNT; i++) {
             for (int j = 0; j < LENGTH; j++) {
@@ -335,7 +355,7 @@ public class BINGO {
         String pattern;
         for (int k = 0; k < CARD_COUNT; k++) {
             pattern = CARD_PATTERNS_SEQUENCES.substring(k * LENGTH, k * LENGTH + LENGTH);
-            CARD_PATTERNS_INTS += convertPattToInt(pattern) + "" + SEPARATOR;
+            CARD_PATTERNS_INTS += convertPattToInt(pattern) + SEPSTR;
         }
     }
 
@@ -343,7 +363,7 @@ public class BINGO {
         String pattern;
         for (int i = 0; i < PATTERN_COUNT; i++) {
             pattern = WINNING_PATTERNS_SEQUENCES.substring(i * LENGTH, i * LENGTH + LENGTH);
-            WINNING_PATTERNS_INTS += convertPattToInt(pattern) + "" + SEPARATOR;
+            WINNING_PATTERNS_INTS += convertPattToInt(pattern) + SEPSTR;
         }
     }
 
@@ -351,9 +371,9 @@ public class BINGO {
         // for the sake of my sanity, please afford us the use of parseToInt...
         boolean isWon = true;
         int winningPatternBits, cardPatternBits;
-        for (String patternInts : WINNING_PATTERNS_INTS.split(SEPARATOR+"")) {
+        for (String patternInts : WINNING_PATTERNS_INTS.split(SEPSTR)) {
             winningPatternBits = Integer.parseInt(patternInts);
-            for (String cardPatternInts : CARD_PATTERNS_INTS.split(SEPARATOR+"")) {
+            for (String cardPatternInts : CARD_PATTERNS_INTS.split(SEPSTR)) {
                 cardPatternBits = Integer.parseInt(cardPatternInts);
                 if ((winningPatternBits & cardPatternBits) != winningPatternBits) isWon = false;
             }
@@ -371,10 +391,6 @@ public class BINGO {
 		}
 		return bytes;
 	}
-
-    static String replace(String s, int index, String replacement) {
-        return s.substring(0, index) + replacement + s.substring(index+1);
-    }
 
     static void patternCreationTutorial () {
         // Queenielyn
