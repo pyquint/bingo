@@ -8,24 +8,32 @@ public class BINGO {
     static Scanner SCANNER = new Scanner(System.in);
 
     // " " (32 in ASCII) AS SEPARATOR FOR PATTERN AND  AND "!" AS FREE SPACE IN THE MIDDLE
-    static final char SEPCHAR = 32, FREE_SPACE = SEPCHAR + 1;
+    static final char SEPCHAR = 32;
+    static final char FREE_SPACE = SEPCHAR + 1;
     static final String SEPSTR = SEPCHAR + "";
-    static final int ASCIIMIN = FREE_SPACE + 1, BINGOMAX = 75, LENGTH = 25, MIDDLE = 12;
+    static final String GRID_SEP = "\t";
+
+    static final int ASCIIMIN = FREE_SPACE + 1;
+    static final int BINGOMAX = 75;
+    static final int LENGTH = 25;
+    static final int MIDDLE = 12;
 
     /*
-     * There is NO SEPARATOR between REPRS and SEQUENCES, only in INTS,
-     * since we can control the printing of card repr, and there is no need to print sequences (for now).
-     * Substring of each reprs and sequences is [start, start + LENGTH], where start = i * LENGTH.
-     * However, if you decided to add separation, use start = i * LENGTH + (i * 1).
+     * There is NO SEPARATOR between card reprs, only in pattern reprs,
+     * since we can control the printing of card repr, and there is no need to print patterns (for now).
+     * // if using substrings:
+     * // Substring of each reprs and sequences is [start, start + LENGTH], where start = i * LENGTH.
+     * // However, if you decided to add separation, use start = i * LENGTH + (i * 1).
      */
 
-    static String ROLLED_NUMBERS_REPR;
-    static String WINNING_PATTERNS_REPR;
     static String CARDS_REPR;
     static String CARD_PATTERNS_REPR;
-    static String GRID_SEP = "\t";
+    static String WINNING_PATTERNS_REPR;
+    static String ROLLED_NUMBERS_REPR;
 
-    static int PATTERN_COUNT = 0, CARD_COUNT;
+
+    static int CARD_COUNT;
+    static int PATTERN_COUNT;
 
     static String BINGOASCII = """
         _______  ___   __    _  _______  _______  __
@@ -72,43 +80,46 @@ public class BINGO {
         System.out.println(BINGOASCII);
         printInteractive("Tara BINGO!");
 
-        /* ONE CARD AT THE START. THE PLAYER CAN EARN MONEY BY WINNING
-         * PLAYERS CAN THEN BUY ADDITIONAL CARDS ???
+        /*
+         * ONE CARD AT THE START. THE PLAYER CAN EARN MONEY BY WINNING
+         * PLAYERS CAN BUY ADDITIONAL CARDS ???
          */
 
         // INITIALIZATION OF VARIABLES
         CARDS_REPR = "";
         WINNING_PATTERNS_REPR = "";
         ROLLED_NUMBERS_REPR = "";
+        PATTERN_COUNT = 0;
 
         System.out.print("How many cards? ");
         CARD_COUNT = SCANNER.nextInt();
         createBingoCardRepr(CARD_COUNT);
         SCANNER.nextLine();
 
-        // TODO change the loopings here.
         // PATTERN CREATION
         String response;
         do {
             System.out.print("Do you want to create a custom winning pattern? (y/n): ");
             response = SCANNER.nextLine().strip().toLowerCase();
-        } while (!(response != "y" || response != "n"));
+        } while (!(response.equals("y") || response.equals("n")));
+
 
         if (response.equals("n")) {
-            WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*");
+            WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
             PATTERN_COUNT++;
+        }
+
+        while (response.equals("y")) {
+            patternCreation();
+            System.out.print("Create another pattern? (y/n): ");
+            response = SCANNER.nextLine().strip().toLowerCase();
+            if (response.equals("n")) {
+                printlnInteractive("Exiting tool...");
+            }
         }
 
         // TOOL TUTORIAL
         // patternCreationTutorial();
-
-        while (response.equals("y")) {
-            patternCreation();
-            do {
-                System.out.print("Create another pattern? (y/n): ");
-                response = SCANNER.nextLine().strip().toLowerCase();
-            }  while (!(response != "y" || response != "n"));
-        }
 
         // HELP MODULE
         // playTutorial();
@@ -130,9 +141,15 @@ public class BINGO {
         boolean isPlaying = true;
 
         while (isPlaying) {
+            printlnInteractive("\nTaya taya...");
+            printInteractive("Sa letra sang...");
+
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
             } while (ROLLED_NUMBERS_REPR.contains(randomNumberRepr+""));
+
+            ROLLED_NUMBERS_REPR += randomNumberRepr;
+            updateCardPatternsRepr();
 
             randomNumber = getReprNumber(randomNumberRepr);
             membership = (CARDS_REPR.contains(randomNumberRepr+"")) ? "May " : "Wala ";
@@ -149,7 +166,12 @@ public class BINGO {
                 letter = 'O';
             }
 
-            updateCardPatterns();
+            // System.out.print(BingoShake);
+            printInteractive(letter + "!");
+            printInteractive(randomNumber + "!");
+            System.out.println(membership + randomNumber + "!");
+
+            printBingoCardsRepr();
 
             if (cardContainsWinningPattern()) {
                 System.out.println("BINGO!!!");
@@ -158,16 +180,6 @@ public class BINGO {
                 break;
             };
 
-            // System.out.print(BingoShake);
-            printBingoCardsRepr();
-
-            printlnInteractive("\nTaya taya...");
-            printInteractive("Sa letra sang...");
-            printInteractive(letter + "!");
-            printInteractive(randomNumber + "!");
-            System.out.println(membership + randomNumber + "!");
-
-            ROLLED_NUMBERS_REPR += randomNumberRepr;
             printInteractive("\nRoll again >>>");
             cls();
         }
@@ -175,7 +187,7 @@ public class BINGO {
 
     static void createBingoCardRepr(int cardCount) {
         /*
-         * bingoCardRepr is a one-directional string which includes five rows (separated by newline) of five characters.
+         * bingoCardRepr is a one-directional String composed of 25 * CARD_COUNT characters.
          * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
          * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
          *
@@ -252,7 +264,7 @@ public class BINGO {
 
 
         int patternBits = 0;
-        char currChar;
+        char currBit;
         int currentSelection = 0;
         boolean inTool = true;
 
@@ -265,13 +277,14 @@ public class BINGO {
             System.out.println("PATTERN MAKER TOOL\n");
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
             for (int i = 0; i < LENGTH; i++) {
-                currChar = ((patternBits & (1 << (LENGTH - 1 - i))) != 0) ? '*' : '-';
+                // if the current bit is not 0, meaning marked square
+                currBit = ((patternBits & (1 << (LENGTH - 1 - i))) != 0) ? '*' : '-';
                 if (i == currentSelection) {
-                    System.out.print("[" + currChar + "]");
+                    System.out.print("[" + currBit + "]");
                 } else if (i == MIDDLE) {
                     System.out.print('*');
                 } else {
-                    System.out.print(currChar);
+                    System.out.print(currBit);
                 }
 
                 if (i % 5 == 4) {
@@ -318,6 +331,7 @@ public class BINGO {
                         patternBits = patternBits | 1 << LENGTH - topMost - (i * 5) - 1;
                     }
                 } else if (action.equals("e")) {
+                    System.out.println();
                     inTool = false;
                 } else if (action.equals("r")) {
                     patternBits = 0;
@@ -336,17 +350,19 @@ public class BINGO {
                 break;
             }
         }
-        WINNING_PATTERNS_REPR += patternBits;
+        WINNING_PATTERNS_REPR += patternBits + SEPSTR;
         PATTERN_COUNT++;
     }
 
-    static void updateCardPatterns() {
+    static void updateCardPatternsRepr() {
         CARD_PATTERNS_REPR = "";
-        int bits = 0;
+        int bits;
+        char currChar;
         for (int i = 0; i < CARD_COUNT; i++) {
+            bits = 0;
             for (int j = 0; j < LENGTH; j++) {
-                if ((bits & (1 << (LENGTH - 1 - i))) == 0 || j != MIDDLE + (LENGTH * i));
-                bits = bits | 1 << (LENGTH - 1);
+                currChar = CARDS_REPR.charAt(j + (LENGTH * i));
+                if (ROLLED_NUMBERS_REPR.contains(currChar+"") || currChar == FREE_SPACE) bits = bits | 1 << (LENGTH - j - 1);
             }
             CARD_PATTERNS_REPR += bits + SEPSTR;
         }
@@ -354,17 +370,15 @@ public class BINGO {
 
     static boolean cardContainsWinningPattern() {
         // for the sake of my sanity, please afford us the use of parseToInt and enhanced for loops...
-        boolean isWon = true;
-        int winningPatternBits, cardPatternBits;
+        int winningPatternBit, cardPatternBit;
         for (String patternInts : WINNING_PATTERNS_REPR.split(SEPSTR)) {
-            winningPatternBits = Integer.parseInt(patternInts);
-            for (String cardPatternInts : CARD_PATTERNS_REPR.split(SEPSTR)) {
-                cardPatternBits = Integer.parseInt(cardPatternInts);
-                if ((winningPatternBits & cardPatternBits) != winningPatternBits) isWon = false;
+            winningPatternBit = Integer.parseInt(patternInts);
+            for (String cardPatternRepr : CARD_PATTERNS_REPR.split(SEPSTR)) {
+                cardPatternBit = Integer.parseInt(cardPatternRepr);
+                if ((winningPatternBit & cardPatternBit) == winningPatternBit) return true;
             }
-            if (isWon) return isWon;
         }
-        return isWon;
+        return false;
     }
 
 	static int convertPattToInt(String pattern) {
@@ -372,7 +386,7 @@ public class BINGO {
         int len = pattern.length();
 		for (int i = 0; i < len; i++) {
 			if (pattern.charAt(i) == '-') continue;
-			bytes = bytes | (1 << len-i);
+			bytes = bytes | (1 << len-1-i);
 		}
 		return bytes;
 	}
