@@ -19,13 +19,10 @@ public class BINGO {
      * However, if you decided to add separation, use start = i * LENGTH + (i * 1).
      */
 
-    static final String TEMPLATE_PATTERN = "------------*------------";
     static String ROLLED_NUMBERS_REPR;
-    static String WINNING_PATTERNS_SEQUENCES;
-    static String WINNING_PATTERNS_INTS;
+    static String WINNING_PATTERNS_REPR;
     static String CARDS_REPR;
-    static String CARD_PATTERNS_SEQUENCES;
-    static String CARD_PATTERNS_INTS;
+    static String CARD_PATTERNS_REPR;
     static String GRID_SEP = "\t";
 
     static int PATTERN_COUNT = 0, CARD_COUNT;
@@ -81,8 +78,7 @@ public class BINGO {
 
         // INITIALIZATION OF VARIABLES
         CARDS_REPR = "";
-        WINNING_PATTERNS_INTS = "";
-        WINNING_PATTERNS_SEQUENCES = "";
+        WINNING_PATTERNS_REPR = "";
         ROLLED_NUMBERS_REPR = "";
 
         System.out.print("How many cards? ");
@@ -90,6 +86,7 @@ public class BINGO {
         createBingoCardRepr(CARD_COUNT);
         SCANNER.nextLine();
 
+        // TODO change the loopings here.
         // PATTERN CREATION
         String response;
         do {
@@ -98,9 +95,12 @@ public class BINGO {
         } while (!(response != "y" || response != "n"));
 
         if (response.equals("n")) {
-            WINNING_PATTERNS_SEQUENCES = "*---*-*-*---*---*-*-*---*";
+            WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*");
             PATTERN_COUNT++;
         }
+
+        // TOOL TUTORIAL
+        // patternCreationTutorial();
 
         while (response.equals("y")) {
             patternCreation();
@@ -112,7 +112,8 @@ public class BINGO {
 
         // HELP MODULE
         // playTutorial();
-        convertWinningPatternToInts();
+
+        //convertWinningPatternToInts();
 
         // MAIN GAME LOOP
         letsPlayBingo();
@@ -241,39 +242,39 @@ public class BINGO {
 
     static void patternCreation() throws IOException, InterruptedException {
         /*
-        * A `pattern` is a representation of the marked squares in a player card and a winning pattern.
-        * It has has two forms, a SEQUENCE and an INT.
-        * A SEQUENCE is a String composed of '*'s and '-' (where '*' is marked and '-' is the default).
-        * An INT is a String of the integer equivalent of a pattern's SEQUENCE when converted into bits.
+        * A `pattern` is composed of marked squares in a player card and a winning pattern.
+        * It is (Repr)esented/stored as a String of the number equivalent to that pattern's squares when converted into a series of bits,
+        * where a marked square is 1 and an unmarked one as 0 (this number is an int, 2^32 bit, enough space for a 25-bit max value).
         *
-        * Checking for a matching pattern in the card involves converting that String integer into int and perform bitwise AND
+        * Checking for a matching pattern in the card involves converting that String number into an int and perform bitwise AND
         * (see the pattern checking function for actual implementation).
-        *
-        * TODO directly store pattern as int instead of intermediary sequence?
-        * Would require changing the printing of pattern in the pattern maker tool.
         */
 
-        // TOOL TUTORIAL
-        // patternCreationTutorial();
+
+        int patternBits = 0;
+        char currChar;
+        int currentSelection = 0;
+        boolean inTool = true;
 
         String action;
-        boolean inTool = true;
-        int currentSelection = 0;
-        String pattern = TEMPLATE_PATTERN;
+        int leftMost, topMost;
 
         while (inTool) {
             cls();
             // PRINTING THE CURRENT PATTERN MAKER CARD
             System.out.println("PATTERN MAKER TOOL\n");
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
-            for (int j = 0; j < LENGTH; j++) {
-                if (j == currentSelection) {
-                    System.out.print("[" + pattern.charAt(j) + "]");
+            for (int i = 0; i < LENGTH; i++) {
+                currChar = ((patternBits & (1 << (LENGTH - 1 - i))) != 0) ? '*' : '-';
+                if (i == currentSelection) {
+                    System.out.print("[" + currChar + "]");
+                } else if (i == MIDDLE) {
+                    System.out.print('*');
                 } else {
-                    System.out.print(pattern.charAt(j));
+                    System.out.print(currChar);
                 }
 
-                if (j % 5 == 4) {
+                if (i % 5 == 4) {
                     System.out.println('\n');
                 } else {
                     System.out.print(GRID_SEP);
@@ -282,46 +283,45 @@ public class BINGO {
             System.out.println();
 
             while (true) {
+                // TODO add demarking of selection
                 System.out.println("[wasd] Move current selection");
                 System.out.println("[q] Mark current selection");
                 System.out.println("[z] Mark whole row");
                 System.out.println("[x] Mark whole column");
-                System.out.println("[e] Finish and exit");
+                System.out.println("[e] Save and exit");
+                // System.out.println("[n] Discard and exit");
                 System.out.println("[r] Reset");
                 System.out.print("Action: ");
                 action = SCANNER.nextLine().toLowerCase().strip();
 
+                /*
+                 * The manipulation of bits is reversed in relation to the current selection
+                 * (you can see subtractions from LENGTH) because the pattern starts from the leftmost bit (most significant)
+                 * going to the right, and the currentSelection starts from 0 (least significant).
+                 * e.g. 00000 and currentSelection is 0. The 0th shift is actually the last bit, and the shift by LENGTH-1 amount the opposite.
+                 */
                 if (action.equals("q")) {
-                    pattern = pattern.substring(0, currentSelection) + "*" + pattern.substring(currentSelection+1);
+                    // mark current selection
+                    patternBits = patternBits | 1 << LENGTH - currentSelection - 1;
                 } else if (action.equals("z")) {
-                    int leftMostIndex = 0;
-                    if (currentSelection <= 4) {
-                        leftMostIndex = 0;
-                    } else if (currentSelection <= 9) {
-                        leftMostIndex = 5;
-                    } else if (currentSelection <= 14) {
-                        leftMostIndex = 10;
-                    } else if (currentSelection <= 19) {
-                        leftMostIndex = 15;
-                    } else if (currentSelection <= 24) {
-                        leftMostIndex = 20;
+                    // mark whole row
+                    // currentSelection - (currentSelection % 5) calculates the leftmost index of currentSelection's row
+                    leftMost = currentSelection - (currentSelection % 5);
+                    for (int i = 0; i < 5; i++) {
+                        patternBits = patternBits | 1 << LENGTH - leftMost - i - 1;
                     }
-                    pattern = pattern.substring(0, leftMostIndex) + '*'+'*'+'*'+'*'+'*' + pattern.substring(leftMostIndex+5);
                 } else if (action.equals("x")) {
-                    String temporaryString = "";
-                    for (int i = 0; i < LENGTH; i++) {
-                        if (i % 5 == currentSelection % 5) {
-                            temporaryString += '*';
-                        } else {
-                            temporaryString += pattern.charAt(i);
-                        }
+                    // mark whole column
+                    topMost = currentSelection % 5;
+                    for (int i = 0; i < 5; i++) {
+                        System.out.println(LENGTH - topMost - (i * 5) - 1);
+                        patternBits = patternBits | 1 << LENGTH - topMost - (i * 5) - 1;
                     }
-                    pattern = temporaryString;
                 } else if (action.equals("e")) {
-                    System.out.println("Exiting pattern tool...");
                     inTool = false;
                 } else if (action.equals("r")) {
-                    pattern = TEMPLATE_PATTERN;
+                    patternBits = 0;
+                    currentSelection = 0;
                 } else if (action.equals("w") && currentSelection > 4) {
                     currentSelection -= 5;
                 } else if (action.equals("a") && currentSelection % 5 > 0) {
@@ -331,49 +331,34 @@ public class BINGO {
                 } else if (action.equals("d") && currentSelection % 5 < 4) {
                     currentSelection += 1;
                 } else {
-                    System.out.println("boop");
+                    System.out.println("TODO");
                 }
                 break;
             }
         }
-        WINNING_PATTERNS_SEQUENCES += pattern;
+        WINNING_PATTERNS_REPR += patternBits;
         PATTERN_COUNT++;
     }
 
     static void updateCardPatterns() {
-        CARD_PATTERNS_SEQUENCES = "";
-        CARD_PATTERNS_INTS = "";
-        char currentChar;
+        CARD_PATTERNS_REPR = "";
+        int bits = 0;
         for (int i = 0; i < CARD_COUNT; i++) {
             for (int j = 0; j < LENGTH; j++) {
-                currentChar = CARDS_REPR.charAt(j);
-                if (currentChar == FREE_SPACE) CARD_PATTERNS_SEQUENCES += '*';
-                CARD_PATTERNS_SEQUENCES += (ROLLED_NUMBERS_REPR.contains(currentChar+"")) ? '*' : '-';
+                if ((bits & (1 << (LENGTH - 1 - i))) == 0 || j != MIDDLE + (LENGTH * i));
+                bits = bits | 1 << (LENGTH - 1);
             }
-        }
-
-        String pattern;
-        for (int k = 0; k < CARD_COUNT; k++) {
-            pattern = CARD_PATTERNS_SEQUENCES.substring(k * LENGTH, k * LENGTH + LENGTH);
-            CARD_PATTERNS_INTS += convertPattToInt(pattern) + SEPSTR;
-        }
-    }
-
-    static void convertWinningPatternToInts() {
-        String pattern;
-        for (int i = 0; i < PATTERN_COUNT; i++) {
-            pattern = WINNING_PATTERNS_SEQUENCES.substring(i * LENGTH, i * LENGTH + LENGTH);
-            WINNING_PATTERNS_INTS += convertPattToInt(pattern) + SEPSTR;
+            CARD_PATTERNS_REPR += bits + SEPSTR;
         }
     }
 
     static boolean cardContainsWinningPattern() {
-        // for the sake of my sanity, please afford us the use of parseToInt...
+        // for the sake of my sanity, please afford us the use of parseToInt and enhanced for loops...
         boolean isWon = true;
         int winningPatternBits, cardPatternBits;
-        for (String patternInts : WINNING_PATTERNS_INTS.split(SEPSTR)) {
+        for (String patternInts : WINNING_PATTERNS_REPR.split(SEPSTR)) {
             winningPatternBits = Integer.parseInt(patternInts);
-            for (String cardPatternInts : CARD_PATTERNS_INTS.split(SEPSTR)) {
+            for (String cardPatternInts : CARD_PATTERNS_REPR.split(SEPSTR)) {
                 cardPatternBits = Integer.parseInt(cardPatternInts);
                 if ((winningPatternBits & cardPatternBits) != winningPatternBits) isWon = false;
             }
