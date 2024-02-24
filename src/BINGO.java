@@ -6,6 +6,7 @@ public class BINGO {
     // GLOBAL VARIABLES
     static Random RAND = new Random();
     static Scanner SCANNER = new Scanner(System.in);
+    static ProcessBuilder cmdProcess = new ProcessBuilder("cmd", "/c", "cls").inheritIO();
 
     // " " (32 in ASCII) AS SEPARATOR FOR PATTERN AND  AND "!" AS FREE SPACE IN THE MIDDLE
     static final char SEPCHAR = 32;
@@ -35,6 +36,7 @@ public class BINGO {
     static int CARD_COUNT;
     static int PATTERN_COUNT;
 
+    static String BINGO = "BINGO";
     static String BINGOASCII = """
         _______  ___   __    _  _______  _______  __
         |  _    ||   | |  |  | ||       ||       ||  |
@@ -103,19 +105,19 @@ public class BINGO {
             response = SCANNER.nextLine().strip().toLowerCase();
         } while (!(response.equals("y") || response.equals("n")));
 
-
-        if (response.equals("n")) {
-            WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
-            PATTERN_COUNT++;
-        }
-
         while (response.equals("y")) {
             patternCreation();
             System.out.print("Create another pattern? (y/n): ");
             response = SCANNER.nextLine().strip().toLowerCase();
             if (response.equals("n")) {
-                printlnInteractive("Exiting tool...");
+                System.out.println("Exiting tool...");
             }
+        }
+
+        if (response.equals("n") && PATTERN_COUNT == 0) {
+            printInteractive("\nDEFAULT WINNING PATTERN: X");
+            WINNING_PATTERNS_REPR = convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
+            PATTERN_COUNT++;
         }
 
         // TOOL TUTORIAL
@@ -131,66 +133,66 @@ public class BINGO {
     }
 
     static void letsPlayBingo() throws IOException, InterruptedException {
-        char letter;
         char randomNumberRepr;
         int randomNumber;
         String membership;
 
-        cls();
-        if (PATTERN_COUNT == 1) System.out.println("USING WINNING PATTERN: X\n");
         boolean isPlaying = true;
 
         while (isPlaying) {
-            printlnInteractive("\nTaya taya...");
-            printInteractive("Sa letra sang...");
+            cls();
+
+            updateCardPatternsRepr();
+            if (cardContainsWinningPattern()) {
+                System.out.println(BINGOASCII);
+                printAllCards();
+                break;
+            }
+
+            printAllCards();
+
+            // System.out.print(BingoShake);
+            System.out.println("Taya taya...");
+            System.out.print("Sa letra sang");
+
+            for (int i = 0; i < getRandomNumber(3, 7); i++) {
+                    System.out.print(".");
+                    Thread.sleep(getRandomNumber(250, 501));
+            }
 
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
             } while (ROLLED_NUMBERS_REPR.contains(randomNumberRepr+""));
 
             ROLLED_NUMBERS_REPR += randomNumberRepr;
-            updateCardPatternsRepr();
-
             randomNumber = getReprNumber(randomNumberRepr);
-            membership = (CARDS_REPR.contains(randomNumberRepr+"")) ? "May " : "Wala ";
 
-            if (randomNumber >= 1 && randomNumber <= 15) {
-                letter = 'B';
-            } else if (randomNumber > 15 && randomNumber <= 30) {
-                letter = 'I';
-            } else if (randomNumber > 30 && randomNumber <= 45) {
-                letter = 'N';
-            } else if (randomNumber > 45 && randomNumber <= 60) {
-                letter = 'G';
-            } else {
-                letter = 'O';
+            System.out.print(BINGO.charAt((randomNumber - (randomNumber % 16)) / 15));
+
+            for (int i = 0; i < getRandomNumber(2, 5); i++) {
+                System.out.print(".");
+                Thread.sleep(getRandomNumber(100, 401));
             }
 
-            // System.out.print(BingoShake);
-            printInteractive(letter + "!");
+            Thread.sleep(getRandomNumber(500, 1001));
             printInteractive(randomNumber + "!");
-            System.out.println(membership + randomNumber + "!");
 
-            printBingoCardsRepr();
+            membership = (CARDS_REPR.contains(randomNumberRepr+"")) ? "May " : "Wala ";
+            System.out.println("\n" + membership + randomNumber + "!");
 
-            if (cardContainsWinningPattern()) {
-                System.out.println("BINGO!!!");
-                printBingoCardsRepr();
-                isPlaying = false;
-                break;
-            };
+            // System.out.print("Ano nga card may " + randomNumber + "? ");
+            // memberships = SCANNER.nextLine();
 
             printInteractive("\nRoll again >>>");
-            cls();
         }
     }
 
     static void createBingoCardRepr(int cardCount) {
         /*
-         * bingoCardRepr is a one-directional String composed of 25 * CARD_COUNT characters.
-         * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
-         * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
-         *
+        * bingoCardRepr is a one-directional String composed of 25 * CARD_COUNT characters.
+        * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
+        * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
+        *
          * One technique I could think of is we could change the way we check the membership of rolled numbers.
          * But as of right now I cannot think of anything about this.
          *
@@ -222,32 +224,41 @@ public class BINGO {
         }
     }
 
-    static void printBingoCardsRepr() {
+    static void printBingoCardRepr(int i) {
         /*
         * Since bingoCardRepr is a 1-dimentional form, there is no need for nested loops.
         * I instead used conditionals to further control the printing of the card.
+        *
+        * TODO instead of checking card repr currentNumRepr then updating pattern repr, how about we update the pattern repr first then print the card on the bits?
         */
-        char currentNumRepr;
         int currentNum;
+        char currentNumRepr;
 
+        System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
+
+        for (int j = i * LENGTH; j < i * LENGTH + LENGTH; j++) {
+            currentNumRepr = CARDS_REPR.charAt(j);
+            if (currentNumRepr == FREE_SPACE) {
+                System.out.print("FS" + GRID_SEP);
+                continue;
+            }
+
+            currentNum = getReprNumber(currentNumRepr);
+            // enclose the number with parentheses if the number is already called out, else print as it is
+            System.out.print(ROLLED_NUMBERS_REPR.contains(currentNumRepr+"") ? "(" + currentNum + ")" : currentNum);
+
+            if (j % 5 == 4) {
+                System.out.print('\n');
+            } else {
+                System.out.print(GRID_SEP);
+            }
+        }
+    }
+
+    static void printAllCards() {
         for (int i = 0; i < CARD_COUNT; i++) {
             System.out.println("CARD NO. " + (i + 1));
-            System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
-            for (int j = i * LENGTH; j < i * LENGTH + LENGTH; j++) {
-            currentNumRepr = CARDS_REPR.charAt(j);
-
-                if (currentNumRepr == FREE_SPACE) {
-                    System.out.print("FS" + GRID_SEP);
-                } else {
-                    currentNum = getReprNumber(currentNumRepr);
-                    // enclose the number with parentheses if the number is already called out, else print as it is
-                    System.out.print(ROLLED_NUMBERS_REPR.contains(currentNumRepr+"") ? "(" + currentNum + ")" : currentNum);
-                    System.out.print(GRID_SEP);
-                }
-                if (j % 5 == 4) {
-                    System.out.print('\n');
-                }
-            }
+            printBingoCardRepr(i);
             System.out.println();
         }
     }
@@ -262,9 +273,8 @@ public class BINGO {
         * (see the pattern checking function for actual implementation).
         */
 
-
         int patternBits = 0;
-        char currBit;
+        char currChar;
         int currentSelection = 0;
         boolean inTool = true;
 
@@ -276,15 +286,16 @@ public class BINGO {
             // PRINTING THE CURRENT PATTERN MAKER CARD
             System.out.println("PATTERN MAKER TOOL\n");
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
+
             for (int i = 0; i < LENGTH; i++) {
-                // if the current bit is not 0, meaning marked square
-                currBit = ((patternBits & (1 << (LENGTH - 1 - i))) != 0) ? '*' : '-';
+                // if the current bit is not 0, meaning the square is marked, current character is '*'
+                currChar = ((patternBits & (1 << (LENGTH - 1 - i))) != 0) ? '*' : '-';
                 if (i == currentSelection) {
-                    System.out.print("[" + currBit + "]");
+                    System.out.print("[" + currChar + "]");
                 } else if (i == MIDDLE) {
                     System.out.print('*');
                 } else {
-                    System.out.print(currBit);
+                    System.out.print(currChar);
                 }
 
                 if (i % 5 == 4) {
@@ -350,14 +361,18 @@ public class BINGO {
                 break;
             }
         }
-        WINNING_PATTERNS_REPR += patternBits + SEPSTR;
-        PATTERN_COUNT++;
+
+        if (patternBits > 0) {
+            WINNING_PATTERNS_REPR += patternBits + SEPSTR;
+            PATTERN_COUNT++;
+        }
     }
 
     static void updateCardPatternsRepr() {
         CARD_PATTERNS_REPR = "";
         int bits;
         char currChar;
+        // TODO this is wasteful, we already check for currChar membership in the printing of card. How about we update first, then print card depending on the bits, or both at the same time?
         for (int i = 0; i < CARD_COUNT; i++) {
             bits = 0;
             for (int j = 0; j < LENGTH; j++) {
@@ -436,7 +451,7 @@ public class BINGO {
     }
 
     static void printlnInteractive(String s) {
-        System.out.println(s + " (ENTER) ");
+        System.out.print(s + " (ENTER) ");
         SCANNER.nextLine();
     }
 
@@ -446,6 +461,6 @@ public class BINGO {
     }
 
     static void cls() throws IOException, InterruptedException {
-        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        cmdProcess.start().waitFor();
     }
 }
