@@ -101,7 +101,7 @@ public class BINGO {
         // PATTERN CREATION
         String response;
         do {
-            System.out.print("Do you want to create a custom winning pattern? (y/n): ");
+            System.out.print("Are you a game host? Do you want to create a custom winning pattern? (y/n): ");
             response = SCANNER.nextLine().strip().toLowerCase();
         } while (!(response.equals("y") || response.equals("n")));
 
@@ -156,8 +156,8 @@ public class BINGO {
             System.out.print("Sa letra sang");
 
             for (int i = 0; i < getRandomNumber(3, 7); i++) {
-                    System.out.print(".");
-                    Thread.sleep(getRandomNumber(250, 501));
+            System.out.print(".");
+            Thread.sleep(getRandomNumber(250, 501));
             }
 
             do {
@@ -170,8 +170,8 @@ public class BINGO {
             System.out.print(BINGO.charAt((randomNumber - (randomNumber % 16)) / 15));
 
             for (int i = 0; i < getRandomNumber(2, 5); i++) {
-                System.out.print(".");
-                Thread.sleep(getRandomNumber(100, 401));
+            System.out.print(".");
+            Thread.sleep(getRandomNumber(100, 401));
             }
 
             Thread.sleep(getRandomNumber(500, 1001));
@@ -182,6 +182,13 @@ public class BINGO {
 
             // System.out.print("Ano nga card may " + randomNumber + "? ");
             // memberships = SCANNER.nextLine();
+
+            // System.out.println();
+            // for (int i = 1; i < 11; i++) {
+            //     System.out.print(i);
+            //     Thread.sleep(1000);
+            //     System.out.print("\r");
+            // }
 
             printInteractive("\nRoll again >>>");
         }
@@ -319,10 +326,16 @@ public class BINGO {
                 action = SCANNER.nextLine().toLowerCase().strip();
 
                 /*
-                 * The manipulation of bits is reversed in relation to the current selection
-                 * (you can see subtractions from LENGTH) because the pattern starts from the leftmost bit (most significant)
-                 * going to the right, and the currentSelection starts from 0 (least significant).
-                 * e.g. 00000 and currentSelection is 0. The 0th shift is actually the last bit, and the shift by LENGTH-1 amount the opposite.
+                 * Bit manipulation is reversed in relation to the current selection (subtracting from LENGTH)
+                 * because `currentSelection` starts from 0, first and leftmost square of the printed pattern,
+                 * but a shift by 0 on the pattern int only reaches the rightmost bit.
+                 *
+                 * e.g. 00000 and currentSelection is 0. The 0th index is actually the last bit, and LENGTH-1 is the opposite side.
+                 *
+                 * The left side of << is the number of zeros.
+                 * It should be 1 less than the (reversed) index of the bit you want to flip.
+                 * e.g. 1001, you want to flip the 3th (2th from the left) bit, you shift by 3-1 = 2
+                 * So the operation looks like 1001 << 1 | 2 == 1001 | 0100 == 1101
                  */
                 if (action.equals("q")) {
                     // mark current selection
