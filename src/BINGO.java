@@ -101,11 +101,11 @@ public class BINGO {
         // PATTERN CREATION
         String response;
         do {
-            System.out.print("Are you a game host? Do you want to create a custom winning pattern? (y/n): ");
-            response = SCANNER.nextLine().strip().toLowerCase();
+        System.out.print("Are you a game host? Do you want to create a custom winning pattern? (y/n): ");
+        response = SCANNER.nextLine().strip().toLowerCase();
         } while (!(response.equals("y") || response.equals("n")));
 
-        while (response.equals("y")) {
+                while (response.equals("y")) {
             patternCreation();
             System.out.print("Create another pattern? (y/n): ");
             response = SCANNER.nextLine().strip().toLowerCase();
@@ -200,13 +200,14 @@ public class BINGO {
         * We cannot naively store the card numbers as numerical values, or verify membership of single-digit numbers.
         * For example: We rolled a '1'. If we use bingoCardRepr.contains('1'), it will look for 1, 12, 13, ..., 21, 31, and so on.
         *
-         * One technique I could think of is we could change the way we check the membership of rolled numbers.
-         * But as of right now I cannot think of anything about this.
-         *
-         * What I came up with and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
-         * The number is always converted to its associated character, and vice versa.
-         * We start the mapping at the 34rd character ('"') up to 108 ('l', 33 + 75 - 1 because of indexing).
-         */
+        * One technique I could think of is we could change the way we check the membership of rolled numbers.
+        * But as of right now I cannot think of anything about this.
+        *
+        * What I came up with and ultimately chose was (Repr)esenting the rolled number into an ASCII character.
+        * The number is always converted to its associated character, and vice versa.
+        * We start the mapping at the 34rd character ('"') up to 108 ('l', 33 + 75 - 1 because of indexing).
+        */
+
         String card;
         char randNumberRepr;
         int min, max;
@@ -238,6 +239,7 @@ public class BINGO {
         *
         * TODO instead of checking card repr currentNumRepr then updating pattern repr, how about we update the pattern repr first then print the card on the bits?
         */
+
         int currentNum;
         char currentNumRepr;
 
@@ -278,25 +280,41 @@ public class BINGO {
         *
         * Checking for a matching pattern in the card involves converting that String number into an int and perform bitwise AND
         * (see the pattern checking function for actual implementation).
+        *
+        * We start from the 25th bit (24th index) of the pattern integer and printing of loops.
+        * The index being one less than current selection works well in bit shifting.
+        * i.e. if we want to flip the bit at i, OR the bits with 1 shifted by i.
+        * e.g. 01 | 1 << 1  -->  01 | 10  -->  11
+        *
+        * 24  23  22  21  20
+        * 19  18  17  16  15
+        * 14  13  12  11  10
+        *  9   8   7   6   5
+        *  4   3   2   1   0
         */
 
-        int patternBits = 0;
         char currChar;
-        int currentSelection = 0;
+        int leftIndex, topIndex;
+
+        int bits = 0;
+        int msbIndex = LENGTH - 1;
+        int currentSelection = msbIndex;
         boolean inTool = true;
 
         String action;
-        int leftMost, topMost;
+        // keys for mark/unmark, mark column, mark row, reset pattern, save and exit
+        String mUnmCurr = "z", mCol = "c", mRow = "v", reset = "r", wq = "e";
 
         while (inTool) {
             cls();
-            // PRINTING THE CURRENT PATTERN MAKER CARD
             System.out.println("PATTERN MAKER TOOL\n");
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
-            for (int i = 0; i < LENGTH; i++) {
+            // PRINTING THE CURRENT PATTERN MAKER CARD
+            for (int i = msbIndex; i >= 0; i--) {
                 // if the current bit is not 0, meaning the square is marked, current character is '*'
-                currChar = ((patternBits & (1 << (LENGTH - 1 - i))) != 0) ? '*' : '-';
+                currChar = ((bits & 1 << i) != 0) ? '*' : '-';
+
                 if (i == currentSelection) {
                     System.out.print("[" + currChar + "]");
                 } else if (i == MIDDLE) {
@@ -305,7 +323,7 @@ public class BINGO {
                     System.out.print(currChar);
                 }
 
-                if (i % 5 == 4) {
+                if (i % 5 == 0) {
                     System.out.println('\n');
                 } else {
                     System.out.print(GRID_SEP);
@@ -313,70 +331,58 @@ public class BINGO {
             }
             System.out.println();
 
+            System.out.println("[wasd] Move current selection");
+            System.out.println("[" + mUnmCurr + "] Mark/unmark current selection");
+            System.out.println("[" + mRow + "] Mark whole row");
+            System.out.println("[" + mCol + "] Mark whole column");
+            // System.out.println("[n] Discard and exit");
+            System.out.println("[" + reset + "] Reset");
+            System.out.println("[" + wq + "] Done/Exit");
+
             while (true) {
-                // TODO add demarking of selection
-                System.out.println("[wasd] Move current selection");
-                System.out.println("[q] Mark current selection");
-                System.out.println("[z] Mark whole row");
-                System.out.println("[x] Mark whole column");
-                System.out.println("[e] Save and exit");
-                // System.out.println("[n] Discard and exit");
-                System.out.println("[r] Reset");
-                System.out.print("Action: ");
+                System.out.print("\nAction: ");
                 action = SCANNER.nextLine().toLowerCase().strip();
 
-                /*
-                 * Bit manipulation is reversed in relation to the current selection (subtracting from LENGTH)
-                 * because `currentSelection` starts from 0, first and leftmost square of the printed pattern,
-                 * but a shift by 0 on the pattern int only reaches the rightmost bit.
-                 *
-                 * e.g. 00000 and currentSelection is 0. The 0th index is actually the last bit, and LENGTH-1 is the opposite side.
-                 *
-                 * The left side of << is the number of zeros.
-                 * It should be 1 less than the (reversed) index of the bit you want to flip.
-                 * e.g. 1001, you want to flip the 3th (2th from the left) bit, you shift by 3-1 = 2
-                 * So the operation looks like 1001 << 1 | 2 == 1001 | 0100 == 1101
-                 */
-                if (action.equals("q")) {
-                    // mark current selection
-                    patternBits = patternBits | 1 << LENGTH - currentSelection - 1;
-                } else if (action.equals("z")) {
-                    // mark whole row
-                    // currentSelection - (currentSelection % 5) calculates the leftmost index of currentSelection's row
-                    leftMost = currentSelection - (currentSelection % 5);
-                    for (int i = 0; i < 5; i++) {
-                        patternBits = patternBits | 1 << LENGTH - leftMost - i - 1;
-                    }
-                } else if (action.equals("x")) {
-                    // mark whole column
-                    topMost = currentSelection % 5;
-                    for (int i = 0; i < 5; i++) {
-                        System.out.println(LENGTH - topMost - (i * 5) - 1);
-                        patternBits = patternBits | 1 << LENGTH - topMost - (i * 5) - 1;
-                    }
-                } else if (action.equals("e")) {
+                if (action.equals(mUnmCurr)) {
+                    // mark/unmark current selection
+                    bits = bits ^ 1 << currentSelection;
+                } else if (action.equals("w") && currentSelection < 20) {
+                    currentSelection += 5;
+                } else if (action.equals("a") && currentSelection % 5 < 4) {
+                    currentSelection += 1;
+                } else if (action.equals("s") && currentSelection > 4) {
+                    currentSelection -= 5;
+                } else if (action.equals("d") && currentSelection % 5 > 0) {
+                    currentSelection -= 1;
+                } else if (action.equals(reset)) {
+                    bits = 0;
+                    currentSelection = msbIndex;
+                } else if (action.equals(wq)) {
                     System.out.println();
                     inTool = false;
-                } else if (action.equals("r")) {
-                    patternBits = 0;
-                    currentSelection = 0;
-                } else if (action.equals("w") && currentSelection > 4) {
-                    currentSelection -= 5;
-                } else if (action.equals("a") && currentSelection % 5 > 0) {
-                    currentSelection -= 1;
-                } else if (action.equals("s") && currentSelection < 20) {
-                    currentSelection += 5;
-                } else if (action.equals("d") && currentSelection % 5 < 4) {
-                    currentSelection += 1;
+                } else if (action.equals(mRow)) {
+                    // mark whole row
+                    // leftIndex calculates the leftmost index of currentSelection's row
+                    leftIndex = currentSelection - (currentSelection % 5);
+                    for (int j = 0; j < 5; j++) {
+                        bits = bits | 1 << leftIndex + j;
+                    }
+                } else if (action.equals(mCol)) {
+                    // mark whole column
+                    topIndex = currentSelection % 5;
+                    for (int k = 0; k < 5; k++) {
+                        bits = bits | 1 << topIndex + k * 5;
+                    }
                 } else {
-                    System.out.println("TODO");
+                    System.out.println("Invalid input.");
+                    continue;
                 }
                 break;
             }
         }
 
-        if (patternBits > 0) {
-            WINNING_PATTERNS_REPR += patternBits + SEPSTR;
+        if (bits > 0) {
+            WINNING_PATTERNS_REPR += bits + SEPSTR;
             PATTERN_COUNT++;
         }
     }
