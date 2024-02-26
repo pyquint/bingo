@@ -146,7 +146,7 @@ public class BINGO {
 
             updateCardPatternsRepr();
             if (cardContainsWinningPattern()) {
-                                System.out.println(BINGOASCII);
+                System.out.println(BINGOASCII);
                 printAllCards();
                 break;
             }
@@ -240,20 +240,21 @@ public class BINGO {
 
     static void printBingoCardRepr(int i) {
         /*
-        * Since bingoCardRepr is a 1-dimentional form, there is no need for nested loops.
-        * I instead used conditionals to further control the printing of the card.
-        *
-        * TODO instead of checking card repr currentNumRepr then updating pattern repr, how about we update the pattern repr first then print the card on the bits?
-        */
+         * Since bingoCardRepr is a 1-dimentional form, there is no need for nested
+         * loops. I instead used conditionals to further control the printing of the
+         * card.
+         *
+         * TODO instead of checking card repr currentNumRepr then updating pattern repr, how about we update the pattern repr first then print the card on the bits?
+         */
 
         int currentNum;
         char currentNumRepr;
 
-            System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
+        System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
-            for (int j = i * LENGTH; j < i * LENGTH + LENGTH; j++) {
-                                currentNumRepr = CARDS_REPR.charAt(j);
-                if (currentNumRepr == FREE_SPACE) {
+        for (int j = i * LENGTH; j < i * LENGTH + LENGTH; j++) {
+            currentNumRepr = CARDS_REPR.charAt(j);
+            if (currentNumRepr == FREE_SPACE) {
                 System.out.print("FS" + GRID_SEP);
                 continue;
             }
@@ -262,14 +263,15 @@ public class BINGO {
             // enclose the number with parentheses if the number is already called out, else print as it is
             System.out.print(ROLLED_NUMBERS_REPR.contains(currentNumRepr+"") ? "(" + currentNum + ")" : currentNum);
 
-                if (j % 5 == 4) {
-                    System.out.print('\n');
-                } else {
-                    System.out.print(GRID_SEP);
-                }
+            if (j % 5 == 4) {
+                System.out.print('\n');
+            } else {
+                System.out.print(GRID_SEP);
             }
+        }
+    }
 
-            static void printAllCards() {
+    static void printAllCards() {
         for (int i = 0; i < CARD_COUNT; i++) {
             System.out.println("CARD NO. " + (i + 1));
             printBingoCardRepr(i);
@@ -400,7 +402,8 @@ public class BINGO {
             bits = 0;
             for (int j = 0; j < LENGTH; j++) {
                 currChar = CARDS_REPR.charAt(j + (LENGTH * i));
-                if (ROLLED_NUMBERS_REPR.contains(currChar+"") || currChar == FREE_SPACE) bits = bits | 1 << (LENGTH - j - 1);
+                if (ROLLED_NUMBERS_REPR.contains(currChar + "") || currChar == FREE_SPACE)
+                    bits = bits | 1 << (LENGTH - j - 1);
             }
             CARD_PATTERNS_REPR += bits + SEPSTR;
         }
