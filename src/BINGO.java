@@ -2,8 +2,6 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.Random;
 
-
-
 public class BINGO {
     // GLOBAL VARIABLES
     static Random RAND = new Random();
