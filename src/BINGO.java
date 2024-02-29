@@ -154,8 +154,8 @@ public class BINGO {
             System.out.print("Sa letra sang");
 
             for (int i = 0; i < getRandomNumber(3, 7); i++) {
-            System.out.print(".");
-            Thread.sleep(getRandomNumber(250, 501));
+                System.out.print(".");
+                Thread.sleep(getRandomNumber(250, 501));
             }
 
             do {
@@ -168,8 +168,8 @@ public class BINGO {
             System.out.print(BINGO.charAt((randomNumber - (randomNumber % 16)) / 15));
 
             for (int i = 0; i < getRandomNumber(2, 5); i++) {
-            System.out.print(".");
-            Thread.sleep(getRandomNumber(100, 401));
+                System.out.print(".");
+                Thread.sleep(getRandomNumber(100, 401));
             }
 
             Thread.sleep(getRandomNumber(500, 1001));
@@ -386,21 +386,42 @@ public class BINGO {
         }
 
         if (bits > 0) {
-            WINNING_PATTERNS_REPR += bits + SEPSTR;
+            WINNING_PATTERNS_REPR += bits + (SEP + "");
             PATTERN_COUNT++;
         }
     }
 
     static boolean cardContainsWinningPattern() {
+        System.out.println(WINNING_PATTERNS_REPR + "\n" + CARD_PATTERNS_REPR);
+
         int winningPatternBits, cardPatternBits;
-        // TODO do not use .split()
-        for (String patternInts : WINNING_PATTERNS_REPR.split(SEPSTR)) {
-            winningPatternBits = Integer.parseInt(patternInts);
-            for (String cardPatternRepr : CARD_PATTERNS_REPR.split(SEPSTR)) {
+        String winningPatternRepr, cardPatternRepr;
+        char currentWinningPatternChar, currentCardPatternChar;
+
+        for (int winCount = 0; winCount < CARD_COUNT; winCount++) {
+            winningPatternRepr = "";
+            for (int i = 0; i < WINNING_PATTERNS_REPR.length(); i++) {
+                currentWinningPatternChar = WINNING_PATTERNS_REPR.charAt(i);
+                if (currentWinningPatternChar == SEPCHAR)
+                    break;
+                winningPatternRepr += currentWinningPatternChar;
+            }
+            winningPatternBits = Integer.parseInt(winningPatternRepr);
+
+            for (int cardCount = 0; cardCount < CARD_COUNT; cardCount++) {
+                cardPatternRepr = "";
+                for (int j = 0; j < CARD_PATTERNS_REPR.length(); j++) {
+                    currentCardPatternChar = CARD_PATTERNS_REPR.charAt(j);
+                    if (currentCardPatternChar == SEPCHAR)
+                        break;
+                    cardPatternRepr += currentCardPatternChar;
+                }
                 cardPatternBits = Integer.parseInt(cardPatternRepr);
+
                 if ((winningPatternBits & cardPatternBits) == winningPatternBits)
                     return true;
             }
+
         }
         return false;
     }
