@@ -142,32 +142,33 @@ public class BINGO {
             SCANNER.nextLine();
 
             // PATTERN CREATION
-            boolean isCreatingPattern = isYesWhenPrompted("Are you the game host? Create a custom winning pattern?");
+            boolean isCreatingPattern = isYesWhenPrompted("\nDo you want to create and use a custom winning pattern?");
             while (isCreatingPattern) {
                 patternCreation();
                 isCreatingPattern = isYesWhenPrompted("Create another pattern?");
                 if (!isCreatingPattern) {
-                    System.out.println("Exiting tool...");
+                    cls();
+                    System.out.println("Exited Pattern Maker Tool...");
                 }
             }
 
-        if (!isCreatingPattern && PATTERN_COUNT == 0) {
-            printInteractive("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
-            WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
-            WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
-            PATTERN_COUNT += 2;
-        }
+            if (!isCreatingPattern && PATTERN_COUNT == 0) {
+                System.out.println("DEFAULT WINNING PATTERNS: X and BLACKOUT");
+                WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
+                PATTERN_COUNT += 2;
+            }
 
-        // TOOL TUTORIAL
-        // patternCreationTutorial();
+            // TOOL TUTORIAL
+            // patternCreationTutorial();
 
-        // HELP MODULE
-        // playTutorial();
+            // HELP MODULE
+            // playTutorial();
 
-        // convertWinningPatternToInts();
+            // convertWinningPatternToInts();
 
             // MAIN GAME LOOP
-            printlnInteractive("We're all set! Tara BINGO!");
+            printlnInteractive("\nWe're all set! Tara BINGO!");
             letsPlayBingo();
         } while (isYesWhenPrompted("Do you want to play again " + USERNAME + "?"));
     }
@@ -183,9 +184,9 @@ public class BINGO {
         inGame: while (true) {
             cls();
 
-            System.out.println(USERNAME + "'S CARDS:");
+            System.out.println(USERNAME + "'S CARD/S:");
             printCardsUpdatePatterns(USERNAME);
-            System.out.println("\nCOMPUTER'S CARDS:");
+            System.out.println("\nCOMPUTER'S CARD/S:");
             printCardsUpdatePatterns("computer");
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
@@ -207,7 +208,7 @@ public class BINGO {
 
             // System.out.print(BingoShake);
             System.out.println("Taya taya...");
-            System.out.print("Sa letra sang");
+            System.out.print("Sa letra sang ");
 
             // TODO remove when submitting.
             // for (int i = 0; i < getRandomNumber(3, 7); i++) {
@@ -233,7 +234,7 @@ public class BINGO {
             // printInteractive(randomNumber + "!");
 
             membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May " : "Wala ";
-            System.out.println("\n" + membership + randomNumber + " ka!");
+            System.out.println("\n" + membership + " ka " + randomNumber + "!");
 
             // System.out.print("Ano nga card may " + randomNumber + "? ");
             // memberships = SCANNER.nextLine();
