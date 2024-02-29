@@ -386,7 +386,7 @@ public class BINGO {
         }
 
         if (bits > 0) {
-            WINNING_PATTERNS_REPR += bits + (SEP + "");
+            WINNING_PATTERNS_REPR += bits + SEPSTR;
             PATTERN_COUNT++;
         }
     }
