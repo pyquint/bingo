@@ -32,13 +32,21 @@ public class BINGO {
      * use start = i * LENGTH + (i * 1).
      */
 
-    static String CARDS_REPR;
-    static String CARD_PATTERNS_REPR;
     static String WINNING_PATTERNS_REPR;
     static String ROLLED_NUMBERS_REPR;
 
-    static int CARD_COUNT;
+    static String USERNAME;
+    static String USER_CARDS_REPR;
+    static String USER_CARD_PATTERNS_REPR;
+    static int USER_CARD_COUNT;
+
+    static String COMP_CARDS_REPR;
+    static String COMP_CARD_PATTERNS_REPR;
+    static int COMP_CARD_COUNT;
+
     static int PATTERN_COUNT;
+    static int USER_MONEY = 0;
+    static int COMP_MONEY = 0;
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
@@ -85,78 +93,120 @@ public class BINGO {
         System.out.println(BINGOSHAKE);
         System.out.println(BINGOASCII);
         printInteractive("Tara BINGO!");
+        // boolean isFirstGame = true;
 
-        /*
-         * ONE CARD AT THE START. THE PLAYER CAN EARN MONEY BY WINNING PLAYERS CAN BUY
-         * ADDITIONAL CARDS ???
-         */
-
-        // INITIALIZATION OF VARIABLES
-        CARDS_REPR = "";
-        CARD_PATTERNS_REPR = "";
-        WINNING_PATTERNS_REPR = "";
-        ROLLED_NUMBERS_REPR = "";
-        PATTERN_COUNT = 0;
-
-        System.out.print("How many cards? ");
-        CARD_COUNT = SCANNER.nextInt();
-        createBingoCardRepr(CARD_COUNT);
-        SCANNER.nextLine();
-
-        // PATTERN CREATION
-        boolean isCreatingPattern = isYesWhenPrompted("Are you the game host? Create a custom winning pattern?");
-        while (isCreatingPattern) {
-            patternCreation();
-            isCreatingPattern = isYesWhenPrompted("Create another pattern?");
-            if (!isCreatingPattern) {
-                System.out.println("Exiting tool...");
+        while (true) {
+            System.out.print("\nWhat would you like to name yourself?: ");
+            USERNAME = SCANNER.nextLine();
+            if (USERNAME.toLowerCase().equals("computer")) {
+                System.out.println("You cannot name yourself as '" + USERNAME + "'!");
+                System.out.println("Please use another name!\n");
+                continue;
             }
+            if (isYesWhenPrompted("Is '" + USERNAME + "' final?"))
+                break;
         }
 
-        if (!isCreatingPattern && PATTERN_COUNT == 0) {
-            printInteractive("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
-            WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
-            WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
-            PATTERN_COUNT += 2;
-        }
+        System.out.println("\nWELCOME, " + USERNAME + "!");
 
-        // TOOL TUTORIAL
-        // patternCreationTutorial();
+        do {
+            /*
+             * ONE CARD AT THE START. THE PLAYER CAN EARN MONEY BY WINNING PLAYERS CAN BUY
+             * ADDITIONAL CARDS ???
+             */
 
-        // HELP MODULE
-        // playTutorial();
+            // INITIALIZATION OF VARIABLES
+            USER_CARDS_REPR = "";
+            USER_CARD_PATTERNS_REPR = "";
+            COMP_CARDS_REPR = "";
+            COMP_CARD_PATTERNS_REPR = "";
+            WINNING_PATTERNS_REPR = "";
+            ROLLED_NUMBERS_REPR = "";
+            PATTERN_COUNT = 0;
+            USER_MONEY = 0;
 
-        // convertWinningPatternToInts();
+            // TOOL TUTORIAL
+            // if (isYesWhenPrompted("Do you want to go to the turorial first?"))
+            // playTutorial();
 
-        // MAIN GAME LOOP
-        letsPlayBingo();
+            // HELP MODULE
+            // patternCreationTutorial();
+
+            System.out.print("\nHow many cards do you want to hold? ");
+            USER_CARD_COUNT = SCANNER.nextInt();
+            createBingoCardsRepr(USER_CARD_COUNT, USERNAME);
+
+            COMP_CARD_COUNT = getRandomNumber(USER_CARD_COUNT, USER_CARD_COUNT + 2);
+            createBingoCardsRepr(COMP_CARD_COUNT, "computer");
+
+            SCANNER.nextLine();
+
+            // PATTERN CREATION
+            boolean isCreatingPattern = isYesWhenPrompted("Are you the game host? Create a custom winning pattern?");
+            while (isCreatingPattern) {
+                patternCreation();
+                isCreatingPattern = isYesWhenPrompted("Create another pattern?");
+                if (!isCreatingPattern) {
+                    System.out.println("Exiting tool...");
+                }
+            }
+
+            if (!isCreatingPattern && PATTERN_COUNT == 0) {
+                printInteractive("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
+                WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
+                PATTERN_COUNT += 2;
+            }
+
+            // MAIN GAME LOOP
+            letsPlayBingo();
+        } while (isYesWhenPrompted("Play again?"));
+
+        System.out.println("Thank you for playing!");
     }
 
     static void letsPlayBingo() throws IOException, InterruptedException {
         char randomNumberRepr;
         int randomNumber;
+        int winningCardNo;
         String membership;
+        String playerChecking;
+        int playerCheckingCounter;
 
-        boolean isPlaying = true;
-
-        while (isPlaying) {
+        inGame: while (true) {
             cls();
 
-            printCardsUpdatePatterns();
+            System.out.println(USERNAME + "'S CARDS:");
+            printCardsUpdatePatterns(USERNAME);
+            System.out.println("\nCOMPUTER'S CARDS:");
+            printCardsUpdatePatterns("computer");
 
-            if (cardContainsWinningPattern()) {
-                System.out.println(BINGOASCII);
-                break;
+            // Randomize in a 50-50 chance who to check first, which in turn is the one to
+            // be called winner should they have the winning pattern.
+
+            playerCheckingCounter = getRandomNumber(0, 2);
+            for (int i = 0; i < 2; i++) {
+                playerChecking = playerCheckingCounter == 1 ? USERNAME : "computer";
+                winningCardNo = cardContainsWinningPattern(playerChecking);
+                if (winningCardNo != -1) {
+                    System.out.println(BINGOASCII);
+                    System.out.println(playerChecking + " WINS!");
+                    printlnInteractive("WINNING CARD: No." + winningCardNo + "!");
+                    cls();
+                    break inGame;
+                }
+                playerCheckingCounter = (playerCheckingCounter + 1) % 2;
             }
 
             // System.out.print(BingoShake);
             System.out.println("Taya taya...");
             System.out.print("Sa letra sang");
 
-            for (int i = 0; i < getRandomNumber(3, 7); i++) {
-                System.out.print(".");
-                Thread.sleep(getRandomNumber(250, 501));
-            }
+            // TODO remove when submitting.
+            // for (int i = 0; i < getRandomNumber(3, 7); i++) {
+            // System.out.print(".");
+            // Thread.sleep(getRandomNumber(250, 501));
+            // }
 
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
@@ -167,16 +217,16 @@ public class BINGO {
 
             System.out.print(BINGO.charAt((randomNumber - (randomNumber % 16)) / 15));
 
-            for (int i = 0; i < getRandomNumber(2, 5); i++) {
-                System.out.print(".");
-                Thread.sleep(getRandomNumber(100, 401));
-            }
+            // for (int i = 0; i < getRandomNumber(2, 5); i++) {
+            // System.out.print(".");
+            // Thread.sleep(getRandomNumber(100, 401));
+            // }
 
-            Thread.sleep(getRandomNumber(500, 1001));
-            printInteractive(randomNumber + "!");
+            // Thread.sleep(getRandomNumber(500, 1001));
+            // printInteractive(randomNumber + "!");
 
-            membership = (CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May " : "Wala ";
-            System.out.println("\n" + membership + randomNumber + "!");
+            membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May " : "Wala ";
+            System.out.println("\n" + membership + randomNumber + " ka!");
 
             // System.out.print("Ano nga card may " + randomNumber + "? ");
             // memberships = SCANNER.nextLine();
@@ -190,9 +240,10 @@ public class BINGO {
 
             // printInteractive("\nRoll again >>>");
         }
+
     }
 
-    static void createBingoCardRepr(int cardCount) {
+    static void createBingoCardsRepr(int cardCount, String player) {
         /*
          * bingoCardRepr is a one-directional String composed of 25 * CARD_COUNT
          * characters. We cannot naively store the card numbers as numerical values, or
@@ -230,28 +281,44 @@ public class BINGO {
                     card += randNumberRepr;
                 }
             }
-            CARDS_REPR += card;
+
+            if (player.equals("computer")) {
+                COMP_CARDS_REPR += card;
+            } else {
+                USER_CARDS_REPR += card;
+            }
         }
     }
 
-    static void printCardsUpdatePatterns() {
+    static void printCardsUpdatePatterns(String player) {
         int patternBits;
         boolean marked;
-        CARD_PATTERNS_REPR = "";
-
         int currentNum;
         char currentNumRepr;
 
+        int count;
+        String card_repr;
+
+        if (player.equals("computer")) {
+            COMP_CARD_PATTERNS_REPR = "";
+            card_repr = COMP_CARDS_REPR;
+            count = COMP_CARD_COUNT;
+        } else {
+            USER_CARD_PATTERNS_REPR = "";
+            card_repr = USER_CARDS_REPR;
+            count = USER_CARD_COUNT;
+        }
+
         // Use conditionals to further control the printing of the card.
-        for (int i = 0; i < CARD_COUNT; i++) {
+        for (int i = 0; i < count; i++) {
             patternBits = 0;
 
             System.out.println("Card no. " + (i + 1));
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
-            for (int j = i * LENGTH; j < i * LENGTH + LENGTH; j++) {
+            for (int j = 0; j < LENGTH; j++) {
                 marked = true;
-                currentNumRepr = CARDS_REPR.charAt(j);
+                currentNumRepr = card_repr.charAt(j + (i * LENGTH));
                 currentNum = getReprNumber(currentNumRepr);
 
                 if (ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1) {
@@ -273,7 +340,11 @@ public class BINGO {
                 }
             }
 
-            CARD_PATTERNS_REPR += patternBits + SEPSTR;
+            if (player.equals("computer")) {
+                COMP_CARD_PATTERNS_REPR += patternBits + SEPSTR;
+            } else {
+                USER_CARD_PATTERNS_REPR += patternBits + SEPSTR;
+            }
             System.out.println();
         }
     }
@@ -391,39 +462,53 @@ public class BINGO {
         }
     }
 
-    static boolean cardContainsWinningPattern() {
-        System.out.println(WINNING_PATTERNS_REPR + "\n" + CARD_PATTERNS_REPR);
+    static int cardContainsWinningPattern(String player) {
+        String cardPatternsRepr;
+        int cardCount;
+        if (player.equals("computer")) {
+            cardPatternsRepr = COMP_CARD_PATTERNS_REPR;
+            cardCount = COMP_CARD_COUNT;
+        } else {
+            cardPatternsRepr = USER_CARD_PATTERNS_REPR;
+            cardCount = USER_CARD_COUNT;
+        }
 
         int winningPatternBits, cardPatternBits;
-        String winningPatternRepr, cardPatternRepr;
+        int nextWinningPatternIndex = 0, nextCardPatternIndex = 0;
+        String winningPatternRepr, patternRepr;
         char currentWinningPatternChar, currentCardPatternChar;
 
-        for (int winCount = 0; winCount < CARD_COUNT; winCount++) {
+        for (int patternCount = 0; patternCount < PATTERN_COUNT; patternCount++) {
             winningPatternRepr = "";
+            nextCardPatternIndex = 0;
+
             for (int i = 0; i < WINNING_PATTERNS_REPR.length(); i++) {
-                currentWinningPatternChar = WINNING_PATTERNS_REPR.charAt(i);
+                currentWinningPatternChar = WINNING_PATTERNS_REPR.charAt(i + nextWinningPatternIndex);
                 if (currentWinningPatternChar == SEPCHAR)
                     break;
                 winningPatternRepr += currentWinningPatternChar;
             }
+            nextWinningPatternIndex += winningPatternRepr.length() + 1;
             winningPatternBits = Integer.parseInt(winningPatternRepr);
 
-            for (int cardCount = 0; cardCount < CARD_COUNT; cardCount++) {
-                cardPatternRepr = "";
-                for (int j = 0; j < CARD_PATTERNS_REPR.length(); j++) {
-                    currentCardPatternChar = CARD_PATTERNS_REPR.charAt(j);
+            for (int count = 0; count < cardCount; count++) {
+                patternRepr = "";
+
+                for (int j = 0; j < cardPatternsRepr.length(); j++) {
+                    currentCardPatternChar = cardPatternsRepr.charAt(j + nextCardPatternIndex);
                     if (currentCardPatternChar == SEPCHAR)
                         break;
-                    cardPatternRepr += currentCardPatternChar;
+                    patternRepr += currentCardPatternChar;
                 }
-                cardPatternBits = Integer.parseInt(cardPatternRepr);
+                nextCardPatternIndex += patternRepr.length() + 1;
+                cardPatternBits = Integer.parseInt(patternRepr);
 
                 if ((winningPatternBits & cardPatternBits) == winningPatternBits)
-                    return true;
+                    return count + 1;
             }
 
         }
-        return false;
+        return -1;
     }
 
     static int convertPattToInt(String pattern) {
