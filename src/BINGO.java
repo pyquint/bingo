@@ -63,7 +63,9 @@ public class BINGO {
 
     static double USER_MONEY;
     static double COMP_MONEY;
-    static final double CARD_COST = 2.5;
+    static final double CARD_COST = 5;
+    static final double PRIZE_PER_WIN = 20;
+    static final double STARTING_MONEY = 25;
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
@@ -108,9 +110,8 @@ public class BINGO {
     public static void main(String[] args) throws IOException, InterruptedException {
         do {
             letsPlayBingo();
-            cls();
         } while (!isYesWhenPrompted("Exit the program?"));
-        System.out.println(BINGOSHAKE);
+        System.out.println(BINGOSHAKE + "\n");
         System.out.println("This was BINGO! Goodbye!");
     }
 
@@ -120,9 +121,7 @@ public class BINGO {
         System.out.println(BINGOASCII);
 
         int gameCount = 1;
-        int cardBoughtAmmount;
-        USER_MONEY = 5;
-        COMP_MONEY = 5;
+        USER_MONEY = COMP_MONEY = STARTING_MONEY;
 
         // NAME CREATION
         while (true) {
@@ -153,46 +152,55 @@ public class BINGO {
             PATTERN_COUNT = 0;
 
             // HELP MODULE
-            if (isYesWhenPrompted("Do you want to go to the turorial first?"))
-                playTutorial();
 
             // TOOL TUTORIAL
             // patternCreationTutorial();
 
             // MONETARY SYSTEM
             if (USER_MONEY < CARD_COST) {
-                System.out.println("Unfortunately, you don't have enough money to buy more cards!");
+                cls();
+                printlnInteractive("\nGAME OVER! You don't have enough money to buy more cards!");
+                System.out.println();
+                break;
+            } else if (COMP_MONEY < CARD_COST) {
+                cls();
+                printlnInteractive("\nYOU WIN! Computer can't afford to buy any more cards now!!");
+                System.out.println();
                 break;
             }
 
             if (gameCount == 1) {
-                System.out.println("You get to have one card free of charge for your first game!");
-                USER_CARD_COUNT = 1;
+                if (isYesWhenPrompted("\nDo you want to go to the turorial first?"))
+                    playTutorial();
+                System.out.println("\nYou start with P" + STARTING_MONEY
+                        + ", but you get to have one card for free in your first game!");
+                USER_CARD_COUNT = COMP_CARD_COUNT = 1;
             } else {
-                System.out.printf("1 Card -> ₱%f\n", CARD_COST);
-                System.out.printf("Current money: ₱%f\n\n", USER_MONEY);
-
+                cls();
+                System.out.println("1 Card -> P" + CARD_COST);
+                System.out.println("Current money: P" + USER_MONEY);
+                System.out.println("Computer's money: P" + COMP_MONEY + "\n");
                 while (true) {
-                    System.out.print("How many cards do you want to buy? ");
-                    cardBoughtAmmount = SCANNER.nextInt();
-
-                    if (cardBoughtAmmount * CARD_COST > USER_MONEY) {
-                        System.out.println("Insufficient money!\n");
-                        continue;
-                    }
-
-                    USER_CARD_COUNT = cardBoughtAmmount;
-                    USER_MONEY -= cardBoughtAmmount * CARD_COST;
-                    System.out.println("Bought " + USER_CARD_COUNT + " cards.");
-                    System.out.printf("Remaining money: ₱%f\n", USER_MONEY);
-                    break;
+                    System.out.print("How many cards do you want to buy?: ");
+                    USER_CARD_COUNT = SCANNER.nextInt();
+                    SCANNER.nextLine();
+                    if (USER_CARD_COUNT * CARD_COST <= USER_MONEY)
+                        break;
+                    System.out.println("Insufficient money!\n");
                 }
-                SCANNER.nextLine();
+                USER_MONEY -= USER_CARD_COUNT * CARD_COST;
+                System.out.println("\nYou bought " + USER_CARD_COUNT + " card" + ((USER_CARD_COUNT > 1) ? "s. " : ". ")
+                        + "Remaining money: P" + USER_MONEY);
+
+                do {
+                    COMP_CARD_COUNT = getRandomNumber(1, USER_CARD_COUNT + 3);
+                } while (COMP_CARD_COUNT * CARD_COST >= COMP_MONEY);
+                COMP_MONEY -= COMP_CARD_COUNT * CARD_COST;
+                System.out.println("Computer bought " + COMP_CARD_COUNT + ", with P" + COMP_MONEY + " on its pockets.");
             }
 
-            createBingoCardsRepr(USER_CARD_COUNT, USERNAME);
-            COMP_CARD_COUNT = getRandomNumber(USER_CARD_COUNT, USER_CARD_COUNT + 2);
             createBingoCardsRepr(COMP_CARD_COUNT, "computer");
+            createBingoCardsRepr(USER_CARD_COUNT, USERNAME);
 
             // PATTERN CREATION
             boolean isCreatingPattern = isYesWhenPrompted("\nDo you want to create and use a custom winning pattern?");
@@ -217,7 +225,7 @@ public class BINGO {
             bingoGameLoop();
             gameCount++;
 
-        } while (isYesWhenPrompted("Do you want to play again " + USERNAME + "?"));
+        } while (isYesWhenPrompted("Do you want to play again ?"));
     }
 
     static void bingoGameLoop() throws IOException, InterruptedException {
@@ -228,7 +236,7 @@ public class BINGO {
         String checkedPlayer;
         int playerCheckingCounter;
 
-        inGame: while (true) {
+        gameLoop: while (true) {
             cls();
 
             System.out.println(USERNAME + "'S CARD/S:");
@@ -248,14 +256,15 @@ public class BINGO {
                     System.out.println(BINGOASCII);
                     System.out.println(checkedPlayer + " WINS!");
                     printlnInteractive("WINNING CARD: No." + winningCardNo + "!");
-                    System.out.println();
 
                     if (checkedPlayer.equals("computer")) {
-                        COMP_MONEY += 5;
+                        COMP_MONEY += PRIZE_PER_WIN;
                     } else {
-                        USER_MONEY += 5;
+                        USER_MONEY += PRIZE_PER_WIN;
                     }
-                    break inGame;
+
+                    System.out.println(checkedPlayer + " wins P" + PRIZE_PER_WIN + ".\n");
+                    break gameLoop;
                 }
                 playerCheckingCounter = (playerCheckingCounter + 1) % 2;
             }
@@ -263,10 +272,10 @@ public class BINGO {
             System.out.println("Taya taya...");
             System.out.print("Sa letra sang");
 
-            for (int i = 0; i < getRandomNumber(2, 5); i++) {
-                System.out.print(".");
-                Thread.sleep(getRandomNumber(100, 501));
-            }
+            // for (int i = 0; i < getRandomNumber(2, 5); i++) {
+            // System.out.print(".");
+            // Thread.sleep(getRandomNumber(100, 501));
+            // }
 
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
@@ -277,18 +286,18 @@ public class BINGO {
 
             System.out.print(" " + BINGO.charAt((randomNumber - (randomNumber % 16)) / 15) + "! ");
 
-            for (int i = 0; i < getRandomNumber(3, 7); i++) {
-                System.out.print(".");
-                Thread.sleep(getRandomNumber(100, 251));
-            }
+            // for (int i = 0; i < getRandomNumber(3, 7); i++) {
+            // System.out.print(".");
+            // Thread.sleep(getRandomNumber(100, 251));
+            // }
 
-            Thread.sleep(getRandomNumber(250, 501));
-            printInteractive(" " + randomNumber + "!");
+            // Thread.sleep(getRandomNumber(250, 501));
+            // printInteractive(" " + randomNumber + "!");
 
             membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May ara" : "Wala";
             System.out.println("\n" + membership + " ka " + randomNumber + "!");
 
-            printInteractive("\nRoll again >>>");
+            // printInteractive("\nRoll again >>>");
         }
 
     }
