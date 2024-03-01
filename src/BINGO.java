@@ -466,7 +466,6 @@ public class BINGO {
         printlnInteractive("""
                 The game is won if five (5) marks in a row is achieved,
                 either vertically, horizontally, or diagonally.""");
-        // TODO
         printlnInteractive("Good luck and have fun!");
         cls();
     }

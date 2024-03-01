@@ -1,0 +1,83 @@
+import java.util.Scanner;
+
+public class TutorialBingoniMars {
+
+    public static void main(String[] args) {
+
+        Scanner scan = new Scanner(System.in);
+        
+        System.out.println("Welcome to BINGO!");
+        System.out.print("Enter your name: ");
+        String name = scan.nextLine();
+        
+        System.out.println("\nWelcome " + name + " to BINGO!\n");
+        
+        while(true) {
+
+            System.out.println(" ");
+            System.out.println("Main Menu");
+            System.out.println("1. Bingo Tutorial");
+            System.out.println("2. Patterns for Bingo");
+            System.out.println("3. Enter Bingo Game"); 
+            System.out.println("4. Exit");
+            
+            System.out.print("\nEnter your choice: ");
+            int choice = scan.nextInt();
+
+
+            
+             if(choice == 1) {
+                System.out.println("Tutorial Options" + "\n1. Pattern Making" + "\n2. Game Proper");
+                System.out.println()
+
+               String tutorial = "\n- Bingo is played with 75 balls numbered 1-75" +  
+                                  "\n- The balls are drawn randomly one at a time" +
+                                  "\n- Players mark numbers on their cards as balls are drawn" + 
+                                  "\n- To win, players must form a pattern such as:" +
+                                  "\n  - Horizontal, vertical or diagonal line" +
+                                  "\n  - Four corners" + 
+                                  "\n  - Full house" +
+                                  "\n- The first player to mark the winning pattern shouts BINGO!\n";
+                
+                System.out.println("\nBingo Tutorial");
+                System.out.println(tutorial);
+                System.out.println(" ");
+                System.out.println("Options: " + "\n1. Back to Main Menu" + "\n2. Exit");
+                System.out.print("Enter option: ");
+                int option = scan.nextInt();
+                
+                
+            } else if(choice == 2) {
+               String patterns = "\nHere are some common Bingo patterns:" +
+                                  "\n\nHorizontal Line" +
+                                  "\nVertical Line" +
+                                  "\nDiagonal Line" +
+                                  "\nFour Corners" +
+                                  "\nFull House (all numbers marked)" +
+                                  "\n     ";  
+                                     
+                System.out.println("\nPatterns for Bingo");    
+                System.out.println(patterns); 
+                System.out.println(" ");
+                System.out.println("Options: " + "\n1. Back to Main Menu" + "\n2. Exit");
+                System.out.print("Enter option: ");  
+                int option = scan.nextInt();                  
+                if (option == 2){
+                    System.out.println("Thanks for playing!");
+                    break;
+                }else if (option != 1 && option != 2){
+                    System.out.println("Invalid input!");
+                    System.out.println(" ");
+                }             
+               
+            } else if(choice == 3) {
+                //playBingo(name); // CODE FOR GAME PROPER//
+            } else if(choice == 4) {
+                System.out.println("Thanks for playing!");
+                break;             
+            } else {
+                System.out.println("Invalid choice!");
+            }
+        }
+    }
+}
