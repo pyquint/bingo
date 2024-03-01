@@ -218,9 +218,9 @@ public class BINGO {
                 WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
                 WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
                 WINNING_PATTERNS_REPR += convertPattToInt("*----*----*---*----*----") + SEPSTR;
-                WINNING_PATTERNS_REPR += convertPattToInt("-*----*----*----*----*---") + SEPSTR;
-
-                PATTERN_COUNT = 4;
+                //WINNING_PATTERNS_REPR += convertPattToInt("-*----*----*----*----*---") + SEPSTR; vertical row 2
+                //WINNING_PATTERNS_REPR += convertPattToInt("")
+                PATTERN_COUNT = 3;
             }
 
             // MAIN GAME LOOP
