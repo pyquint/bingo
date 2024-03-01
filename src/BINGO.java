@@ -23,7 +23,7 @@ public class BINGO {
     static Scanner SCANNER = new Scanner(System.in);
     static ProcessBuilder cmdProcess = new ProcessBuilder("cmd", "/c", "cls").inheritIO();
 
-    // " " (32 in ASCII) AS SEPARATOR FOR PATTERN AND "!" AS FREE SPACE
+    // " " (32 in ASCII) AS SEPARATOR FOR PATTERN AND "!" AS FREE SPACE IN REPR
     static final char SEPCHAR = 32;
     static final char FREE_SPACE = SEPCHAR + 1;
     static final String SEPSTR = SEPCHAR + "";
@@ -35,8 +35,12 @@ public class BINGO {
     static final int MIDDLE = 12;
     static final int MSBIndex = LENGTH - 1;
 
-    // keys for mark/unmark, mark column, mark row, reset pattern, save and exit
-    static final String markUnmark = "q", markCol = "z", markRow = "x", reset = "r", wq = "e";
+    // keybindings for the pattern maker tool
+    static final String markUnmarkSq = "q";
+    static final String markWholeCol = "z";
+    static final String markWholeRow = "x";
+    static final String resetPattern = "r";
+    static final String exitPattTool = "e";
 
     /*
      * There is NO SEPARATOR between card reprs, only in pattern reprs, since we can
@@ -389,7 +393,7 @@ public class BINGO {
                 }
 
                 if (marked)
-                    patternBits = patternBits | 1 << (LENGTH - j - 1);
+                    patternBits |= 1 << (LENGTH - j - 1);
 
                 if (j % 5 == 4) {
                     System.out.print('\n');
@@ -470,20 +474,20 @@ public class BINGO {
             System.out.println();
 
             System.out.println("[wasd] Move current selection");
-            System.out.println("[" + markUnmark + "] Mark/unmark current selection");
-            System.out.println("[" + markRow + "] Mark whole row");
-            System.out.println("[" + markCol + "] Mark whole column");
+            System.out.println("[" + markUnmarkSq + "] Mark/unmark current selection");
+            System.out.println("[" + markWholeRow + "] Mark whole row");
+            System.out.println("[" + markWholeCol + "] Mark whole column");
             // System.out.println("[n] Discard and exit");
-            System.out.println("[" + reset + "] Reset");
-            System.out.println("[" + wq + "] Done/Exit");
+            System.out.println("[" + resetPattern + "] Reset");
+            System.out.println("[" + exitPattTool + "] Done/Exit");
 
             while (true) {
                 System.out.print("\nAction: ");
                 action = SCANNER.nextLine().toLowerCase().strip();
 
-                if (action.equals(markUnmark)) {
+                if (action.equals(markUnmarkSq)) {
                     // mark/unmark current selection
-                    bits = bits ^ 1 << currentSelection;
+                    bits ^= 1 << currentSelection;
                 } else if (action.equals("w") && currentSelection < 20) {
                     currentSelection += 5;
                 } else if (action.equals("a") && currentSelection % 5 < 4) {
@@ -492,25 +496,25 @@ public class BINGO {
                     currentSelection -= 5;
                 } else if (action.equals("d") && currentSelection % 5 > 0) {
                     currentSelection -= 1;
-                } else if (action.equals(reset)) {
+                } else if (action.equals(resetPattern)) {
                     bits = 0;
                     currentSelection = MSBIndex;
-                } else if (action.equals(wq)) {
+                } else if (action.equals(exitPattTool)) {
                     System.out.println();
                     isInTool = false;
-                } else if (action.equals(markRow)) {
+                } else if (action.equals(markWholeRow)) {
                     // leftIndex is the index of the current row's leftmost square
                     // (actually calculates the rightmost since we iterate backwards)
                     leftIndex = currentSelection - (currentSelection % 5);
                     for (int j = 0; j < 5; j++) {
-                        bits = bits | 1 << leftIndex + j;
+                        bits |= 1 << leftIndex + j;
                     }
-                } else if (action.equals(markCol)) {
+                } else if (action.equals(markWholeCol)) {
                     // topIndex is the index of the current column's topmost square
                     // (is not reversed since up is up regardless of direction)
                     topIndex = currentSelection % 5;
                     for (int k = 0; k < 5; k++) {
-                        bits = bits | 1 << topIndex + k * 5;
+                        bits |= 1 << topIndex + k * 5;
                     }
                 } else {
                     System.out.println("Invalid input.");
@@ -582,7 +586,7 @@ public class BINGO {
         int bits = 0;
         for (int i = 0; i < LENGTH; i++) {
             if (pattern.charAt(i) == '*')
-                bits = bits | (1 << LENGTH - 1 - i);
+                bits |= (1 << LENGTH - 1 - i);
         }
         return bits;
     }
