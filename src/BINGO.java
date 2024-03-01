@@ -221,10 +221,18 @@ public class BINGO {
                 System.out.println("\nDEFAULT WINNING PATTERNS: X, VERTICAL,HORIZONTAL, AND BLACKOUT");
                 WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
                 WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
-                WINNING_PATTERNS_REPR += convertPattToInt("*----*----*----*----*----") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("*----*----*----*----*----") + SEPSTR; //Vertical Row
                 WINNING_PATTERNS_REPR += convertPattToInt("-*----*----*----*----*---") + SEPSTR; //Vertical Row 2
-                //WINNING_PATTERNS_REPR += convertPattToInt("")
+                WINNING_PATTERNS_REPR += convertPattToInt("--*----*----*----*----*--") + SEPSTR; // vRow 3
+                WINNING_PATTERNS_REPR += convertPattToInt("---*----*----*----*----*-") + SEPSTR; //vRow 4
+                WINNING_PATTERNS_REPR += convertPattToInt("----*----*----*----*----*") + SEPSTR; //vRow 5
+                WINNING_PATTERNS_REPR += convertPattToInt("*****--------------------") + SEPSTR; // Horizontal 
+                WINNING_PATTERNS_REPR += convertPattToInt("-----*****---------------") + SEPSTR;// hRow  2
+                WINNING_PATTERNS_REPR += convertPattToInt("----------*****----------") + SEPSTR;// hRow  3
+                WINNING_PATTERNS_REPR += convertPattToInt("---------------*****-----") + SEPSTR;// hRow  4
+                WINNING_PATTERNS_REPR += convertPattToInt("--------------------*****") + SEPSTR;// hRow  5
                 PATTERN_COUNT = 4;
+
             }
 
             // MAIN GAME LOOP
