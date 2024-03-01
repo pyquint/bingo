@@ -6,13 +6,13 @@ public class BINGO {
     // BINGO by us.
     /*
      * We restricted ourselves to only using the discussed programming constructs in
-     * the majority of the main logic, with the exception of Random which we were
+     * the majority of the main logic, except for Random which we were
      * allowed to use. We have introduced some higher-level techniques, although
      * they are purely for aesthetic and code maintainability purposes only
-     * (functions, clearing of the terminal, Thread sleep printing, etc).
+     * (functions, clearing of the terminal, Thread sleep printing, etc.).
      *
      * While you may want to gouge your eyes after looking at the code, I hope you
-     * understand what with the defiecency in knowledge of the programmers, and
+     * understand what with the deficiency in knowledge of the programmers, and
      * limitations in compliance with the requirements of the project.
      *
      * Good day and have fun playing BINGO!
@@ -34,8 +34,8 @@ public class BINGO {
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSBIndex = LENGTH - 1;
-    static final double CARD_COST = 2.5;
 
+    // keys for mark/unmark, mark column, mark row, reset pattern, save and exit
     static final String markUnmark = "q", markCol = "z", markRow = "x", reset = "r", wq = "e";
 
     /*
@@ -50,6 +50,7 @@ public class BINGO {
 
     static String WINNING_PATTERNS_REPR;
     static String ROLLED_NUMBERS_REPR;
+    static int PATTERN_COUNT;
 
     static String USERNAME;
     static String USER_CARDS_REPR;
@@ -60,9 +61,9 @@ public class BINGO {
     static String COMP_CARD_PATTERNS_REPR;
     static int COMP_CARD_COUNT;
 
-    static int PATTERN_COUNT;
-    static double USER_MONEY = 0;
-    static double COMP_MONEY = 0;
+    static double USER_MONEY;
+    static double COMP_MONEY;
+    static final double CARD_COST = 2.5;
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
@@ -127,7 +128,7 @@ public class BINGO {
         while (true) {
             System.out.print("\nWhat would you like to name yourself?: ");
             USERNAME = SCANNER.nextLine();
-            if (USERNAME.toLowerCase().equals("computer")) {
+            if (USERNAME.equalsIgnoreCase("computer")) {
                 System.out.println("You cannot name yourself as '" + USERNAME + "'!");
                 System.out.println("Please use another name!\n");
                 continue;
@@ -152,11 +153,13 @@ public class BINGO {
             PATTERN_COUNT = 0;
 
             // HELP MODULE
-            // if (isYesWhenPrompted("Do you want to go to the turorial first?"))
-            // playTutorial();
+            if (isYesWhenPrompted("Do you want to go to the turorial first?"))
+                playTutorial();
 
             // TOOL TUTORIAL
             // patternCreationTutorial();
+
+            // MONETARY SYSTEM
             if (USER_MONEY < CARD_COST) {
                 System.out.println("Unfortunately, you don't have enough money to buy more cards!");
                 break;
@@ -168,13 +171,16 @@ public class BINGO {
             } else {
                 System.out.printf("1 Card -> ₱%f\n", CARD_COST);
                 System.out.printf("Current money: ₱%f\n\n", USER_MONEY);
+
                 while (true) {
                     System.out.print("How many cards do you want to buy? ");
                     cardBoughtAmmount = SCANNER.nextInt();
+
                     if (cardBoughtAmmount * CARD_COST > USER_MONEY) {
                         System.out.println("Insufficient money!\n");
                         continue;
                     }
+
                     USER_CARD_COUNT = cardBoughtAmmount;
                     USER_MONEY -= cardBoughtAmmount * CARD_COST;
                     System.out.println("Bought " + USER_CARD_COUNT + " cards.");
@@ -199,11 +205,11 @@ public class BINGO {
                 }
             }
 
-            if (!isCreatingPattern && PATTERN_COUNT == 0) {
+            if (PATTERN_COUNT == 0) {
                 System.out.println("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
-                WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
-                WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
-                PATTERN_COUNT += 2;
+                WINNING_PATTERNS_REPR = convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
+                WINNING_PATTERNS_REPR = convertPattToInt("*************************") + SEPSTR;
+                PATTERN_COUNT = 2;
             }
 
             // MAIN GAME LOOP
@@ -232,17 +238,19 @@ public class BINGO {
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
             // be called winner should they have the winning pattern.
-
             playerCheckingCounter = getRandomNumber(0, 2);
+
             for (int i = 0; i < 2; i++) {
                 checkedPlayer = playerCheckingCounter == 1 ? USERNAME : "computer";
                 winningCardNo = cardContainsWinningPattern(checkedPlayer);
+
                 if (winningCardNo != -1) {
                     System.out.println(BINGOASCII);
                     System.out.println(checkedPlayer + " WINS!");
                     printlnInteractive("WINNING CARD: No." + winningCardNo + "!");
                     System.out.println();
-                    if (checkedPlayer == "computer") {
+
+                    if (checkedPlayer.equals("computer")) {
                         COMP_MONEY += 5;
                     } else {
                         USER_MONEY += 5;
@@ -299,7 +307,7 @@ public class BINGO {
          *
          * What I came up with and ultimately chose was (Repr)esenting the rolled number
          * into an ASCII character. The number is always converted to its associated
-         * character, and vice versa. We start the mapping at the 34rd character ('"')
+         * character, and vice versa. We start the mapping at the 34th character ('"')
          * up to 108 ('l', 33 + 75 - 1 because of indexing).
          */
 
@@ -333,11 +341,10 @@ public class BINGO {
     }
 
     static void printCardsUpdatePatterns(String player) {
-        int patternBits;
         boolean marked;
         int currentNum;
         char currentNumRepr;
-
+        int patternBits;
         int count;
         String card_repr;
 
@@ -407,9 +414,16 @@ public class BINGO {
          * of loops. The index being one less than current selection works well in bit
          * shifting. If we want to flip the bit at index i, we OR the bits with 1
          * shifted by i. e.g. 01 | 1 << 1 (index 1) --> 01 | 10 --> 11
-         *
-         * 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
          */
+
+        // @formatter:off
+        // * This is what the indices would look like:
+        // * 24 23 22 21 20
+        // * 19 18 17 16 15
+        // * 14 13 12 11 10
+        // * 09 08 07 06 05
+        // * 04 03 02 01 00
+        // @formatter:on
 
         char currChar;
         int leftIndex, topIndex;
@@ -419,7 +433,6 @@ public class BINGO {
         boolean isInTool = true;
 
         String action;
-        // keys for mark/unmark, mark column, mark row, reset pattern, save and exit
 
         while (isInTool) {
             cls();
@@ -507,6 +520,7 @@ public class BINGO {
     static int cardContainsWinningPattern(String player) {
         String cardPatternsRepr;
         int cardCount;
+
         if (player.equals("computer")) {
             cardPatternsRepr = COMP_CARD_PATTERNS_REPR;
             cardCount = COMP_CARD_COUNT;
@@ -516,7 +530,7 @@ public class BINGO {
         }
 
         int winningPatternBits, cardPatternBits;
-        int nextWinningPatternIndex = 0, nextCardPatternIndex = 0;
+        int nextWinningPatternIndex = 0, nextCardPatternIndex;
         String winningPatternRepr, patternRepr;
         char currentWinningPatternChar, currentCardPatternChar;
 
@@ -548,7 +562,6 @@ public class BINGO {
                 if ((winningPatternBits & cardPatternBits) == winningPatternBits)
                     return count + 1;
             }
-
         }
         return -1;
     }
