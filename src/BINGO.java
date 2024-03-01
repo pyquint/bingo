@@ -217,10 +217,10 @@ public class BINGO {
                 System.out.println("\nDEFAULT WINNING PATTERNS: X, VERTICAL,HORIZONTAL, AND BLACKOUT");
                 WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
                 WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
-                WINNING_PATTERNS_REPR += convertPattToInt("*----*----*---*----*----") + SEPSTR;
-                //WINNING_PATTERNS_REPR += convertPattToInt("-*----*----*----*----*---") + SEPSTR; vertical row 2
+                WINNING_PATTERNS_REPR += convertPattToInt("*----*----*----*----*----") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("-*----*----*----*----*---") + SEPSTR; //Vertical Row 2
                 //WINNING_PATTERNS_REPR += convertPattToInt("")
-                PATTERN_COUNT = 3;
+                PATTERN_COUNT = 4;
             }
 
             // MAIN GAME LOOP
