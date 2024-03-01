@@ -3,6 +3,21 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class BINGO {
+    // BINGO by us.
+    /*
+     * We restricted ourselves to only using the discussed programming constructs in
+     * the majority of the main logic, with the exception of Random which we were
+     * allowed to use. We have introduced some higher-level techniques, although
+     * they are purely for aesthetic and code maintainability purposes only
+     * (functions, clearing of the terminal, Thread sleep printing, etc).
+     *
+     * While you may want to gouge your eyes after looking at the code, I hope you
+     * understand what with the defiecency in knowledge of the programmers, and
+     * limitations in compliance with the requirements of the project.
+     *
+     * Good day and have fun playing BINGO!
+     */
+
     // GLOBAL VARIABLES
     static Random RAND = new Random();
     static Scanner SCANNER = new Scanner(System.in);
