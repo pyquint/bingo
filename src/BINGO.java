@@ -218,10 +218,13 @@ public class BINGO {
             }
 
             if (PATTERN_COUNT == 0) {
-                System.out.println("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
+                System.out.println("\nDEFAULT WINNING PATTERNS: X, VERTICAL,HORIZONTAL, AND BLACKOUT");
                 WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
                 WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
-                PATTERN_COUNT = 2;
+                WINNING_PATTERNS_REPR += convertPattToInt("*----*----*----*----*----") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("-*----*----*----*----*---") + SEPSTR; //Vertical Row 2
+                //WINNING_PATTERNS_REPR += convertPattToInt("")
+                PATTERN_COUNT = 4;
             }
 
             // MAIN GAME LOOP
@@ -608,7 +611,7 @@ public class BINGO {
                 12\t22\t43\t51\t72\n
                 5\t23\t35\t57\t61\n
                 9\t28\tB\t48\t69\n
-                11t29\t41\t49\t62\n
+                11\t29\t41\t49\t62\n
                 6\t19\t42\t50\t65\n
                 if the rolled number is present, that square gets marked.""");
         printlnInteractive("""
