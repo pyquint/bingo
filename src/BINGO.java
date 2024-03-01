@@ -6,10 +6,10 @@ public class BINGO {
     // BINGO by us.
     /*
      * We restricted ourselves to only using the discussed programming constructs in
-     * the majority of the main logic, except for Random which we were
-     * allowed to use. We have introduced some higher-level techniques, although
-     * they are purely for aesthetic and code maintainability purposes only
-     * (functions, clearing of the terminal, Thread sleep printing, etc.).
+     * the majority of the main logic, except for Random which we were allowed to
+     * use. We have introduced some higher-level techniques, although they are
+     * purely for aesthetic and code maintainability purposes only (functions,
+     * clearing of the terminal, Thread sleep printing, etc.).
      *
      * While you may want to gouge your eyes after looking at the code, I hope you
      * understand what with the deficiency in knowledge of the programmers, and
@@ -207,8 +207,8 @@ public class BINGO {
 
             if (PATTERN_COUNT == 0) {
                 System.out.println("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
-                WINNING_PATTERNS_REPR = convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
-                WINNING_PATTERNS_REPR = convertPattToInt("*************************") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
+                WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
                 PATTERN_COUNT = 2;
             }
 
@@ -530,7 +530,7 @@ public class BINGO {
         }
 
         int winningPatternBits, cardPatternBits;
-        int nextWinningPatternIndex = 0, nextCardPatternIndex;
+        int nextWinningPatternIndex = 0, nextCardPatternIndex = 0;
         String winningPatternRepr, patternRepr;
         char currentWinningPatternChar, currentCardPatternChar;
 
