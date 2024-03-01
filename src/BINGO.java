@@ -34,6 +34,7 @@ public class BINGO {
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSBIndex = LENGTH - 1;
+    static final double CARD_COST = 2.5;
 
     static final String markUnmark = "q", markCol = "z", markRow = "x", reset = "r", wq = "e";
 
@@ -60,8 +61,8 @@ public class BINGO {
     static int COMP_CARD_COUNT;
 
     static int PATTERN_COUNT;
-    static int USER_MONEY = 0;
-    static int COMP_MONEY = 0;
+    static double USER_MONEY = 0;
+    static double COMP_MONEY = 0;
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
@@ -104,18 +105,34 @@ public class BINGO {
             """;
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        do {
+            letsPlayBingo();
+            cls();
+        } while (!isYesWhenPrompted("Exit the program?"));
+        System.out.println(BINGOSHAKE);
+        System.out.println("This was BINGO! Goodbye!");
+    }
+
+    static void letsPlayBingo() throws IOException, InterruptedException {
         // WELCOME SCREEN
         System.out.println(BINGOSHAKE);
         System.out.println(BINGOASCII);
-        printInteractive("Tara BINGO!");
-        // boolean isFirstGame = true;
 
+        int gameCount = 1;
+        int cardBoughtAmmount;
+        USER_MONEY = 5;
+        COMP_MONEY = 5;
+
+        // NAME CREATION
         while (true) {
             System.out.print("\nWhat would you like to name yourself?: ");
             USERNAME = SCANNER.nextLine();
             if (USERNAME.toLowerCase().equals("computer")) {
                 System.out.println("You cannot name yourself as '" + USERNAME + "'!");
                 System.out.println("Please use another name!\n");
+                continue;
+            } else if (USERNAME.isBlank() || USERNAME.isEmpty()) {
+                System.out.println("Please include characters!");
                 continue;
             }
             if (isYesWhenPrompted("Is '" + USERNAME + "' final?"))
@@ -125,11 +142,6 @@ public class BINGO {
         System.out.println("\nWELCOME, " + USERNAME + "!");
 
         do {
-            /*
-             * ONE CARD AT THE START. THE PLAYER CAN EARN MONEY BY WINNING PLAYERS CAN BUY
-             * ADDITIONAL CARDS ???
-             */
-
             // INITIALIZATION OF VARIABLES
             USER_CARDS_REPR = "";
             USER_CARD_PATTERNS_REPR = "";
@@ -138,23 +150,43 @@ public class BINGO {
             WINNING_PATTERNS_REPR = "";
             ROLLED_NUMBERS_REPR = "";
             PATTERN_COUNT = 0;
-            USER_MONEY = 0;
 
-            // TOOL TUTORIAL
+            // HELP MODULE
             // if (isYesWhenPrompted("Do you want to go to the turorial first?"))
             // playTutorial();
 
-            // HELP MODULE
+            // TOOL TUTORIAL
             // patternCreationTutorial();
+            if (USER_MONEY < CARD_COST) {
+                System.out.println("Unfortunately, you don't have enough money to buy more cards!");
+                break;
+            }
 
-            System.out.print("\nHow many cards do you want to hold? ");
-            USER_CARD_COUNT = SCANNER.nextInt();
+            if (gameCount == 1) {
+                System.out.println("You get to have one card free of charge for your first game!");
+                USER_CARD_COUNT = 1;
+            } else {
+                System.out.printf("1 Card -> ₱%f\n", CARD_COST);
+                System.out.printf("Current money: ₱%f\n\n", USER_MONEY);
+                while (true) {
+                    System.out.print("How many cards do you want to buy? ");
+                    cardBoughtAmmount = SCANNER.nextInt();
+                    if (cardBoughtAmmount * CARD_COST > USER_MONEY) {
+                        System.out.println("Insufficient money!\n");
+                        continue;
+                    }
+                    USER_CARD_COUNT = cardBoughtAmmount;
+                    USER_MONEY -= cardBoughtAmmount * CARD_COST;
+                    System.out.println("Bought " + USER_CARD_COUNT + " cards.");
+                    System.out.printf("Remaining money: ₱%f\n", USER_MONEY);
+                    break;
+                }
+                SCANNER.nextLine();
+            }
+
             createBingoCardsRepr(USER_CARD_COUNT, USERNAME);
-
             COMP_CARD_COUNT = getRandomNumber(USER_CARD_COUNT, USER_CARD_COUNT + 2);
             createBingoCardsRepr(COMP_CARD_COUNT, "computer");
-
-            SCANNER.nextLine();
 
             // PATTERN CREATION
             boolean isCreatingPattern = isYesWhenPrompted("\nDo you want to create and use a custom winning pattern?");
@@ -168,32 +200,26 @@ public class BINGO {
             }
 
             if (!isCreatingPattern && PATTERN_COUNT == 0) {
-                System.out.println("DEFAULT WINNING PATTERNS: X and BLACKOUT");
+                System.out.println("\nDEFAULT WINNING PATTERNS: X and BLACKOUT");
                 WINNING_PATTERNS_REPR += convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPSTR;
                 WINNING_PATTERNS_REPR += convertPattToInt("*************************") + SEPSTR;
                 PATTERN_COUNT += 2;
             }
 
-            // TOOL TUTORIAL
-            // patternCreationTutorial();
-
-            // HELP MODULE
-            // playTutorial();
-
-            // convertWinningPatternToInts();
-
             // MAIN GAME LOOP
             printlnInteractive("\nWe're all set! Tara BINGO!");
-            letsPlayBingo();
+            bingoGameLoop();
+            gameCount++;
+
         } while (isYesWhenPrompted("Do you want to play again " + USERNAME + "?"));
     }
 
-    static void letsPlayBingo() throws IOException, InterruptedException {
+    static void bingoGameLoop() throws IOException, InterruptedException {
         char randomNumberRepr;
         int randomNumber;
         int winningCardNo;
         String membership;
-        String playerChecking;
+        String checkedPlayer;
         int playerCheckingCounter;
 
         inGame: while (true) {
@@ -209,27 +235,30 @@ public class BINGO {
 
             playerCheckingCounter = getRandomNumber(0, 2);
             for (int i = 0; i < 2; i++) {
-                playerChecking = playerCheckingCounter == 1 ? USERNAME : "computer";
-                winningCardNo = cardContainsWinningPattern(playerChecking);
+                checkedPlayer = playerCheckingCounter == 1 ? USERNAME : "computer";
+                winningCardNo = cardContainsWinningPattern(checkedPlayer);
                 if (winningCardNo != -1) {
                     System.out.println(BINGOASCII);
-                    System.out.println(playerChecking + " WINS!");
+                    System.out.println(checkedPlayer + " WINS!");
                     printlnInteractive("WINNING CARD: No." + winningCardNo + "!");
-                    cls();
+                    System.out.println();
+                    if (checkedPlayer == "computer") {
+                        COMP_MONEY += 5;
+                    } else {
+                        USER_MONEY += 5;
+                    }
                     break inGame;
                 }
                 playerCheckingCounter = (playerCheckingCounter + 1) % 2;
             }
 
-            // System.out.print(BingoShake);
             System.out.println("Taya taya...");
-            System.out.print("Sa letra sang ");
+            System.out.print("Sa letra sang");
 
-            // TODO remove when submitting.
-            // for (int i = 0; i < getRandomNumber(3, 7); i++) {
-            // System.out.print(".");
-            // Thread.sleep(getRandomNumber(250, 501));
-            // }
+            for (int i = 0; i < getRandomNumber(2, 5); i++) {
+                System.out.print(".");
+                Thread.sleep(getRandomNumber(100, 501));
+            }
 
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
@@ -238,28 +267,18 @@ public class BINGO {
             ROLLED_NUMBERS_REPR += randomNumberRepr;
             randomNumber = getReprNumber(randomNumberRepr);
 
-            System.out.print(BINGO.charAt((randomNumber - (randomNumber % 16)) / 15));
+            System.out.print(" " + BINGO.charAt((randomNumber - (randomNumber % 16)) / 15) + "! ");
 
-            // for (int i = 0; i < getRandomNumber(2, 5); i++) {
-            // System.out.print(".");
-            // Thread.sleep(getRandomNumber(100, 401));
-            // }
+            for (int i = 0; i < getRandomNumber(3, 7); i++) {
+                System.out.print(".");
+                Thread.sleep(getRandomNumber(100, 251));
+            }
 
-            // Thread.sleep(getRandomNumber(500, 1001));
-            // printInteractive(randomNumber + "!");
+            Thread.sleep(getRandomNumber(250, 501));
+            printInteractive(" " + randomNumber + "!");
 
-            membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May " : "Wala ";
+            membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May ara" : "Wala";
             System.out.println("\n" + membership + " ka " + randomNumber + "!");
-
-            // System.out.print("Ano nga card may " + randomNumber + "? ");
-            // memberships = SCANNER.nextLine();
-
-            // System.out.println();
-            // for (int i = 1; i < 11; i++) {
-            // System.out.print(i);
-            // Thread.sleep(1000);
-            // System.out.print("\r");
-            // }
 
             printInteractive("\nRoll again >>>");
         }
