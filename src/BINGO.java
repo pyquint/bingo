@@ -122,13 +122,18 @@ public class BINGO {
     public static void main(String[] args) throws IOException, InterruptedException {
         do {
             letsPlayBingo();
-            System.out.println("\t==== POST-GAME STATISTICS ====");
+            cls();
+
+            System.out.println("\t==== POST-GAME STATISTICS ====\n");
             System.out.println(
-                    "> You held on for a total of " + ROUNDS_COUNT + ((ROUNDS_COUNT > 1) ? "rounds" : "round") + "!");
+                    "> You held on for a total of " + ROUNDS_COUNT + ((ROUNDS_COUNT > 1) ? " rounds" : " round") + "!");
             System.out.println("> Maximum money held at some point: P" + MAX_MONEY_HELD);
             System.out.println("> Total number of cards bought: " + CARDS_BOUGHT);
             System.out.println("> Wins / Losses: " + PLAYER_WIN_COUNT + " / " + COMP_WIN_COUNT);
+            System.out.println();
+
         } while (!isYesWhenPrompted("Exit the program?"));
+
         System.out.println(BINGOSHAKE + "\n");
         System.out.println("This was BINGO! Goodbye!");
     }
@@ -176,7 +181,7 @@ public class BINGO {
                 System.out.println();
                 break;
             } else if (COMP_MONEY < CARD_COST) {
-                printlnInteractive("\nYOU WIN! Computer can't afford to buy any more cards now!!");
+                printlnInteractive("\nYOU WIN! Computer can't afford to buy any more cards!");
                 System.out.println();
                 break;
             }
