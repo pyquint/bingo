@@ -58,6 +58,7 @@ public class BINGO {
 
     static String WINNING_PATTERNS_REPR;
     static String ROLLED_NUMBERS_REPR;
+    static String USER_MARKED_NUM_REPR;
     static int PATTERN_COUNT;
     static int ROUNDS_COUNT;
 
@@ -195,6 +196,7 @@ public class BINGO {
             COMP_CARD_PATTERNS_REPR = "";
             WINNING_PATTERNS_REPR = "";
             ROLLED_NUMBERS_REPR = "";
+            USER_MARKED_NUM_REPR = "";
             PATTERN_COUNT = 0;
 
             // MONETARY SYSTEM
@@ -266,11 +268,13 @@ public class BINGO {
         char randomNumberRepr;
         int randomNumber;
         int winningCardNo;
-        String membership;
+        boolean numberInCard;
+        boolean numberIsInCardSaysUser;
         String checkedPlayer;
         int playerCheckingCounter;
+        double deduction = 2.5;
 
-        gameLoop: while (true) {
+        while (true) {
             cls();
 
             System.out.println(USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
@@ -286,25 +290,26 @@ public class BINGO {
                 checkedPlayer = playerCheckingCounter == 1 ? USERNAME : COMP_NAME;
                 winningCardNo = cardContainsWinningPattern(checkedPlayer);
 
-                if (winningCardNo != -1) {
-                    System.out.println(BINGOASCII);
-                    System.out.println(checkedPlayer + " WINS!");
-                    printlnInteractive("WINNING CARD: No." + winningCardNo + "!");
-
-                    if (checkedPlayer.equals(COMP_NAME)) {
-                        COMP_MONEY += PRIZE_PER_WIN;
-                        COMP_WIN_COUNT++;
-                    } else {
-                        USER_MONEY += PRIZE_PER_WIN;
-                        PLAYER_WIN_COUNT++;
-                        if (USER_MONEY > MAX_MONEY_HELD)
-                            MAX_MONEY_HELD = USER_MONEY;
-                    }
-
-                    System.out.println(checkedPlayer + " wins P" + PRIZE_PER_WIN + ".\n");
-                    break gameLoop;
+                if (!(winningCardNo != -1)) {
+                    playerCheckingCounter = (playerCheckingCounter + 1) % 2;
+                    continue;
                 }
-                playerCheckingCounter = (playerCheckingCounter + 1) % 2;
+
+                System.out.println(BINGOASCII);
+                System.out.println(checkedPlayer + " WINS!");
+                printlnInteractive("WINNING CARD: No." + winningCardNo + "!");
+
+                if (checkedPlayer.equals(COMP_NAME)) {
+                    COMP_MONEY += PRIZE_PER_WIN;
+                    COMP_WIN_COUNT++;
+                } else {
+                    USER_MONEY += PRIZE_PER_WIN;
+                    PLAYER_WIN_COUNT++;
+                    if (USER_MONEY > MAX_MONEY_HELD)
+                        MAX_MONEY_HELD = USER_MONEY;
+                }
+
+                System.out.println(checkedPlayer + " wins P" + PRIZE_PER_WIN + ".\n");
             }
 
             System.out.println("Taya taya...");
@@ -315,6 +320,7 @@ public class BINGO {
 
             ROLLED_NUMBERS_REPR += randomNumberRepr;
             randomNumber = getReprNumber(randomNumberRepr);
+            numberInCard = USER_CARDS_REPR.indexOf(randomNumberRepr) != -1;
 
             for (int i = 0; i < getRandomNumber(15, 26); i++) {
                 System.out.print("\rSa letra sang... ");
@@ -330,15 +336,23 @@ public class BINGO {
             }
 
             System.out.println(randomNumber + "!\n");
+            numberIsInCardSaysUser = isYesWhenPrompted("Do you have " + randomNumber + " in any of your card?");
 
-            Thread.sleep(1000);
+            if (numberIsInCardSaysUser) {
+                if (numberInCard) {
+                    USER_MARKED_NUM_REPR += randomNumberRepr;
+                    System.out.println("You bet you do!");
+                } else {
+                    USER_MONEY -= deduction;
+                    System.out.println("Incorrect! " + deduction + " Has been deducted from your balance!");
+                }
+            } else {
+                if (numberInCard)
+                    System.out.println("Too bad! " + randomNumber + " won't get marked!");
+            }
 
-            membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May ara" : "Wala";
-            System.out.print(membership + " ka " + randomNumber + "!");
-
-            Thread.sleep(2000);
+            printlnInteractive((numberInCard ? "\nMay ara" : "Wala") + " ka " + randomNumber + "!");
         }
-
     }
 
     static void createBingoCardsRepr(int cardCount, String player) {
@@ -389,21 +403,23 @@ public class BINGO {
     }
 
     static void printCardsUpdatePatterns(String player) {
-        boolean marked;
+        boolean isMarked;
+        boolean isPlayer;
+        boolean isMiddle;
         int currentNum;
         char currentNumRepr;
         int patternBits;
         int count;
         String card_repr;
 
-        if (player.equals(COMP_NAME)) {
-            COMP_CARD_PATTERNS_REPR = "";
-            card_repr = COMP_CARDS_REPR;
-            count = COMP_CARD_COUNT;
-        } else {
+        if (isPlayer = player.equals(USERNAME)) {
             USER_CARD_PATTERNS_REPR = "";
             card_repr = USER_CARDS_REPR;
             count = USER_CARD_COUNT;
+        } else {
+            COMP_CARD_PATTERNS_REPR = "";
+            card_repr = COMP_CARDS_REPR;
+            count = COMP_CARD_COUNT;
         }
 
         // Use conditionals to further control the printing of the card.
@@ -414,21 +430,22 @@ public class BINGO {
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
             for (int j = 0; j < LENGTH; j++) {
-                marked = true;
                 currentNumRepr = card_repr.charAt(j + (i * LENGTH));
                 currentNum = getReprNumber(currentNumRepr);
 
-                if (ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1) {
-                    System.out.print("(" + currentNum + ")");
-                } else if (currentNumRepr == FREE_SPACE) {
-                    System.out.print("FS");
-                } else {
-                    System.out.print(currentNum);
-                    marked = false;
+                if (isPlayer && USER_MARKED_NUM_REPR.indexOf(currentNumRepr) == -1) {
+                    isMarked = false;
                 }
 
-                if (marked)
+                isMiddle = currentNumRepr == FREE_SPACE;
+                isMarked = ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1 || isMiddle;
+
+                if (isMarked) {
+                    System.out.print(isMiddle ? "FS" : ("(" + currentNum + ")"));
                     patternBits |= 1 << (LENGTH - j - 1);
+                } else {
+                    System.out.print(currentNum);
+                }
 
                 if (j % 5 == 4) {
                     System.out.print('\n');
