@@ -188,7 +188,7 @@ public class BINGO {
                 break;
             }
 
-            // INITIALIZATION OF VARIABLES
+            // INITIALIZATION OF PER-ROUND VARIABLES
             USER_CARDS_REPR = "";
             USER_CARD_PATTERNS_REPR = "";
             COMP_CARDS_REPR = "";
@@ -196,9 +196,6 @@ public class BINGO {
             WINNING_PATTERNS_REPR = "";
             ROLLED_NUMBERS_REPR = "";
             PATTERN_COUNT = 0;
-
-            // TOOL TUTORIAL
-            // patternCreationTutorial();
 
             // MONETARY SYSTEM
             if (ROUNDS_COUNT > 1) {
@@ -311,12 +308,6 @@ public class BINGO {
             }
 
             System.out.println("Taya taya...");
-            System.out.print("Sa letra sang");
-
-            // for (int i = 0; i < getRandomNumber(2, 5); i++) {
-            // System.out.print(".");
-            // Thread.sleep(getRandomNumber(100, 501));
-            // }
 
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGOMAX + 1));
@@ -325,20 +316,27 @@ public class BINGO {
             ROLLED_NUMBERS_REPR += randomNumberRepr;
             randomNumber = getReprNumber(randomNumberRepr);
 
-            System.out.print(" " + BINGO.charAt((randomNumber - (randomNumber % 16)) / 15) + "! ");
+            for (int i = 0; i < getRandomNumber(15, 26); i++) {
+                System.out.print("\rSa letra sang... ");
+                System.out.print(BINGO.charAt(getRandomNumber(0, BINGO.length())));
+                Thread.sleep(50);
+            }
 
-            // for (int i = 0; i < getRandomNumber(3, 7); i++) {
-            // System.out.print(".");
-            // Thread.sleep(getRandomNumber(100, 251));
-            // }
+            System.out.print("\b" + BINGO.charAt((randomNumber - (randomNumber % 16)) / 15) + "!\n");
 
-            // Thread.sleep(getRandomNumber(250, 501));
-            // printInteractive(" " + randomNumber + "!");
+            for (int i = 0; i < getRandomNumber(15, 26); i++) {
+                System.out.print(getRandomNumber(1, BINGOMAX + 1) + "\r");
+                Thread.sleep(25);
+            }
+
+            System.out.println(randomNumber + "!\n");
+
+            Thread.sleep(1000);
 
             membership = (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) ? "May ara" : "Wala";
-            System.out.println("\n" + membership + " ka " + randomNumber + "!");
+            System.out.print(membership + " ka " + randomNumber + "!");
 
-            // printInteractive("\nRoll again >>>");
+            Thread.sleep(2000);
         }
 
     }
