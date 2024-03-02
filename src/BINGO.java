@@ -139,9 +139,11 @@ public class BINGO {
     }
 
     static void letsPlayBingo() throws IOException, InterruptedException {
+        cls();
         // WELCOME SCREEN
         System.out.println(BINGOSHAKE);
         System.out.println(BINGOASCII);
+        System.out.println("WELCOME TO BINGO!");
 
         ROUNDS_COUNT = 1;
         USER_MONEY = COMP_MONEY = STARTING_MONEY;
@@ -628,9 +630,8 @@ public class BINGO {
 
     static void playTutorial() throws IOException, InterruptedException {
         cls();
-        System.out.println("Hello! Welcome to the BINGO tutorial!");
-
-        while (true) {
+        System.out.println("Hello! Welcome to the BINGO tutorial!\n");
+        tutorial: while (true) {
             System.out.println("TUTORIAL\n");
             System.out.println("""
                     What do you want to know?
@@ -684,7 +685,7 @@ public class BINGO {
                 cls();
                 printlnInteractive("CREATING PATTERNS");
                 printlnInteractive("Welcome, Host!");
-                printlnInteractive("You can create patterns with the Pattern Maker TOol.");
+                printlnInteractive("You can create patterns with the Pattern Maker Tool.");
                 printlnInteractive("""
                         Pattern Maker Tool:
                         B\tI\tN\tG\tO
@@ -703,13 +704,13 @@ public class BINGO {
                 printlnInteractive("You can mark the whole column by typing 'z'.");
                 printlnInteractive("You can reset all the customized pattern by typing 'r'.");
                 printlnInteractive("If you're done or you don't want to make patterns, type 'e'.");
-
             }
             case "4" -> {
                 printlnInteractive("You're all settled. Good luck and have fun!");
-                break;
+                cls();
+                break tutorial;
             }
-            default -> printlnInteractive("Invalid input!");
+            default -> printlnInteractive("\nInvalid input!");
             }
             cls();
         }
