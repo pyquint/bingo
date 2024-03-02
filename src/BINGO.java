@@ -168,7 +168,9 @@ public class BINGO {
             if (isYesWhenPrompted("You're sure with '" + USERNAME + "'?"))
                 break;
         }
-
+        cls();
+        System.out.println(BINGOSHAKE);
+        System.out.println(BINGOASCII);
         System.out.println("\nWELCOME, " + USERNAME + "!");
 
         // HELP MODULE
@@ -344,14 +346,16 @@ public class BINGO {
                     System.out.println("You bet you do!");
                 } else {
                     USER_MONEY -= deduction;
-                    System.out.println("Incorrect! " + deduction + " Has been deducted from your balance!");
+                    System.out.println("Incorrect! " + deduction + " Has been deducted from your money!");
+                    System.out.println("Remaining balance: P" + USER_MONEY);
                 }
             } else {
                 if (numberInCard)
                     System.out.println("Too bad! " + randomNumber + " won't get marked!");
             }
 
-            printlnInteractive((numberInCard ? "\nMay ara" : "Wala") + " ka " + randomNumber + "!");
+            System.out.println((numberInCard ? "\nMay ara" : "\nWala") + " ka " + randomNumber + "!");
+            Thread.sleep(2000);
         }
     }
 
@@ -433,12 +437,11 @@ public class BINGO {
                 currentNumRepr = card_repr.charAt(j + (i * LENGTH));
                 currentNum = getReprNumber(currentNumRepr);
 
-                if (isPlayer && USER_MARKED_NUM_REPR.indexOf(currentNumRepr) == -1) {
-                    isMarked = false;
-                }
-
                 isMiddle = currentNumRepr == FREE_SPACE;
                 isMarked = ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1 || isMiddle;
+
+                if (isPlayer && USER_MARKED_NUM_REPR.indexOf(currentNumRepr) == -1 && !isMiddle)
+                    isMarked = false;
 
                 if (isMarked) {
                     System.out.print(isMiddle ? "FS" : ("(" + currentNum + ")"));
