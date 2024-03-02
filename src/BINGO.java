@@ -155,10 +155,10 @@ public class BINGO {
 
         // NAME CREATION
         while (true) {
-            System.out.print("\nWhat would you like to name yourself?: ");
+            System.out.print("\nWhat is your name?: ");
             USERNAME = SCANNER.nextLine();
             if (USERNAME.equalsIgnoreCase(COMP_NAME)) {
-                System.out.println("You cannot name yourself as '" + USERNAME + "'!");
+                System.out.println("You cannot name yourself as '" + USERNAME + "'.");
                 System.out.println("Please use another name!\n");
                 continue;
             } else if (USERNAME.isBlank() || USERNAME.isEmpty()) {
@@ -168,6 +168,7 @@ public class BINGO {
             if (isYesWhenPrompted("You're sure with '" + USERNAME + "'?"))
                 break;
         }
+
         cls();
         System.out.println(BINGOASCII);
         System.out.println("\nWELCOME, " + USERNAME + "!");
@@ -175,8 +176,9 @@ public class BINGO {
         // HELP MODULE
         if (isYesWhenPrompted("\nDo you want to go to the turorial first?"))
             playTutorial();
-        System.out.println(
-                "\nYou start with P" + STARTING_MONEY + ", but you get to have one card for free in your first game!");
+
+        cls();
+
         USER_CARD_COUNT = COMP_CARD_COUNT = 1;
 
         do {
@@ -240,6 +242,10 @@ public class BINGO {
                 }
             }
 
+            if (ROUNDS_COUNT == 0)
+                System.out.println("You start with P" + STARTING_MONEY
+                        + ", but you get to have one card for free in your first game!");
+
             // DEFAULT PATTERNS
             if (PATTERN_COUNT == 0) {
                 System.out.println("\nDEFAULT WINNING PATTERNS: X, VERTICAL, HORIZONTAL, AND BLACKOUT");
@@ -267,17 +273,22 @@ public class BINGO {
     }
 
     static void bingoGameLoop() throws IOException, InterruptedException {
-        char randomNumberRepr;
         int randomNumber;
+        char randomNumberRepr;
+
         int winningCardNo;
+        int playerCheckingCounter;
+        String checkedPlayer;
+
+        char membership;
+        double deduction = 2.5;
+        int sleepDuration;
         boolean numberInCard;
         boolean numberIsInCardSaysUser;
-        String checkedPlayer;
-        int playerCheckingCounter;
-        double deduction = 2.5;
 
         while (true) {
             cls();
+            sleepDuration = 2500;
 
             System.out.println(USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
             printCardsUpdatePatterns(USERNAME);
@@ -323,39 +334,47 @@ public class BINGO {
             ROLLED_NUMBERS_REPR += randomNumberRepr;
             randomNumber = getReprNumber(randomNumberRepr);
             numberInCard = USER_CARDS_REPR.indexOf(randomNumberRepr) != -1;
+            membership = BINGO.charAt((randomNumber - (randomNumber % 16)) / 15);
 
-            for (int i = 0; i < getRandomNumber(15, 26); i++) {
+            for (int i = 0; i < getRandomNumber(50, 101); i++) {
                 System.out.print("\rSa letra sang... ");
                 System.out.print(BINGO.charAt(getRandomNumber(0, BINGO.length())));
-                Thread.sleep(50);
+                Thread.sleep(12);
             }
 
-            System.out.print("\b" + BINGO.charAt((randomNumber - (randomNumber % 16)) / 15) + "!\n");
+            System.out.print("\b" + membership + "!\n");
 
-            for (int i = 0; i < getRandomNumber(15, 26); i++) {
+            for (int i = 0; i < getRandomNumber(25, 75); i++) {
                 System.out.print(getRandomNumber(1, BINGOMAX + 1) + "\r");
                 Thread.sleep(25);
             }
 
-            System.out.println(randomNumber + "!\n");
+            System.out.println(membership + " " + randomNumber + "!\n");
             numberIsInCardSaysUser = isYesWhenPrompted("Do you have " + randomNumber + " in any of your card?");
 
-            if (numberIsInCardSaysUser) {
-                if (numberInCard) {
+            System.out.println();
+
+            if (numberInCard) {
+                if (numberIsInCardSaysUser) {
                     USER_MARKED_NUM_REPR += randomNumberRepr;
-                    System.out.println("You bet you do!");
+                    System.out.println("You do!");
                 } else {
-                    USER_MONEY -= deduction;
-                    System.out.println("Incorrect! " + deduction + " Has been deducted from your money!");
-                    System.out.println("Remaining balance: P" + USER_MONEY);
+                    System.out.println("You do have " + randomNumber + ". Too bad it won't get marked!");
+                    sleepDuration = 2500;
                 }
             } else {
-                if (numberInCard)
-                    System.out.println("Too bad! " + randomNumber + " won't get marked!");
+                if (numberIsInCardSaysUser) {
+                    USER_MONEY -= deduction;
+                    System.out.println("You don't! P" + deduction + " nas been deducted from you.");
+                    System.out.println("Remaining balance: P" + USER_MONEY);
+                    sleepDuration = 4000;
+                } else {
+                    System.out.println("You don't have " + randomNumber + ".");
+                }
             }
 
-            System.out.println((numberInCard ? "\nMay ara" : "\nWala") + " ka " + randomNumber + "!");
-            Thread.sleep(2000);
+            System.out.println();
+            Thread.sleep(sleepDuration);
         }
     }
 
