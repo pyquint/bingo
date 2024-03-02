@@ -626,107 +626,93 @@ public class BINGO {
         return bits;
     }
 
-
-    static void mainOption(){
-        Scanner scan = new Scanner(System.in);
-
-        String subOption = ("\n1. Enter New Game"+ "\n2. Back to Menu");
-                System.out.println(subOption);
-                System.out.print("Enter your choice: ");
-                int option = scan.nextInt();
-                
-                if (option == 1){
-                    printlnInteractive("You're all settled. Good luck and have fun!");
-                }else if (option == 2){
-                    playTutorial();
-                }else{
-                    printlnInteractive("Invalid input.");
-                    mainOption();
-                }
-    }
-
-    static void playTutorial(){
+    static void playTutorial() throws IOException, InterruptedException {
+        cls();
         System.out.println("Hello! Welcome to the BINGO tutorial!");
-        tutorials();
 
-    }
+        while (true) {
+            System.out.println("TUTORIAL\n");
+            System.out.println("""
+                    What do you want to know?
+                    1. Mechanics
+                    2. Buying Cards
+                    3. Creating Patterns
+                    4. Enter Game""");
+            System.out.print("Enter your choice: ");
+            String choice = SCANNER.nextLine();
 
-    static void tutorials() {
-        // Queenielyn
-        Scanner scan = new Scanner(System.in);
-        String tutorial = ( "What do you want to know?" + "\n1. Mechanics"+"\n2. Buy Cards" + 
-        "\n3. Create Patterns" + "\n4. Enter Game");
-        System.out.println(tutorial);
-        System.out.print("Enter your choice: ");
-        int choice = scan.nextInt();
+            switch (choice) {
+            case ("1") -> {
+                cls();
+                printInteractive("MECHANICS");
+                printlnInteractive("BINGO is a game of chance.");
+                printlnInteractive("Once every turn, a number is rolled randomly.");
+                printlnInteractive("""
+                        On a BINGO card that looks something like this:
 
-        if (choice == 1){
-            printInteractive("Mechanics");
-            printlnInteractive("BINGO is a game of chance.");
-            printlnInteractive("Once every turn, a number is rolled randomly.");
-            printlnInteractive("""
-                On a BINGO card that looks something like this:
-                12\t22\t43\t51\t72\n
-                5\t23\t35\t57\t61\n
-                9\t28\tB\t48\t69\n
-                11\t29\t41\t49\t62\n
-                6\t19\t42\t50\t65\n
-                if the rolled number is present, that square gets marked.""");
-            printlnInteractive("""
-                The middle, denoted B, is a sort of free square.
-                Consider it already marked.""");
-            printlnInteractive("""
-            The game has 2 winning patterns:
-                1. The Default Patterns:
-                    The game is won if five (5) marks in a row is achieved,
-                    either vertically, horizontally, or diagonally.
-                2. Customized Patterns
-                    The game is won if one if the host's customized patterns is achieved.
-            """);
-            printlnInteractive("The winner gets P20.00 after the game ends.");
-            printlnInteractive("If the user or the computer reaches P0.00, then the game will be over.");
-            
-            mainOption();
+                        B\tI\tN\tG\tO
+                        12\t22\t43\t51\t72
+                        5\t23\t35\t57\t61
+                        9\t28\tFS\t48\t69
+                        11\t29\t41\t49\t62
+                        6\t19\t42\t50\t65
 
-        }else if (choice == 2){
-            printlnInteractive("Buy Cards");
-            printlnInteractive("Once the first game ends, you can buy new cards");
-            printlnInteractive("1 card = P5.00");
-            printlnInteractive("You can buy new cards as much as you want as long as it's within your current money.");
-            mainOption();
-        }else if (choice == 3){
-            printlnInteractive("Create Patterns");
-            printlnInteractive("Welcome, Host!");
-            printlnInteractive("You can create patterns with the Pattern Maker TOol.");
-            printlnInteractive("""
-                Pattern Maker Tool
-                (-)\t-\t-\t-\t-\n
-                -\t-\t-\t-\t-\n
-                -\t-\tB\t-\t-\n
-                -\t-\t-\t-\t-\n
-                -\t-\t-\t-\t-\n 
-            """);
-            printlnInteractive("First, select which coordinates you want to mark as part of the winning pattern.");
-            printlnInteractive("To move the selection type: ");
-            printlnInteractive("'w' - moves upward");
-            printlnInteractive("'s' - moves downward");
-            printInteractive("'a' - moves to the left");
-            printlnInteractive("'d' - moves to the right.");
-            printlnInteractive("You can mark the whole row by typing 'x'.");
-            printlnInteractive("You can mark the whole column by typing 'z'.");
-            printlnInteractive("You can reset all the customized pattern by typing 'r'.");
-            printlnInteractive("If you're done or you don't want to make patterns, type 'e'.");
-            mainOption();
+                        if the rolled number is present, that square gets marked.""");
+                printlnInteractive("""
+                        The middle, denoted FS, is a free square.
+                        Consider it already marked.""");
+                printlnInteractive("""
+                        The game has 2 winning patterns:
+                        1. The Default Patterns:
+                        The game is won if five (5) marks in a row is achieved,
+                        either vertically, horizontally, or diagonally.
+                        2. Customized Patterns
+                        The game is won if one if the host's customized patterns is achieved.
+                        """);
+                printlnInteractive("The winner gets P20.00 after the game ends.");
+                printlnInteractive("If the user or the computer reaches P0.00, then the game will be over.");
+            }
+            case "2" -> {
+                cls();
+                printlnInteractive("BUYING CARDS");
+                printlnInteractive("Once the first game ends, you can buy new cards");
+                printlnInteractive("1 card = P5.00");
+                printlnInteractive(
+                        "You can buy new cards as much as you want as long as it's within your current money.");
+            }
+            case "3" -> {
+                cls();
+                printlnInteractive("CREATING PATTERNS");
+                printlnInteractive("Welcome, Host!");
+                printlnInteractive("You can create patterns with the Pattern Maker TOol.");
+                printlnInteractive("""
+                        Pattern Maker Tool:
+                        B\tI\tN\tG\tO
+                        (-)\t-\t-\t-\t-
+                        -\t-\t-\t-\t-
+                        -\t-\tB\t-\t-
+                        -\t-\t-\t-\t-
+                        -\t-\t-\t-\t-""");
+                printlnInteractive("First, select which coordinates you want to mark as part of the winning pattern.");
+                printlnInteractive("To move the selection type: ");
+                printlnInteractive("'w' - moves upward");
+                printlnInteractive("'s' - moves downward");
+                printlnInteractive("'a' - moves to the left");
+                printlnInteractive("'d' - moves to the right.");
+                printlnInteractive("You can mark the whole row by typing 'x'.");
+                printlnInteractive("You can mark the whole column by typing 'z'.");
+                printlnInteractive("You can reset all the customized pattern by typing 'r'.");
+                printlnInteractive("If you're done or you don't want to make patterns, type 'e'.");
 
-        }else if (choice == 4){
-            printlnInteractive("You're all settled. Good luck and have fun!");
-        }else{
-            printlnInteractive("Invalid input!");
-            playTutorial();
-
+            }
+            case "4" -> {
+                printlnInteractive("You're all settled. Good luck and have fun!");
+                break;
+            }
+            default -> printlnInteractive("Invalid input!");
+            }
+            cls();
         }
-        
-        
     }
 
     static boolean isYesWhenPrompted(String prompt) {
