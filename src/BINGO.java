@@ -260,10 +260,10 @@ public class BINGO {
             // first game
             if (ROUNDS_COUNT == 0)
                 System.out.println("You start with P" + STARTING_MONEY
-                        + ", but you get to have one card for free in your first game!");
+                        + ", but you get to have one card for free in your first game!\n");
 
             // DEFAULT PATTERNS
-            System.out.println("\nDEFAULT PATTERNS: X, VERTICAL, HORIZONTAL, DIAGONAL, AND BLACKOUT");
+            System.out.println("DEFAULT PATTERNS: X, VERTICAL, HORIZONTAL, DIAGONAL, AND BLACKOUT");
             if (CUSTOM_PATTERN_COUNT != 0)
                 System.out.println(
                         "CUSTOM PATTERNS: " + CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2));
@@ -305,9 +305,9 @@ public class BINGO {
         game: while (true) {
             cls();
 
-            System.out.println(USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
+            System.out.println("**** " + USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + " ****");
             printCardsUpdatePatterns(USERNAME);
-            System.out.println("\n" + COMP_NAME + "'S " + ((COMP_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
+            System.out.println("\n**** " + COMP_NAME + "'S " + ((COMP_CARD_COUNT > 1) ? "CARDS" : "CARD") + " ****");
             printCardsUpdatePatterns(COMP_NAME);
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
@@ -335,6 +335,28 @@ public class BINGO {
                     PLAYER_WIN_COUNT++;
                     if (USER_MONEY > MAX_MONEY_HELD)
                         MAX_MONEY_HELD = USER_MONEY;
+
+                    System.out.println("""
+                            ⠀⠀⠀⠀⠀⢀⠤⠐⠒⠀⠀⠀⠒⠒⠤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⠀⠀⡠⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠑⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⠀⡔⠁⠀⠀⠀⠀⠀⢰⠁⠀⠀⠀⠀⠀⠀⠈⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⢰⠀⠀⠀⠀⠀⠀⠀⣾⠀⠀⠔⠒⠢⠀⠀⠀⢼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⡆⠀⠀⠀⠀⠀⠀⠀⠸⣆⠀⠀⠙⠀⠀⠠⠐⠚⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⠇⠀⠀⠀⠀⠀⠀⠀⠀⢻⠀⠀⠀⠀⠀⠀⡄⢠⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀
+                            ⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⣀⣀⡠⡌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⢄⣲⣬⣶⣿⣿⡇⡇⠀
+                            ⠀⠀⠆⠀⠀⠀⠀⠀⠀⠀⠘⡆⠀⠀⢀⣀⡀⢠⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⢴⣾⣶⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
+                            ⠀⠀⢸⠀⠀⠀⠀⠠⢄⠀⠀⢣⠀⠀⠑⠒⠂⡌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢿⣿⣿⣿⣿⣿⣿⣿⡇⠀
+                            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠑⠤⡀⠑⠀⠀⠀⡘⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⣡⣿⣿⣿⣿⣿⣿⣿⣇⠀
+                            ⠀⠀⢀⡄⠀⠀⠀⠀⠀⠀⠀⠈⢑⠖⠒⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⣴⣿⣿⣿⡟⠁⠈⠛⠿⣿⠀
+                            ⠀⣰⣿⣿⣄⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢈⣾⣿⣿⣿⠏⠀⠀⠀⠀⠀⠈⠀
+                            ⠈⣿⣿⣿⣿⣷⡤⣀⡀⠀⠀⢀⠎⣦⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣢⣿⣿⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⠘⣿⣿⣿⣿⣿⣄⠈⢒⣤⡎⠀⢸⣿⣿⣿⣷⣶⣤⣄⣀⠀⠀⠀⢠⣽⣿⠿⠿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                            ⠀⠀⠹⣿⣿⣿⣿⣿⣾⠛⠉⣿⣦⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡗⣰⣿⣿⣿⠀⠀⣿⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀
+                            ⠀⠀⡰⠋⠉⠉⠉⣿⠉⠀⠀⠉⢹⡿⠋⠉⠉⠉⠛⢿⣿⠉⠉⠋⠉⠉⠻⣿⠀⠀⣿⠞⠉⢉⣿⠚⠉⠉⠉⣿⠀
+                            ⠀⠀⢧⠀⠈⠛⠿⣟⢻⠀⠀⣿⣿⠁⠀⣾⣿⣧⠀⠘⣿⠀⠀⣾⣿⠀⠀⣿⠀⠀⠋⠀⢰⣿⣿⡀⠀⠛⠻⣟⠀
+                            ⠀⠀⡞⠿⠶⠄⠀⢸⢸⠀⠀⠿⢿⡄⠀⠻⠿⠇⠀⣸⣿⠀⠀⣿⣿⠀⠀⣿⠀⠀⣶⡀⠈⢻⣿⠿⠶⠆⠀⢸⡇
+                            ⠀⠀⠧⢤⣤⣤⠴⠋⠈⠦⣤⣤⠼⠙⠦⢤⣤⡤⠶⠋⠹⠤⠤⠿⠿⠤⠤⠿⠤⠤⠿⠳⠤⠤⠽⢤⣤⣤⠴⠟⠀
+                                """);
                 }
 
                 System.out.println(checkedPlayer + " wins P" + PRIZE_PER_WIN + ".\n");
@@ -366,7 +388,7 @@ public class BINGO {
             }
 
             System.out.println(membership + " " + randomNumber + "!\n");
-            numberIsInCardSaysUser = isYesWhenPrompted("Do you have " + randomNumber + " in any of your card?");
+            numberIsInCardSaysUser = isYesWhenPrompted("Do you have " + randomNumber + " in any of your carda?");
 
             System.out.println();
 
@@ -374,12 +396,12 @@ public class BINGO {
                 System.out.print("May ara ka sang " + randomNumber + ". ");
                 if (numberIsInCardSaysUser) {
                     USER_MARKED_NUM_REPR += randomNumberRepr;
-                    System.out.print("Markahan ang card...");
+                    System.out.print("Markahan ang imo card...");
                 } else {
-                    System.out.println("Sayang, hindi pag markahan.");
+                    System.out.println("Nugon, hindi pag markahan.");
                 }
             } else {
-                System.out.print("Wala ka sang " + randomNumber + ". ");
+                System.out.print("Wala ka " + randomNumber + ". ");
                 if (numberIsInCardSaysUser) {
                     USER_MONEY -= deduction;
                     System.out.println("Buhinan imo kwarta P" + deduction + ".");
@@ -517,14 +539,12 @@ public class BINGO {
          * shifted by i, e.g. 01 | 1 << 1 (index 1) --> 01 | 10 --> 11
          */
 
-        // @formatter:off
-        // * This is what the indices would look like:
+        // This is what the indices would look like:
         // * 24 23 22 21 20
         // * 19 18 17 16 15
         // * 14 13 12 11 10
         // * 09 08 07 06 05
         // * 04 03 02 01 00
-        // @formatter:on
 
         char currChar;
         int leftIndex, topIndex;
@@ -577,7 +597,7 @@ public class BINGO {
                 }
             }
 
-            System.out.println("\n'*' : Marked\t '-' :Unmarked\n");
+            System.out.println("\n'*' : Marked\t'-' :Unmarked\n");
             System.out.println("[wasd]\tMove selection");
             System.out.println("[" + markUnmarkSqr + "]\tFlip selection");
             System.out.println("[" + markUnmarkRow + "]\tFlip whole row");
@@ -586,75 +606,71 @@ public class BINGO {
             System.out.println("[" + resetPattern + "]\tReset pattern");
             System.out.println("[" + exitPattTool + "]\tExit Tool");
 
-            while (true) {
-                System.out.print("\nAction: ");
-                action = SCANNER.nextLine().toLowerCase().strip();
+            System.out.print("\nAction: ");
 
-                if (action.equals(markUnmarkSqr)) {
-                    bits ^= 1 << currentSelection;
+            // @formatter:off
+            switch (SCANNER.nextLine().toLowerCase().strip()) {
+                case markUnmarkSqr -> bits ^= 1 << currentSelection;
+                case "w" -> {if (currentSelection < 20) currentSelection += 5;}
+                case "a" -> {if (currentSelection % 5 < 4) currentSelection += 1;}
+                case "s" -> {if (currentSelection > 4) currentSelection -= 5;}
+                case "d" -> {if (currentSelection % 5 > 0) currentSelection -= 1;}
 
-                } else if (action.equals("w") && currentSelection < 20) {
-                    currentSelection += 5;
-                } else if (action.equals("a") && currentSelection % 5 < 4) {
-                    currentSelection += 1;
-                } else if (action.equals("s") && currentSelection > 4) {
-                    currentSelection -= 5;
-                } else if (action.equals("d") && currentSelection % 5 > 0) {
-                    currentSelection -= 1;
-
-                } else if (action.equals(useCustomPatt)) {
-                    if (bits == 0) {
-                        printInteractive("Please mark something in the pattern.");
-                        break;
-                    } else if (DEFAULT_WINNING_PATTERNS_REPR.contains(bits + "")) {
-                        System.out.println("The current pattern is already a default pattern.");
-                        break;
-                    }
-                    System.out.print("What would you like to name the pattern?: ");
-                    String customPatternName = SCANNER.nextLine();
-                    CUSTOM_PATTERNS_REPR += bits + SEPARATOR_STRING;
-                    CUSTOM_PATTERN_NAMES += "\"" + customPatternName + "\", ";
-                    printInteractive("Added '" + customPatternName + "' as a winning pattern.");
-                    if (isYesWhenPrompted("Reset the grid?")) {
-                        bits = 0;
-                        currentSelection = MSB_INDEX;
-                    }
-
-                } else if (action.equals(resetPattern)) {
-                    if (isYesWhenPrompted("Are you sure you want to reset?")) {
-                        bits = 0;
-                        currentSelection = MSB_INDEX;
-                    }
-
-                } else if (action.equals(exitPattTool)) {
-                    if (bits > 0) {
-                        isInTool = !isYesWhenPrompted("Are you sure you want to discard changes and exit?");
-                    } else {
-                        isInTool = !isYesWhenPrompted("Are you sure you want to exit?");
-                    }
-
-                } else if (action.equals(markUnmarkRow)) {
+                case markUnmarkRow -> {
                     // leftIndex is the index of the current row's leftmost square
                     // (actually calculates the rightmost since we iterate backwards)
                     leftIndex = currentSelection - (currentSelection % 5);
                     for (int j = 0; j < 5; j++) {
                         bits ^= 1 << leftIndex + j;
                     }
+                }
 
-                } else if (action.equals(markUnmarkCol)) {
+                case markUnmarkCol -> {
                     // topIndex is the index of the current column's topmost square
                     // (is not reversed since up is up regardless of direction)
                     topIndex = currentSelection % 5;
                     for (int k = 0; k < 5; k++) {
                         bits ^= 1 << topIndex + k * 5;
                     }
-
-                } else {
-                    System.out.println("Invalid input.");
-                    continue;
                 }
-                break;
+
+                case useCustomPatt -> {
+                    if (bits == 0) {
+                        printInteractive("Please mark something in the pattern.");
+                    } else if (DEFAULT_WINNING_PATTERNS_REPR.contains(bits + "")) {
+                        System.out.println("The current pattern is already a default pattern.");
+                    }
+
+                    System.out.print("What would you like to name the pattern?: ");
+                    String customPatternName = SCANNER.nextLine();
+                    CUSTOM_PATTERNS_REPR += bits + SEPARATOR_STRING;
+                    CUSTOM_PATTERN_NAMES += "\"" + customPatternName + "\", ";
+                    printInteractive("Added '" + customPatternName + "' as a winning pattern.");
+
+                    if (isYesWhenPrompted("Reset the grid?")) {
+                        bits = 0;
+                        currentSelection = MSB_INDEX;
+                    }
+                }
+
+                case resetPattern -> {
+                    if (isYesWhenPrompted("Are you sure you want to reset?")) {
+                        bits = 0;
+                        currentSelection = MSB_INDEX;
+                    }
+                }
+
+                case exitPattTool -> {
+                    if (bits > 0) {
+                        isInTool = !isYesWhenPrompted("Are you sure you want to discard changes and exit?");
+                    } else {
+                        isInTool = !isYesWhenPrompted("Are you sure you want to exit?");
+                    }
+                }
+
+                default -> printInteractive("Invalid input.");
             }
+            // @formatter:on
         } while (isInTool);
     }
 
@@ -700,7 +716,6 @@ public class BINGO {
             }
         }
         return -1;
-
     }
 
     static int convertPattToInt(String pattern) {
@@ -728,7 +743,8 @@ public class BINGO {
                     1. Base Mechanics
                     2. Money and Buying Cards
                     3. Creating Patterns
-                    4. Enter Game
+
+                    4. Start Game!
                     """);
             System.out.print("Enter your choice: ");
 
