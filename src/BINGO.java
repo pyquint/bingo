@@ -9,18 +9,21 @@ public class BINGO {
     /*
      * We limited ourselves with discussed programming constructs
      * and the allowed Random module for as much as possible.
-     * But alas have utilized some higher-level techniques, for
-     * aesthetic, and code reusability, and maintainability purposes
+     * But alas we have utilized some higher-level techniques, for
+     * aesthetic, code reusability, and code maintainability purposes
      * (functions, clearing of the terminal, Thread sleep printing, etc.).
      *
      * While you may want to gouge your eyes after looking at the code, do know
      * the deficiency and limitations in the knowledge of the programmers and
-     * goal to be in compliance with the requirements of the project.
+     * the desired goal of compliance with the requirements of the project.
      *
      * Good day and have fun playing BINGO!
      */
 
     // GLOBAL VARIABLES
+    static final Random RAND = new Random();
+    static final Scanner SCANNER = new Scanner(System.in);
+    static final ProcessBuilder cmdProcess = new ProcessBuilder("cmd", "/c", "cls").inheritIO();
 
     // " " (32 in ASCII) AS SEPARATOR FOR PATTERN AND "!" AS FREE SPACE IN REPR
     static final char SEPARATOR_CHAR = 32;
@@ -28,13 +31,17 @@ public class BINGO {
     static final int ASCII_MIN = FREE_SPACE + 1;
     static final String SEPARATOR_STRING = " ";
     static final String GRID_SEP = "\t";
+
     static final int BINGO_MAX = 75;
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSB_INDEX = LENGTH - 1;
+
     static final double CARD_COST = 5;
     static final double PRIZE_PER_WIN = 20;
     static final double STARTING_MONEY = 25;
+    static final String COMP_NAME = "COMP";
+
     // keybindings for the pattern maker tool
     static final String markUnmarkSqr = "q";
     static final String markUnmarkCol = "z";
@@ -42,6 +49,7 @@ public class BINGO {
     static final String resetPattern = "r";
     static final String useCustomPatt = "t";
     static final String exitPattTool = "e";
+
     static final String DEFAULT_WINNING_PATTERNS_REPR = (
             convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING +
                     convertPattToInt("*************************") + SEPARATOR_STRING +
@@ -56,7 +64,6 @@ public class BINGO {
                     convertPattToInt("---------------*****-----") + SEPARATOR_STRING +// hRow 4
                     convertPattToInt("--------------------*****") + SEPARATOR_STRING); // hRow 5
 
-
     /*
      * There is NO SEPARATOR between card reprs, only in pattern reprs, since we can
      * control the printing of card repr, and there is no need to print patterns
@@ -66,10 +73,7 @@ public class BINGO {
      * LENGTH], where start = i * LENGTH. However, if you decided to add separation,
      * use start = i * LENGTH + (i * 1).
      */
-    static final String COMP_NAME = "COMP";
-    static Random RAND = new Random();
-    static Scanner SCANNER = new Scanner(System.in);
-    static ProcessBuilder cmdProcess = new ProcessBuilder("cmd", "/c", "cls").inheritIO();
+
     static String WINNING_PATTERNS_REPR;
     static String CUSTOM_PATTERNS_REPR;
     static int CUSTOM_PATTERN_COUNT;
@@ -237,7 +241,7 @@ public class BINGO {
 
             // CUSTOM PATTERNS
             if (CUSTOM_PATTERN_COUNT == 0) {
-                isCreatingPattern = isYesWhenPrompted("\nDo you want to create custom winning patterns?");
+                isCreatingPattern = isYesWhenPrompted("Do you want to create custom winning patterns?");
             } else {
                 if (!isYesWhenPrompted("Reuse custom patterns?")) CUSTOM_PATTERNS_REPR = CUSTOM_PATTERN_NAMES = "";
                 isCreatingPattern = isYesWhenPrompted("Do you want to create more");
@@ -298,7 +302,7 @@ public class BINGO {
 
             System.out.println(USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
             printCardsUpdatePatterns(USERNAME);
-            System.out.println("\n" + COMP_NAME + ((COMP_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
+            System.out.println("\n" + COMP_NAME + "'S " + ((COMP_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
             printCardsUpdatePatterns(COMP_NAME);
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
@@ -568,6 +572,7 @@ public class BINGO {
                 }
             }
 
+            System.out.println("\n'*' : Marked\t '-' :Unmarked\n");
             System.out.println("[wasd]\tMove selection");
             System.out.println("[" + markUnmarkSqr + "]\tFlip selection");
             System.out.println("[" + markUnmarkRow + "]\tFlip whole row");
@@ -595,6 +600,9 @@ public class BINGO {
                 } else if (action.equals(useCustomPatt)) {
                     if (bits == 0) {
                         printInteractive("Please mark something in the pattern.");
+                        break;
+                    } else if (DEFAULT_WINNING_PATTERNS_REPR.contains(bits + "")) {
+                        System.out.println("The current pattern is already a default pattern.");
                         break;
                     }
                     System.out.print("What would you like to name the pattern?: ");
