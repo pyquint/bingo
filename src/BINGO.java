@@ -53,7 +53,7 @@ public class BINGO {
 
     // @formatter:off
     static final String DEFAULT_WINNING_PATTERNS_REPR = (
-            + convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING // cross
+              convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING // cross
             + convertPattToInt("*************************") + SEPARATOR_STRING // blackout
             + convertPattToInt("*----*----*----*----*----") + SEPARATOR_STRING // col 1
             + convertPattToInt("-*----*----*----*----*---") + SEPARATOR_STRING // col 2
@@ -66,9 +66,9 @@ public class BINGO {
             + convertPattToInt("---------------*****-----") + SEPARATOR_STRING // row 4
             + convertPattToInt("--------------------*****") + SEPARATOR_STRING // row 5
     );
-    //@formatter:on
+    // @formatter:on
 
-    //default pattern random variable
+    // default pattern random variable
     static int randPattern = RAND.nextInt(4) + 1;
 
     /*
@@ -267,7 +267,7 @@ public class BINGO {
 
             // DEFAULT PATTERNS
             System.out.println("DEFAULT PATTERNS: X, VERTICAL, HORIZONTAL, DIAGONAL, AND BLACKOUT");
-            defaultPatternRandom(); // Needs test if working 
+            defaultPatternRandom(); // Needs test if working
             if (CUSTOM_PATTERN_COUNT != 0)
                 System.out.println(
                         "CUSTOM PATTERNS: " + CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2));
@@ -302,8 +302,7 @@ public class BINGO {
         String checkedPlayer;
         boolean numberIsInCardSaysUser;
 
-        game:
-        while (true) {
+        game: while (true) {
             cls();
 
             System.out.println("**** " + USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + " ****");
@@ -731,6 +730,8 @@ public class BINGO {
         String blackoutPattern;
         String verticalPattern;
         String horizontalPattern;
+
+        // @formatter:off
         switch (randPattern) {
             case (1) -> {
                 System.out.println("Default Pattern Crosswise!");
@@ -761,7 +762,7 @@ public class BINGO {
                 WINNING_PATTERNS_REPR = horizontalPattern;
             }
         }
-
+        // @formatter:on
     }
 
     static void playTutorial() throws IOException, InterruptedException {
@@ -769,8 +770,7 @@ public class BINGO {
         printlnInteractive("Hello! Welcome to the BINGO tutorial!");
 
         // Limit the output to about 50 characters.
-        tutorial:
-        while (true) {
+        tutorial: while (true) {
             cls();
             System.out.println("BINGO TUTORIAL\n");
             System.out.println("""
@@ -783,6 +783,7 @@ public class BINGO {
                     """);
             System.out.print("Enter your choice: ");
 
+            // @formatter:off
             switch (SCANNER.nextLine()) {
 
                 case ("1") -> {
@@ -972,6 +973,7 @@ public class BINGO {
                 }
                 default -> printlnInteractive("\nInvalid input!");
             }
+            // @formatter:on
         }
         cls();
     }
