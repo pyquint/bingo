@@ -51,6 +51,9 @@ public class BINGO {
     static final String resetPattern = "r";
     static final String exitPattTool = "e";
 
+    //default pattern random variable
+    int randPattern = RAND.nextInt(4)+1;
+
     static final String DEFAULT_WINNING_PATTERNS_REPR = ("" // for formatting only
 
             + convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING // cross
