@@ -7,15 +7,15 @@ public class BINGO {
     // Best played in a vertical terminal.
 
     /*
-     * We limited ourselves with discussed programming constructs
-     * and the allowed Random module for as much as possible.
-     * But alas we have utilized some higher-level techniques, for
-     * aesthetic, code reusability, and code maintainability purposes
-     * (functions, clearing of the terminal, Thread sleep printing, etc.).
+     * We limited ourselves with discussed programming constructs and the allowed
+     * Random module for as much as possible. But alas we have utilized some
+     * higher-level techniques, for aesthetic, code reusability, and code
+     * maintainability purposes (functions, clearing of the terminal, Thread sleep
+     * printing, etc.).
      *
-     * While you may want to gouge your eyes after looking at the code, do know
-     * the deficiency and limitations in the knowledge of the programmers and
-     * the desired goal of compliance with the requirements of the project.
+     * While you may want to gouge your eyes after looking at the code, do know the
+     * deficiency and limitations in the knowledge of the programmers and the
+     * desired goal of compliance with the requirements of the project.
      *
      * Good day and have fun playing BINGO!
      */
@@ -46,23 +46,26 @@ public class BINGO {
     static final String markUnmarkSqr = "q";
     static final String markUnmarkCol = "z";
     static final String markUnmarkRow = "x";
-    static final String resetPattern = "r";
     static final String useCustomPatt = "t";
+    static final String resetPattern = "r";
     static final String exitPattTool = "e";
 
-    static final String DEFAULT_WINNING_PATTERNS_REPR = (
-            convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING +
-                    convertPattToInt("*************************") + SEPARATOR_STRING +
-                    convertPattToInt("*----*----*----*----*----") + SEPARATOR_STRING + // Vertical 1
-                    convertPattToInt("-*----*----*----*----*---") + SEPARATOR_STRING +// vrow 2
-                    convertPattToInt("--*----*----*----*----*--") + SEPARATOR_STRING +// vRow 3
-                    convertPattToInt("---*----*----*----*----*-") + SEPARATOR_STRING + // vRow 4
-                    convertPattToInt("----*----*----*----*----*") + SEPARATOR_STRING +// vRow 5
-                    convertPattToInt("*****--------------------") + SEPARATOR_STRING +// Horizontal 1
-                    convertPattToInt("-----*****---------------") + SEPARATOR_STRING +// hRow 2
-                    convertPattToInt("----------*****----------") + SEPARATOR_STRING +// hRow 3
-                    convertPattToInt("---------------*****-----") + SEPARATOR_STRING +// hRow 4
-                    convertPattToInt("--------------------*****") + SEPARATOR_STRING); // hRow 5
+    static final String DEFAULT_WINNING_PATTERNS_REPR = ("" // for formatting only
+
+            + convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING // cross
+            + convertPattToInt("*************************") + SEPARATOR_STRING // blackout
+            + convertPattToInt("*----*----*----*----*----") + SEPARATOR_STRING // col 1
+            + convertPattToInt("-*----*----*----*----*---") + SEPARATOR_STRING // col 2
+            + convertPattToInt("--*----*----*----*----*--") + SEPARATOR_STRING // col 3
+            + convertPattToInt("---*----*----*----*----*-") + SEPARATOR_STRING // col 4
+            + convertPattToInt("----*----*----*----*----*") + SEPARATOR_STRING // col 5
+            + convertPattToInt("*****--------------------") + SEPARATOR_STRING // row 1
+            + convertPattToInt("-----*****---------------") + SEPARATOR_STRING // row 2
+            + convertPattToInt("----------*****----------") + SEPARATOR_STRING // row 3
+            + convertPattToInt("---------------*****-----") + SEPARATOR_STRING // row 4
+            + convertPattToInt("--------------------*****") + SEPARATOR_STRING // row 5
+
+    );
 
     /*
      * There is NO SEPARATOR between card reprs, only in pattern reprs, since we can
@@ -74,26 +77,26 @@ public class BINGO {
      * use start = i * LENGTH + (i * 1).
      */
 
-    static String WINNING_PATTERNS_REPR;
-    static String CUSTOM_PATTERNS_REPR;
-    static int CUSTOM_PATTERN_COUNT;
-    static String CUSTOM_PATTERN_NAMES;
+    static String USERNAME;
     static String ROLLED_NUMBERS_REPR;
     static String USER_MARKED_NUM_REPR;
-    static int PATTERN_COUNT;
-    static int ROUNDS_COUNT;
-    static String USERNAME;
+    static String WINNING_PATTERNS_REPR;
+    static String CUSTOM_PATTERNS_REPR;
+    static String CUSTOM_PATTERN_NAMES;
     static String USER_CARDS_REPR;
-    static String USER_CARD_PATTERNS_REPR;
     static String COMP_CARDS_REPR;
+    static String USER_CARD_PATTERNS_REPR;
     static String COMP_CARD_PATTERNS_REPR;
+    static int PATTERN_COUNT;
+    static int CUSTOM_PATTERN_COUNT;
     static int USER_CARD_COUNT;
     static int COMP_CARD_COUNT;
-    static double USER_MONEY;
-    static double COMP_MONEY;
+    static int ROUNDS_COUNT;
     static int PLAYER_WIN_COUNT;
     static int COMP_WIN_COUNT;
     static int CARDS_BOUGHT;
+    static double USER_MONEY;
+    static double COMP_MONEY;
     static double MAX_MONEY_HELD;
 
     static String BINGO = "BINGO";
@@ -243,11 +246,13 @@ public class BINGO {
             if (CUSTOM_PATTERN_COUNT == 0) {
                 isCreatingPattern = isYesWhenPrompted("Do you want to create custom winning patterns?");
             } else {
-                if (!isYesWhenPrompted("Reuse custom patterns?")) CUSTOM_PATTERNS_REPR = CUSTOM_PATTERN_NAMES = "";
+                if (!isYesWhenPrompted("Reuse custom patterns?"))
+                    CUSTOM_PATTERNS_REPR = CUSTOM_PATTERN_NAMES = "";
                 isCreatingPattern = isYesWhenPrompted("Do you want to create more");
             }
 
-            if (isCreatingPattern) patternCreation();
+            if (isCreatingPattern)
+                patternCreation();
             CUSTOM_PATTERN_COUNT = occurenceOf(SEPARATOR_STRING, CUSTOM_PATTERNS_REPR);
 
             cls();
@@ -260,7 +265,8 @@ public class BINGO {
             // DEFAULT PATTERNS
             System.out.println("\nDEFAULT PATTERNS: X, VERTICAL, HORIZONTAL, DIAGONAL, AND BLACKOUT");
             if (CUSTOM_PATTERN_COUNT != 0)
-                System.out.println("CUSTOM PATTERNS: " + CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2));
+                System.out.println(
+                        "CUSTOM PATTERNS: " + CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2));
 
             WINNING_PATTERNS_REPR = DEFAULT_WINNING_PATTERNS_REPR + CUSTOM_PATTERNS_REPR;
             PATTERN_COUNT = occurenceOf(SEPARATOR_STRING, WINNING_PATTERNS_REPR);
@@ -296,8 +302,7 @@ public class BINGO {
         boolean numberInCard;
         boolean numberIsInCardSaysUser;
 
-        game:
-        while (true) {
+        game: while (true) {
             cls();
 
             System.out.println(USERNAME + "'S " + ((USER_CARD_COUNT > 1) ? "CARDS" : "CARD") + ":");
@@ -627,7 +632,6 @@ public class BINGO {
                     } else {
                         isInTool = !isYesWhenPrompted("Are you sure you want to exit?");
                     }
-                    printInteractive("Exiting Pattern Maker Tool...");
 
                 } else if (action.equals(markUnmarkRow)) {
                     // leftIndex is the index of the current row's leftmost square
@@ -655,8 +659,12 @@ public class BINGO {
     }
 
     static int cardContainsWinningPattern(String player) {
-        String cardPatternsRepr;
         int cardCount;
+        int winningPatternBits, cardPatternBits;
+        int nextCardSep, nextWinSep = 0;
+        int nextCardPatternIndex, nextWinningPatternIndex = 0;
+        String cardPatternsRepr;
+        String winningPatternRepr, cardPatternRepr;
 
         if (player.equals(COMP_NAME)) {
             cardPatternsRepr = COMP_CARD_PATTERNS_REPR;
@@ -666,41 +674,33 @@ public class BINGO {
             cardCount = USER_CARD_COUNT;
         }
 
-        int winningPatternBits, cardPatternBits;
-        int nextWinningPatternIndex = 0, nextCardPatternIndex;
-        String winningPatternRepr, patternRepr;
-        char currentWinningPatternChar, currentCardPatternChar;
-
         for (int patternCount = 0; patternCount < PATTERN_COUNT; patternCount++) {
-            winningPatternRepr = "";
-            nextCardPatternIndex = 0;
+            nextWinSep = WINNING_PATTERNS_REPR.substring(nextWinningPatternIndex).indexOf(SEPARATOR_CHAR)
+                    + nextWinningPatternIndex;
 
-            for (int i = 0; i < WINNING_PATTERNS_REPR.length(); i++) {
-                currentWinningPatternChar = WINNING_PATTERNS_REPR.charAt(i + nextWinningPatternIndex);
-                if (currentWinningPatternChar == SEPARATOR_CHAR)
-                    break;
-                winningPatternRepr += currentWinningPatternChar;
-            }
-            nextWinningPatternIndex += winningPatternRepr.length() + 1;
+            winningPatternRepr = WINNING_PATTERNS_REPR.substring(nextWinningPatternIndex, nextWinSep);
             winningPatternBits = Integer.parseInt(winningPatternRepr);
 
-            for (int count = 0; count < cardCount; count++) {
-                patternRepr = "";
+            nextWinningPatternIndex += winningPatternRepr.length() + 1;
 
-                for (int j = 0; j < cardPatternsRepr.length(); j++) {
-                    currentCardPatternChar = cardPatternsRepr.charAt(j + nextCardPatternIndex);
-                    if (currentCardPatternChar == SEPARATOR_CHAR)
-                        break;
-                    patternRepr += currentCardPatternChar;
-                }
-                nextCardPatternIndex += patternRepr.length() + 1;
-                cardPatternBits = Integer.parseInt(patternRepr);
+            nextCardPatternIndex = 0;
+            nextCardSep = 0;
+
+            for (int count = 0; count < cardCount; count++) {
+                nextCardSep = cardPatternsRepr.substring(nextCardPatternIndex).indexOf(SEPARATOR_CHAR)
+                        + nextCardPatternIndex;
+
+                cardPatternRepr = cardPatternsRepr.substring(nextCardPatternIndex, nextCardSep);
+                cardPatternBits = Integer.parseInt(cardPatternRepr);
+
+                nextCardPatternIndex += winningPatternRepr.length() + 1;
 
                 if ((winningPatternBits & cardPatternBits) == winningPatternBits)
                     return count + 1;
             }
         }
         return -1;
+
     }
 
     static int convertPattToInt(String pattern) {
@@ -720,8 +720,7 @@ public class BINGO {
         printlnInteractive("Hello! Welcome to the BINGO tutorial!");
 
         // Limit the output to about 50 characters.
-        tutorial:
-        while (true) {
+        tutorial: while (true) {
             cls();
             System.out.println("BINGO TUTORIAL\n");
             System.out.println("""
@@ -735,20 +734,71 @@ public class BINGO {
 
             switch (SCANNER.nextLine()) {
 
-                case ("1") -> {
-                    cls();
-                    System.out.println("BASE MECHANICS\n");
-                    printlnInteractive("BINGO is a game of chance.");
-                    printlnInteractive("Once every turn, a number is rolled randomly.");
-                    printlnInteractive("""
-                            The middle, denoted FS, means free square.
-                            Consider it already marked.""");
-                    System.out.println();
-                    cls();
+            case ("1") -> {
+                cls();
+                System.out.println("BASE MECHANICS\n");
+                printlnInteractive("BINGO is a game of chance.");
+                printlnInteractive("Once every turn, a number is rolled randomly.");
+                printlnInteractive("""
+                        The middle, denoted FS, means free square.
+                        Consider it already marked.""");
+                System.out.println();
+                cls();
 
+                printlnInteractive("""
+                        After a roll,
+                        on a BINGO card that looks like this:
+
+                        B\tI\tN\tG\tO
+                        12\t22\t43\t51\t72
+                        5\t23\t35\t57\t61
+                        9\t28\tFS\t48\t69
+                        11\t29\t41\t49\t62
+                        6\t19\t42\t50\t65
+
+                        You are prompted if the number is in one of your cards.""");
+                printlnInteractive("\n> IF you say yes and it is, the square gets marked.");
+                printlnInteractive("> If you say yes but it isn't, your money gets deducted.");
+                printlnInteractive("> If you say no but it is, it will not get marked.");
+                printlnInteractive("> IF you say no and it isn't, nothing will happen.");
+
+                cls();
+                printlnInteractive("""
+                        B\tI\tN\tG\tO
+                        12\t22\t43\t51\t72
+                        5\t23\t35\t57\t61
+                        9\t28\tFS\t48\t69
+                        11\t29\t41\t49\t62
+                        6\t19\t42\t50\t65
+                        """);
+
+                for (int i = 0; i < getRandomNumber(50, 76); i++) {
+                    System.out.print("\rSa letra sang... " + BINGO.charAt(getRandomNumber(0, 5)));
+                    Thread.sleep(25);
+                }
+
+                printInteractive("\bO!");
+
+                printlnInteractive("69!");
+
+                if (isYesWhenPrompted("Is 69 in the card?")) {
                     printlnInteractive("""
-                            After a roll,
-                            on a BINGO card that looks like this:
+
+                            You bet it is!
+                            May 69 ka!
+
+                            B\tI\tN\tG\tO
+                            12\t22\t43\t51\t72
+                            5\t23\t35\t57\t61
+                            9\t28\tFS\t48\t(69)
+                            11\t29\t41\t49\t62
+                            6\t19\t42\t50\t65
+
+                            [NOTE: The number was marked]""");
+                } else {
+                    printlnInteractive("""
+
+                            Di mo nakita. may ara ka 69!
 
                             B\tI\tN\tG\tO
                             12\t22\t43\t51\t72
@@ -757,170 +807,119 @@ public class BINGO {
                             11\t29\t41\t49\t62
                             6\t19\t42\t50\t65
 
-                            You are prompted if the number is in one of your cards.""");
-                    printlnInteractive("\n> IF you say yes and it is, the square gets marked.");
-                    printlnInteractive("> If you say yes but it isn't, your money gets deducted.");
-                    printlnInteractive("> If you say no but it is, it will not get marked.");
-                    printlnInteractive("> IF you say no and it isn't, nothing will happen.");
-
-                    cls();
-                    printlnInteractive("""
-                            B\tI\tN\tG\tO
-                            12\t22\t43\t51\t72
-                            5\t23\t35\t57\t61
-                            9\t28\tFS\t48\t69
-                            11\t29\t41\t49\t62
-                            6\t19\t42\t50\t65
-                            """);
-
-                    for (int i = 0; i < getRandomNumber(50, 76); i++) {
-                        System.out.print("\rSa letra sang... " + BINGO.charAt(getRandomNumber(0, 5)));
-                        Thread.sleep(25);
-                    }
-
-                    printInteractive("\bO!");
-
-                    printlnInteractive("69!");
-
-                    if (isYesWhenPrompted("Is 69 in the card?")) {
-                        printlnInteractive("""
-
-                                You bet it is!
-                                May 69 ka!
-
-                                B\tI\tN\tG\tO
-                                12\t22\t43\t51\t72
-                                5\t23\t35\t57\t61
-                                9\t28\tFS\t48\t(69)
-                                11\t29\t41\t49\t62
-                                6\t19\t42\t50\t65
-
-                                [NOTE: The number was marked]""");
-                    } else {
-                        printlnInteractive("""
-
-                                Di mo nakita. may ara ka 69!
-
-                                B\tI\tN\tG\tO
-                                12\t22\t43\t51\t72
-                                5\t23\t35\t57\t61
-                                9\t28\tFS\t48\t69
-                                11\t29\t41\t49\t62
-                                6\t19\t42\t50\t65
-
-                                [NOTE: The number was not marked.]""");
-                    }
-
-                    cls();
-                    printlnInteractive("The game has two types of patterns:");
-                    printInteractive("""
-
-                            1. CUSTOMIZED PATTERNS
-                            - The host is prompted whether to create custom patterns.
-                            - If the host does not wish so, the game uses back to default patterns.
-                            - The game is won if one of the host's customized patterns is achieved.
-                            """);
-                    printlnInteractive("""
-
-                            2. DEFAULT PATTERNS
-                            - The game is won if five (5) marks in a row is achieved,
-                            either vertically
-
-                            B\tI\tN\tG\tO
-                            (12)\t22\t43\t51\t72
-                            (5)\t23\t35\t57\t61
-                            (9)\t28\tFS\t48\t69
-                            (11)\t29\t41\t49\t62
-                            (6)\t19\t42\t50\t65
-
-                            (in any column),
-
-                            horizontally
-
-                            B\tI\tN\tG\tO
-                            12\t22\t43\t51\t72
-                            5\t23\t35\t57\t61
-                            (9)\t(28)\tFS\t(48)\t(69)
-                            11\t29\t41\t49\t62
-                            6\t19\t42\t50\t65
-
-                            (in any row),
-
-                            or diagonally
-
-                            B\tI\tN\tG\tO
-                            12\t22\t43\t51\t(72)
-                            5\t23\t35\t(57)\t61
-                            9\t28\tFS\t48\t69
-                            11\t(29)\t41\t49\t62
-                            (6)\t19\t42\t50\t65
-
-                            or special states like the CROSS (intersecting diagonals) or BLACKOUT (full card).""");
-
-                    cls();
-                    System.out.println("That's all for the base game mechanics!");
-                    printlnInteractive("Explore more of the tutorial or go straight to the game!");
+                            [NOTE: The number was not marked.]""");
                 }
 
-                case "2" -> {
-                    cls();
-                    System.out.println("MONEY AND BUYING CARDS\n");
-                    System.out.println("You enter with P" + STARTING_MONEY);
-                    printlnInteractive("But you start the game with one free card.");
-                    printlnInteractive("Once the first game ends, you can buy cards.");
+                cls();
+                printlnInteractive("The game has two types of patterns:");
+                printInteractive("""
 
-                    cls();
-                    printlnInteractive("\n1 card = P" + CARD_COST);
-                    printlnInteractive("\nAfter a game, the winner gets P" + PRIZE_PER_WIN);
-                    printInteractive("""
-                            You can buy new cards as much as you want
-                            as long as you can afford it.""");
-                    printInteractive("""
-                            If you or the computer reaches zero money,
-                            then the game is over.""");
-                    printlnInteractive("That's all about money system and buying cards!");
-                }
+                        1. CUSTOMIZED PATTERNS
+                        - The host is prompted whether to create custom patterns.
+                        - If the host does not wish so, the game uses back to default patterns.
+                        - The game is won if one of the host's customized patterns is achieved.
+                        """);
+                printlnInteractive("""
 
-                case "3" -> {
-                    cls();
-                    System.out.println("CREATING PATTERNS\n");
-                    printlnInteractive("Welcome, Host!");
-                    printlnInteractive("You can create patterns with the Pattern Maker Tool.");
-                    printlnInteractive("""
-                            PATTERN MAKER TOOL
+                        2. DEFAULT PATTERNS
+                        - The game is won if five (5) marks in a row is achieved,
+                        either vertically
 
-                            B\tI\tN\tG\tO
-                            [-]\t-\t-\t-\t-
-                            -\t-\t-\t-\t-
-                            -\t-\tFS\t-\t-
-                            -\t-\t-\t-\t-
-                            -\t-\t-\t-\t-
+                        B\tI\tN\tG\tO
+                        (12)\t22\t43\t51\t72
+                        (5)\t23\t35\t57\t61
+                        (9)\t28\tFS\t48\t69
+                        (11)\t29\t41\t49\t62
+                        (6)\t19\t42\t50\t65
 
-                            Action: (user input)
-                            """);
+                        (in any column),
 
-                    cls();
-                    System.out.println("[NOTE: All keys are inputted by typing into the terminal and then pressing ENTER]");
-                    printlnInteractive("\nFirst, select which square you want to mark as part of the winning pattern.\n");
-                    printlnInteractive("To move the selection:");
-                    printlnInteractive("'w' - moves upward.");
-                    printlnInteractive("'s' - moves downward.");
-                    printlnInteractive("'a' - moves to the left.");
-                    printlnInteractive("'d' - moves to the right.");
+                        horizontally
 
-                    printlnInteractive("\nThere are several ways we can modify the pattern:");
-                    printlnInteractive("'" + markUnmarkSqr + "' - mark the current square;");
-                    printlnInteractive("'" + markUnmarkCol + "' - mark the whole column where the selection lies;");
-                    printlnInteractive("'" + markUnmarkRow + "' - mark the whole row where the selections lies;");
-                    printlnInteractive("'" + resetPattern + "' - reset all the customized pattern;");
-                    printlnInteractive("'" + exitPattTool + "' - if you're done or you don't want to make patterns.");
-                }
-                case "4" -> {
-                    cls();
-                    printlnInteractive("You're all settled! Good luck and have fun!");
-                    break tutorial;
-                }
-                default -> printlnInteractive("\nInvalid input!");
+                        B\tI\tN\tG\tO
+                        12\t22\t43\t51\t72
+                        5\t23\t35\t57\t61
+                        (9)\t(28)\tFS\t(48)\t(69)
+                        11\t29\t41\t49\t62
+                        6\t19\t42\t50\t65
+
+                        (in any row),
+
+                        or diagonally
+
+                        B\tI\tN\tG\tO
+                        12\t22\t43\t51\t(72)
+                        5\t23\t35\t(57)\t61
+                        9\t28\tFS\t48\t69
+                        11\t(29)\t41\t49\t62
+                        (6)\t19\t42\t50\t65
+
+                        or special states like the CROSS (intersecting diagonals) or BLACKOUT (full card).""");
+
+                cls();
+                System.out.println("That's all for the base game mechanics!");
+                printlnInteractive("Explore more of the tutorial or go straight to the game!");
+            }
+
+            case "2" -> {
+                cls();
+                System.out.println("MONEY AND BUYING CARDS\n");
+                System.out.println("You enter with P" + STARTING_MONEY);
+                printlnInteractive("But you start the game with one free card.");
+                printlnInteractive("Once the first game ends, you can buy cards.");
+
+                cls();
+                printlnInteractive("\n1 card = P" + CARD_COST);
+                printlnInteractive("\nAfter a game, the winner gets P" + PRIZE_PER_WIN);
+                printInteractive("""
+                        You can buy new cards as much as you want
+                        as long as you can afford it.""");
+                printInteractive("""
+                        If you or the computer reaches zero money,
+                        then the game is over.""");
+                printlnInteractive("That's all about money system and buying cards!");
+            }
+
+            case "3" -> {
+                cls();
+                System.out.println("CREATING PATTERNS\n");
+                printlnInteractive("Welcome, Host!");
+                printlnInteractive("You can create patterns with the Pattern Maker Tool.");
+                printlnInteractive("""
+                        PATTERN MAKER TOOL
+
+                        B\tI\tN\tG\tO
+                        [-]\t-\t-\t-\t-
+                        -\t-\t-\t-\t-
+                        -\t-\tFS\t-\t-
+                        -\t-\t-\t-\t-
+                        -\t-\t-\t-\t-
+
+                        Action: (user input)
+                        """);
+
+                cls();
+                System.out.println("[NOTE: All keys are inputted by typing into the terminal and then pressing ENTER]");
+                printlnInteractive("\nFirst, select which square you want to mark as part of the winning pattern.\n");
+                printlnInteractive("To move the selection:");
+                printlnInteractive("'w' - moves upward.");
+                printlnInteractive("'s' - moves downward.");
+                printlnInteractive("'a' - moves to the left.");
+                printlnInteractive("'d' - moves to the right.");
+
+                printlnInteractive("\nThere are several ways we can modify the pattern:");
+                printlnInteractive("'" + markUnmarkSqr + "' - mark the current square;");
+                printlnInteractive("'" + markUnmarkCol + "' - mark the whole column where the selection lies;");
+                printlnInteractive("'" + markUnmarkRow + "' - mark the whole row where the selections lies;");
+                printlnInteractive("'" + resetPattern + "' - reset all the customized pattern;");
+                printlnInteractive("'" + exitPattTool + "' - if you're done or you don't want to make patterns.");
+            }
+            case "4" -> {
+                cls();
+                printlnInteractive("You're all settled! Good luck and have fun!");
+                break tutorial;
+            }
+            default -> printlnInteractive("\nInvalid input!");
             }
         }
         cls();
