@@ -666,14 +666,10 @@ public class BINGO {
 
     static void playTutorial() throws IOException, InterruptedException {
         cls();
-        String choice;
-        boolean inTutorial = true;
-
-        // Limit the output lines to about 50 characters.
-
         printlnInteractive("Hello! Welcome to the BINGO tutorial!");
 
-        while (inTutorial) {
+        // Limit the output to about 50 characters.
+        tutorial: while (true) {
             cls();
             System.out.println("BINGO TUTORIAL\n");
             System.out.println("""
@@ -684,9 +680,8 @@ public class BINGO {
                     4. Enter Game
                     """);
             System.out.print("Enter your choice: ");
-            choice = SCANNER.nextLine();
 
-            switch (choice) {
+            switch (SCANNER.nextLine()) {
 
             case ("1") -> {
                 cls();
@@ -725,7 +720,15 @@ public class BINGO {
                         11\t29\t41\t49\t62
                         6\t19\t42\t50\t65
                         """);
-                printlnInteractive("\nSa letra sang O! 69!");
+
+                for (int i = 0; i < getRandomNumber(50, 76); i++) {
+                    System.out.print("\rSa letra sang... " + BINGO.charAt(getRandomNumber(0, 5)));
+                    Thread.sleep(25);
+                }
+
+                printInteractive("\bO!");
+
+                printlnInteractive("69!");
 
                 if (isYesWhenPrompted("Is 69 in the card?")) {
                     printlnInteractive("""
@@ -846,30 +849,29 @@ public class BINGO {
 
                 cls();
                 System.out.println("[NOTE: All keys are inputted by typing into the terminal and then pressing ENTER]");
-                printlnInteractive("First, select which square you want to mark as part of the winning pattern.\n");
+                printlnInteractive("\nFirst, select which square you want to mark as part of the winning pattern.\n");
                 printlnInteractive("To move the selection:");
                 printlnInteractive("'w' - moves upward.");
                 printlnInteractive("'s' - moves downward.");
                 printlnInteractive("'a' - moves to the left.");
                 printlnInteractive("'d' - moves to the right.");
 
-                printlnInteractive("There are several ways we can modify the pattern:");
+                printlnInteractive("\nThere are several ways we can modify the pattern:");
                 printlnInteractive("'" + markUnmarkSq + "' - mark the current square;");
                 printlnInteractive("'" + markWholeCol + "' - mark the whole column where the selection lies;");
                 printlnInteractive("'" + markWholeRow + "' - mark the whole row where the selections lies;");
-                printlnInteractive("Or '" + resetPattern + "' - reset all the customized pattern;");
-
+                printlnInteractive("'" + resetPattern + "' - reset all the customized pattern;");
                 printlnInteractive("'" + exitPattTool + "' - if you're done or you don't want to make patterns.");
             }
             case "4" -> {
                 cls();
                 printlnInteractive("You're all settled! Good luck and have fun!");
-                inTutorial = false;
-                cls();
+                break tutorial;
             }
             default -> printlnInteractive("\nInvalid input!");
             }
         }
+        cls();
     }
 
     static boolean isYesWhenPrompted(String prompt) {
