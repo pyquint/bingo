@@ -267,6 +267,7 @@ public class BINGO {
 
             // DEFAULT PATTERNS
             System.out.println("DEFAULT PATTERNS: X, VERTICAL, HORIZONTAL, DIAGONAL, AND BLACKOUT");
+            defaultPatternRandom(); // Needs test if working 
             if (CUSTOM_PATTERN_COUNT != 0)
                 System.out.println(
                         "CUSTOM PATTERNS: " + CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2));
