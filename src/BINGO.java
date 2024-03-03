@@ -3,7 +3,7 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class BINGO {
-    // BINGO by us.
+     // BINGO by us.
     // Best played in a vertical terminal.
 
     /*
@@ -49,6 +49,9 @@ public class BINGO {
     static final String useCustomPatt = "t";
     static final String resetPattern = "r";
     static final String exitPattTool = "e";
+    
+    // Pattern Random 
+    static final int randPattern = RAND.nextInt(4)+1;
 
     static final String DEFAULT_WINNING_PATTERNS_REPR = ("" // for formatting only
 
@@ -66,6 +69,8 @@ public class BINGO {
             + convertPattToInt("--------------------*****") + SEPARATOR_STRING // row 5
 
     );
+
+
 
     /*
      * There is NO SEPARATOR between card reprs, only in pattern reprs, since we can
@@ -140,6 +145,7 @@ public class BINGO {
             """;
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        
         do {
             letsPlayBingo();
             cls();
@@ -161,6 +167,7 @@ public class BINGO {
     static void letsPlayBingo() throws IOException, InterruptedException {
         cls();
         // WELCOME SCREEN
+        
         System.out.println(BINGOSHAKE);
         System.out.println(BINGOASCII);
         System.out.println("WELCOME TO BINGO!");
@@ -263,13 +270,15 @@ public class BINGO {
                         + ", but you get to have one card for free in your first game!\n");
 
             // DEFAULT PATTERNS
-            System.out.println("DEFAULT PATTERNS: X, VERTICAL, HORIZONTAL, DIAGONAL, AND BLACKOUT");
+            System.out.println("DEFAULT PATTERNS: X, VERTICAL, HORIZONTAL,  AND BLACKOUT");
+            defaultPatternRandom();
             if (CUSTOM_PATTERN_COUNT != 0)
                 System.out.println(
                         "CUSTOM PATTERNS: " + CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2));
 
             WINNING_PATTERNS_REPR = DEFAULT_WINNING_PATTERNS_REPR + CUSTOM_PATTERNS_REPR;
             PATTERN_COUNT = occurenceOf(SEPARATOR_STRING, WINNING_PATTERNS_REPR);
+            
 
             // MAIN GAME LOOP
             printlnInteractive("\nTara BINGO!");
@@ -388,7 +397,7 @@ public class BINGO {
             }
 
             System.out.println(membership + " " + randomNumber + "!\n");
-            numberIsInCardSaysUser = isYesWhenPrompted("Do you have " + randomNumber + " in any of your carda?");
+            numberIsInCardSaysUser = isYesWhenPrompted("Do you have " + randomNumber + " in any of your cards?");
 
             System.out.println();
 
@@ -728,6 +737,44 @@ public class BINGO {
                 bits |= (1 << LENGTH - 1 - i);
         }
         return bits;
+    }
+     // Randomize 4 default pattern
+     static void defaultPatternRandom() { 
+        String crosswisePattern;
+        String blackoutPattern;
+        String verticalPattern;
+        String horizontalPattern;
+        switch (randPattern){
+            case (1) -> {
+                System.out.println("Default Pattern Crosswise!");
+                crosswisePattern = convertPattToInt("*---*-*-*---*---*-*-*---*") + SEPARATOR_STRING; // cross
+                WINNING_PATTERNS_REPR = crosswisePattern;
+             }
+            case (2) -> {
+                System.out.println("Default Pattern BLACKOUT!");
+                blackoutPattern = convertPattToInt("*************************") + SEPARATOR_STRING; // blackout
+                WINNING_PATTERNS_REPR = blackoutPattern;
+            }
+            case (3) -> {
+                System.out.println("Default Pattern Vertical!");
+                 verticalPattern = convertPattToInt("*----*----*----*----*----") + SEPARATOR_STRING // col 1
+                 + convertPattToInt("-*----*----*----*----*---") + SEPARATOR_STRING // col 2
+                 + convertPattToInt("--*----*----*----*----*--") + SEPARATOR_STRING// col 3
+                 + convertPattToInt("---*----*----*----*----*-") + SEPARATOR_STRING // col 4
+                 + convertPattToInt("----*----*----*----*----*") + SEPARATOR_STRING; // col 5
+                 WINNING_PATTERNS_REPR = verticalPattern;
+            }
+            case (4) -> {
+                System.out.println("Default Pattern Horizontal!");
+                horizontalPattern = convertPattToInt("*****--------------------") + SEPARATOR_STRING // row 1
+                + convertPattToInt("-----*****---------------") + SEPARATOR_STRING // row 2
+                + convertPattToInt("----------*****----------") + SEPARATOR_STRING // row 3
+                + convertPattToInt("---------------*****-----") + SEPARATOR_STRING // row 4
+                + convertPattToInt("--------------------*****") + SEPARATOR_STRING; // row 5
+                WINNING_PATTERNS_REPR = horizontalPattern;
+            }
+        }
+
     }
 
     static void playTutorial() throws IOException, InterruptedException {
