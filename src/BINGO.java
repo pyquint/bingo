@@ -399,7 +399,7 @@ public class BINGO {
                     System.out.print("Nugon, hindi pag markahan.");
                 }
             } else {
-                System.out.print("Wala ka " + randomNumber + ". ");
+                System.out.println("Wala ka " + randomNumber + ".");
                 if (numberIsInCardSaysUser) {
                     if (chances == 0) {
                         USER_MONEY -= DEDUCTION;
@@ -412,7 +412,6 @@ public class BINGO {
                     chances--;
                 }
             }
-
             System.out.println();
             Thread.sleep(2500);
         }
