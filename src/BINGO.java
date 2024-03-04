@@ -148,7 +148,7 @@ public class BINGO {
             cls();
 
             System.out.println("\t==== POST-GAME STATISTICS ====\n");
-            System.out.println("> You held on for " + ROUND_COUNT + plurality("round", ROUND_COUNT) + "!");
+            System.out.println("> You held on for " + ROUND_COUNT + plurality(" round", ROUND_COUNT) + "!");
             System.out.println("> Maximum money held at some point: P" + MAX_MONEY_HELD);
             System.out.println("> Total number of cards bought: " + CARDS_BOUGHT);
             System.out.println("> Wins / Losses: " + PLAYER_WIN_COUNT + " / " + COMP_WIN_COUNT);
@@ -232,7 +232,7 @@ public class BINGO {
                 }
                 USER_MONEY -= USER_CARD_COUNT * CARD_COST;
                 CARDS_BOUGHT += USER_CARD_COUNT;
-                System.out.println("\nYou bought " + USER_CARD_COUNT + plurality("card", USER_CARD_COUNT)
+                System.out.println("\nYou bought " + USER_CARD_COUNT + plurality(" card", USER_CARD_COUNT)
                         + ". Remaining balance is P" + USER_MONEY);
 
                 do {
