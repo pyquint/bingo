@@ -305,6 +305,7 @@ public class BINGO {
         char randomNumberRepr;
         String checkedPlayer;
         boolean numberIsInCardSaysUser;
+        int chance = 3;
 
         game: while (true) {
             cls();
@@ -406,11 +407,19 @@ public class BINGO {
                 }
             } else {
                 System.out.print("Wala ka " + randomNumber + ". ");
-                if (numberIsInCardSaysUser) {
-                    USER_MONEY -= DEDUCTION;
-                    System.out.println("Buhinan imo kwarta P" + DEDUCTION + ".");
-                    System.out.println("Remaining balance: P" + USER_MONEY);
-                }
+                do {
+                    if (numberIsInCardSaysUser) {
+                        System.out.printf("Warning! %d chances left!", chance  );
+                        if(chance == 0){
+                        USER_MONEY -= DEDUCTION;
+                        System.out.println("Buhinan imo kwarta P" + DEDUCTION + ".");
+                        System.out.println("Remaining balance: P" + USER_MONEY);
+                        chance += 3;
+                    } 
+                       
+                      --chance;   
+                    }
+                } while( chance == 3);
             }
 
             System.out.println();
