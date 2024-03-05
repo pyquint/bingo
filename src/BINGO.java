@@ -366,62 +366,65 @@ public class BINGO {
             randomNumber = getReprNumber(randomNumberRepr);
             letterMembership = BINGO.charAt(randomNumber / 15 - ((randomNumber % 15 == 0) ? 1 : 0));
 
-            // game output and visuals
-            if (!BRUTEFORCE_FOR_DEBUGGING) {
-                System.out.println("Taya taya...");
-
-                for (int i = 0; i < getRandomNumber(50, 76); i++) {
-                    System.out.print("\rSa letra sang... ");
-                    System.out.print(BINGO.charAt(getRandomNumber(0, BINGO.length())));
-                    Thread.sleep(25);
-                }
-
-                System.out.print("\b" + letterMembership + "!\n");
-
-                for (int i = 0; i < getRandomNumber(25, 51); i++) {
-                    System.out.print(getRandomNumber(1, BINGO_MAX + 1) + "\r");
-                    Thread.sleep(25 + i);
-                }
-
-                System.out.print(letterMembership + " " + randomNumber + "!");
-                if (randomNumber == 65)
-                    System.out.println("Pensionado!");
-
-                if (randomNumber == 69)
-                    System.out.print(" Nice.");
-
-                if (randomNumber == 70)
-                    System.out.println("Kalbo!");
-                
-                
-
-                System.out.println("\n");
-                isYesWhenPrompted("May " + randomNumber + " ka?");
-                numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
-                System.out.println();
-
-                if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
-                    System.out.print("May ara ka " + randomNumber + ". ");
-
-                    if (numberIsInCardSaysUser) {
-                        USER_MARKED_NUM_REPR += randomNumberRepr;
-                        System.out.println("Markahan imo card.");
-                    } else {
-                        System.out.println("Nugon, hindi pag markahan .");
-                    }
-
-                } else {
-                    System.out.println("Wala ka " + randomNumber + ".");
-                    if (numberIsInCardSaysUser) {
-                        USER_MONEY -= DEDUCTION;
-                        System.out.println("\nBuhinan kwarta mo sang P" + DEDUCTION + " kay sala ka.");
-                        System.out.println("Remaining balance: P" + USER_MONEY);
-                    }
-                }
-                Thread.sleep(2500);
-            } else {
+            if (BRUTEFORCE_FOR_DEBUGGING) {
                 USER_MARKED_NUM_REPR += randomNumberRepr;
+                continue;
             }
+
+            // game output and visuals
+            System.out.println("Taya taya...");
+
+            for (int i = 0; i < getRandomNumber(50, 76); i++) {
+                System.out.print("\rSa letra sang... ");
+                System.out.print(BINGO.charAt(getRandomNumber(0, BINGO.length())));
+                Thread.sleep(25);
+            }
+
+            System.out.print("\b" + letterMembership + "!\n");
+
+            for (int i = 0; i < getRandomNumber(25, 51); i++) {
+                System.out.print(getRandomNumber(1, BINGO_MAX + 1) + "\r");
+                Thread.sleep(25 + i);
+            }
+
+            System.out.print(letterMembership + " " + randomNumber + "!");
+
+            if (randomNumber == 65)
+                System.out.print("Pensionado!");
+
+            if (randomNumber == 69)
+                System.out.print(" Nice.");
+
+            if (randomNumber == 70)
+                System.out.print("Kalbo!");
+
+            System.out.println("\n");
+
+            numberIsInCardSaysUser = isYesWhenPrompted("May " + randomNumber + " ka?");
+            if (!isYesWhenPrompted("Sure ka na gid ya?")) {
+                numberIsInCardSaysUser = isYesWhenPrompted("Suliton ko, may " + randomNumber + " ka?");
+            }
+
+            System.out.println("\n");
+            isYesWhenPrompted("May " + randomNumber + " ka?");
+            numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
+            System.out.println();
+
+            if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
+                System.out.print("May ara ka " + randomNumber + ". ");
+
+                if (numberIsInCardSaysUser) {
+                    USER_MARKED_NUM_REPR += randomNumberRepr;
+                    System.out.println("Markahan imo card.");
+                } else {
+                    System.out.println("Nugon, hindi pag markahan.");
+                }
+
+            } else {
+                System.out.println("Wala ka " + randomNumber + ".");
+            }
+
+            Thread.sleep(2500);
         }
 
     }
