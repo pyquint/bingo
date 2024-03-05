@@ -397,7 +397,7 @@ public class BINGO {
 
                 System.out.println("\n");
                 isYesWhenPrompted("May " + randomNumber + " ka?");
-                numberIsInCardSaysUser = isYesWhenPrompted("Sigurado ka?");
+                numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
                 System.out.println();
 
                 if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
