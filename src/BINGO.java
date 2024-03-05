@@ -101,6 +101,9 @@ public class BINGO {
     static double COMP_MONEY;
     static double MAX_MONEY_HELD;
 
+    // TODO turn off when submitting
+    static final boolean BRUTEFORCE_FOR_DEBUGGING = false;
+
     static String BINGO = "BINGO";
     static String BINGOASCII = """
             _______  ___   __    _  _______  _______  __
@@ -232,14 +235,14 @@ public class BINGO {
                 }
                 USER_MONEY -= USER_CARD_COUNT * CARD_COST;
                 CARDS_BOUGHT += USER_CARD_COUNT;
-                System.out.println("\nYou bought " + USER_CARD_COUNT + plurality(" card", USER_CARD_COUNT)
+                printInteractive("\nYou bought " + USER_CARD_COUNT + plurality(" card", USER_CARD_COUNT)
                         + ". Remaining balance is P" + USER_MONEY);
 
                 do {
                     COMP_CARD_COUNT = getRandomNumber(1, USER_CARD_COUNT + 2);
                 } while (COMP_CARD_COUNT * CARD_COST > COMP_MONEY);
                 COMP_MONEY -= COMP_CARD_COUNT * CARD_COST;
-                System.out.println(COMP_NAME + " bought " + COMP_CARD_COUNT + ", with remaining P" + COMP_MONEY + ".");
+                printInteractive(COMP_NAME + " bought " + COMP_CARD_COUNT + ", with remaining P" + COMP_MONEY + ".");
             }
 
             createBingoCardsRepr(COMP_CARD_COUNT, COMP_NAME);
@@ -304,7 +307,6 @@ public class BINGO {
     }
 
     static void bingoGameLoop() throws IOException, InterruptedException {
-        int chances = 3;
         int randomNumber;
         int winningCardNo;
         int playerToCheckCounter;
@@ -328,18 +330,18 @@ public class BINGO {
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
             // be called winner should they have the winning pattern.
-            playerToCheckCounter = getRandomNumber(0, 2);
+            playerToCheckCounter = RANDOM.nextInt(2);
             for (int i = 0; i < 2; i++) {
-                randomPlayerToCheck = (playerToCheckCounter == 1) ? USERNAME : COMP_NAME;
+                randomPlayerToCheck = (playerToCheckCounter % 2 == 0) ? USERNAME : COMP_NAME;
                 winningCardNo = cardContainsWinningPattern(randomPlayerToCheck);
 
                 if (winningCardNo == -1) {
-                    playerToCheckCounter = (playerToCheckCounter + 1) % 2;
+                    playerToCheckCounter++;
                     continue;
                 }
 
                 System.out.println(BINGOASCII);
-                System.out.println(randomPlayerToCheck + " SAID BINGO FIRST! " + randomPlayerToCheck + " WINS!");
+                System.out.println(randomPlayerToCheck + " SAID BINGO! " + randomPlayerToCheck + " WINS!");
                 printInteractive("WINNING CARD: No." + winningCardNo + "!");
 
                 if (randomPlayerToCheck.equals(COMP_NAME)) {
@@ -356,8 +358,6 @@ public class BINGO {
                 break game;
             }
 
-            System.out.println("Taya taya...");
-
             do {
                 randomNumberRepr = getNumberRepr(getRandomNumber(1, BINGO_MAX + 1));
             } while (ROLLED_NUMBERS_REPR.indexOf(randomNumberRepr) != -1);
@@ -366,54 +366,55 @@ public class BINGO {
             randomNumber = getReprNumber(randomNumberRepr);
             letterMembership = BINGO.charAt(randomNumber / 15 - ((randomNumber % 15 == 0) ? 1 : 0));
 
-            for (int i = 0; i < getRandomNumber(50, 76); i++) {
-                System.out.print("\rSa letra sang... ");
-                System.out.print(BINGO.charAt(getRandomNumber(0, BINGO.length())));
-                Thread.sleep(25);
-            }
+            // game output and visuals
+            if (!BRUTEFORCE_FOR_DEBUGGING) {
+                System.out.println("Taya taya...");
 
-            System.out.print("\b" + letterMembership + "!\n");
-
-            for (int i = 0; i < getRandomNumber(25, 51); i++) {
-                System.out.print(getRandomNumber(1, BINGO_MAX + 1) + "\r");
-                Thread.sleep(25 + i);
-            }
-
-            System.out.print(letterMembership + " " + randomNumber + "!");
-
-            if (randomNumber == 69)
-                System.out.print(" Nice.");
-
-            System.out.println("\n");
-
-            numberIsInCardSaysUser = isYesWhenPrompted("May " + randomNumber + " ka?");
-
-            System.out.println();
-
-            if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
-                System.out.print("May ara ka " + randomNumber + ". ");
-                if (numberIsInCardSaysUser) {
-                    USER_MARKED_NUM_REPR += randomNumberRepr;
-                    System.out.print("Markahan imo card.");
-                } else {
-                    System.out.print("Nugon, hindi pag markahan.");
+                for (int i = 0; i < getRandomNumber(50, 76); i++) {
+                    System.out.print("\rSa letra sang... ");
+                    System.out.print(BINGO.charAt(getRandomNumber(0, BINGO.length())));
+                    Thread.sleep(25);
                 }
-            } else {
-                System.out.println("Wala ka " + randomNumber + ".");
-                if (numberIsInCardSaysUser) {
-                    if (chances == 0) {
-                        USER_MONEY -= DEDUCTION;
-                        System.out.println("\nBuhinan kwarta mo sang P" + DEDUCTION + ".");
-                        System.out.println("Remaining balance: P" + USER_MONEY);
-                        chances = 3;
+
+                System.out.print("\b" + letterMembership + "!\n");
+
+                for (int i = 0; i < getRandomNumber(25, 51); i++) {
+                    System.out.print(getRandomNumber(1, BINGO_MAX + 1) + "\r");
+                    Thread.sleep(25 + i);
+                }
+
+                System.out.print(letterMembership + " " + randomNumber + "!");
+
+                if (randomNumber == 69)
+                    System.out.print(" Nice.");
+
+                System.out.println("\n");
+                isYesWhenPrompted("May " + randomNumber + " ka?");
+                numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
+                System.out.println();
+
+                if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
+                    System.out.print("May ara ka " + randomNumber + ". ");
+
+                    if (numberIsInCardSaysUser) {
+                        USER_MARKED_NUM_REPR += randomNumberRepr;
+                        System.out.println("Markahan imo card.");
                     } else {
-                        System.out.printf("\nWarning! %d %s left!", chances, plurality("chance", chances));
+                        System.out.println("Nugon, hindi pag markahan.");
                     }
-                    chances--;
+
+                } else {
+                    System.out.println("Wala ka " + randomNumber + ".");
+                    if (numberIsInCardSaysUser) {
+                        USER_MONEY -= DEDUCTION;
+                        System.out.println("\nBuhinan kwarta mo sang P" + DEDUCTION + " kay sala ka.");
+                        System.out.println("Remaining balance: P" + USER_MONEY);
+                    }
                 }
+                Thread.sleep(2500);
+            } else {
+                USER_MARKED_NUM_REPR += randomNumberRepr;
             }
-            System.out.println();
-            Thread.sleep(2500);
         }
 
     }
