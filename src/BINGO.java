@@ -402,26 +402,25 @@ public class BINGO {
 
             numberIsInCardSaysUser = isYesWhenPrompted("May " + randomNumber + " ka?");
             if (!isYesWhenPrompted("Sure ka na gid ya?")) {
+                System.out.println();
                 numberIsInCardSaysUser = isYesWhenPrompted("Suliton ko, may " + randomNumber + " ka?");
             }
 
-            System.out.println("\n");
-            isYesWhenPrompted("May " + randomNumber + " ka?");
-            numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
-            System.out.println();
+            System.out.println("");
 
             if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
                 System.out.print("May ara ka " + randomNumber + ". ");
 
                 if (numberIsInCardSaysUser) {
                     USER_MARKED_NUM_REPR += randomNumberRepr;
-                    System.out.println("Markahan imo card.");
+                    System.out.println("Markahon card mo.");
                 } else {
-                    System.out.println("Nugon, hindi pag markahan.");
+                    System.out.println("Nugon, hindi pag markahon kay sala ka.");
                 }
 
             } else {
-                System.out.println("Wala ka " + randomNumber + ".");
+                System.out.print(((numberIsInCardSaysUser) ? "Pamutig pa da. " : "Honesty is the best policy. ")
+                        + "Wala ka " + randomNumber + ".");
             }
 
             Thread.sleep(2500);
