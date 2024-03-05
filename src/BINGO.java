@@ -36,6 +36,7 @@ public class BINGO {
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSB_INDEX = LENGTH - 1;
+    static final int CARDS_PER_LINE = 2;
 
     static final double CARD_COST = 5;
     static final double PRIZE_PER_WIN = 20;
@@ -207,7 +208,8 @@ public class BINGO {
 
         cls();
 
-        USER_CARD_COUNT = COMP_CARD_COUNT = 1;
+        USER_CARD_COUNT = 2;
+        COMP_CARD_COUNT = 1;
 
         do {
             // INITIALIZATION OF PER-ROUND VARIABLES
@@ -406,9 +408,6 @@ public class BINGO {
             }
 
             System.out.println("\n");
-            isYesWhenPrompted("May " + randomNumber + " ka?");
-            numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
-            System.out.println();
 
             if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
                 System.out.print("May ara ka " + randomNumber + ". ");
@@ -482,18 +481,59 @@ public class BINGO {
         int cardCount;
         int cardSubIndex;
         char currentNumRepr;
-        String card_repr;
+        String cardRepr;
         boolean isMarked, isMiddle;
         boolean isPlayer = player.equals(USERNAME);
 
         if (isPlayer) {
             USER_CARD_PATTERNS_REPR = "";
-            card_repr = USER_CARDS_REPR;
+            cardRepr = USER_CARDS_REPR;
             cardCount = USER_CARD_COUNT;
         } else {
             COMP_CARD_PATTERNS_REPR = "";
-            card_repr = COMP_CARDS_REPR;
+            cardRepr = COMP_CARDS_REPR;
             cardCount = COMP_CARD_COUNT;
+        }
+
+        int subStart, subEnd;
+        int cardsToPrintPerLine;
+        char currChar;
+        String perLineReprs;
+
+        
+        int linesToPrint = (int) Math.ceil(cardCount / CARDS_PER_LINE);
+
+        // for line
+        for (int ln = 0; ln < linesToPrint; ln++) {
+            cardsToPrintPerLine = CARDS_PER_LINE - (cardCount % CARDS_PER_LINE);
+
+            subStart = BINGO_MAX * cardsToPrintPerLine * ln + (2 * ln);
+            subEnd = subStart + BINGO_MAX * cardsToPrintPerLine;
+            perLineReprs = cardRepr.substring(subStart, subEnd + 1);
+
+            // for reprs in line
+            for (int i = 0; i < cardsToPrintPerLine; i++) {
+                System.out.print("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
+                System.out.print(GRID_SEP + GRID_SEP);
+            }
+
+            System.out.println();
+
+            for (int row = 0; row < 5; row++) {
+                for (int i = 0; i < cardsToPrintPerLine; i++) {
+                    for (int col = 0; col < 5; col++) {
+                        currChar = perLineReprs.charAt(col + ((BINGO_MAX + 1) * i) + ((row) * 5));
+
+                        System.out.print(currChar);
+
+                        if ((col + 1) % 5 == 0) {
+                            System.out.print(GRID_SEP + GRID_SEP);
+                        }
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println("\n");
         }
 
         // Use conditionals to further control the printing of the card.
@@ -504,7 +544,7 @@ public class BINGO {
             System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
             for (int j = 0; j < LENGTH; j++) {
-                currentNumRepr = card_repr.charAt(j + cardSubIndex);
+                currentNumRepr = cardRepr.charAt(j + cardSubIndex);
                 currentNum = getReprNumber(currentNumRepr);
 
                 isMiddle = currentNumRepr == FREE_SPACE;
