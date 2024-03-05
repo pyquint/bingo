@@ -384,13 +384,20 @@ public class BINGO {
                 }
 
                 System.out.print(letterMembership + " " + randomNumber + "!");
+                if (randomNumber == 65)
+                    System.out.println("Pensionado!");
 
                 if (randomNumber == 69)
                     System.out.print(" Nice.");
 
+                if (randomNumber == 70)
+                    System.out.println("Kalbo!");
+                
+                
+
                 System.out.println("\n");
                 isYesWhenPrompted("May " + randomNumber + " ka?");
-                numberIsInCardSaysUser = isYesWhenPrompted("Sure ka na gid ya?");
+                numberIsInCardSaysUser = isYesWhenPrompted("Sigurado ka?");
                 System.out.println();
 
                 if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
@@ -400,7 +407,7 @@ public class BINGO {
                         USER_MARKED_NUM_REPR += randomNumberRepr;
                         System.out.println("Markahan imo card.");
                     } else {
-                        System.out.println("Nugon, hindi pag markahan.");
+                        System.out.println("Nugon, hindi pag markahan .");
                     }
 
                 } else {
