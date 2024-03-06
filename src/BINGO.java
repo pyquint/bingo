@@ -104,7 +104,7 @@ public class BINGO {
     static double MAX_MONEY_HELD;
 
     // TODO turn off when submitting
-    static final boolean BRUTEFORCE_FOR_DEBUGGING = true;
+    static final boolean BRUTEFORCE_FOR_DEBUGGING = false;
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
@@ -407,13 +407,13 @@ public class BINGO {
             System.out.print(letterMembership + " " + randomNumber + "!");
 
             if (randomNumber == 65)
-                System.out.print("Pensionado!");
+                System.out.print(" Pensionado!");
 
             if (randomNumber == 69)
                 System.out.print(" Nice.");
 
             if (randomNumber == 70)
-                System.out.print("Kalbo!");
+                System.out.print(" Kalbo!");
 
             System.out.println("\n");
 
@@ -429,13 +429,14 @@ public class BINGO {
 
                 if (numberIsInCardSaysUser) {
                     USER_MARKED_NUM_REPR += randomNumberRepr;
-                    System.out.println("Markahan imo card.");
+                    System.out.println("Markahon card mo.");
                 } else {
-                    System.out.println("Nugon, hindi pag markahan.");
+                    System.out.println("Nugon, hindi pag markahon kay sala ka.");
                 }
 
             } else {
-                System.out.println("Wala ka " + randomNumber + ".");
+                System.out.print(((numberIsInCardSaysUser) ? "Pamutig pa da. " : "Honesty is the best policy. ")
+                        + "Wala ka " + randomNumber + ".");
             }
 
             Thread.sleep(2500);
