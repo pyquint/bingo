@@ -36,7 +36,7 @@ public class BINGO {
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSB_INDEX = LENGTH - 1;
-    static final int CARDS_PER_LINE = 3;
+    static final int CARDS_PER_LINE = 4;
 
     static final double CARD_COST = 5;
     static final double PRIZE_PER_WIN = 20;
@@ -85,6 +85,7 @@ public class BINGO {
     static String WINNING_PATTERNS_REPR;
     static String CUSTOM_PATTERNS_REPR;
     static String CUSTOM_PATTERN_NAMES;
+    static String CUSTOM_PATTERN_NAMES_FMT;
     static String USER_CARDS_REPR;
     static String COMP_CARDS_REPR;
     static String USER_CARD_PATTERNS_REPR;
@@ -107,6 +108,7 @@ public class BINGO {
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
+
             _______  ___   __    _  _______  _______  __
             |  _    ||   | |  |  | ||       ||       ||  |
             | |_|   ||   | |   |_| ||    ___||   _   ||  |
@@ -114,10 +116,13 @@ public class BINGO {
             |  _   | |   | |  _    ||   ||  ||  |_|  ||__|
             | |_|   ||   | | | |   ||   |_| ||       | __
             |_______||___| |_|  |__||_______||_______||__|
+
                 """;
 
     // SHAKER TOO BIG?
     static String BINGOSHAKE = """
+
+
                   @@@
                 @@  @@
                @@   @@@@
@@ -143,7 +148,9 @@ public class BINGO {
                   @            @@@@                 @@
                     @@@            @@@@@         @@
                        @@@               @@@@@@@@
-            """;
+
+
+                       """;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -158,6 +165,12 @@ public class BINGO {
             System.out.println("> Total number of cards bought: " + CARDS_BOUGHT);
             System.out.println("> Wins / Losses: " + PLAYER_WIN_COUNT + " / " + COMP_WIN_COUNT);
 
+            System.out.print("\n\n(ENTER)");
+            SCANNER.nextLine();
+
+            cls();
+            System.out.println(BINGOASCII);
+
         } while (!isYesWhenPrompted("\nExit the program?"));
 
         System.out.println("\n" + BINGOSHAKE + "\n");
@@ -166,17 +179,16 @@ public class BINGO {
 
     static void letsPlayBingo() throws IOException, InterruptedException {
         cls();
-        // WELCOME SCREEN
 
+        // WELCOME SCREEN
         System.out.println(BINGOSHAKE);
         System.out.println(BINGOASCII);
         System.out.println("WELCOME TO BINGO!");
 
+        USER_MONEY = COMP_MONEY = MAX_MONEY_HELD = STARTING_MONEY;
         ROUND_COUNT = 1;
-        USER_MONEY = COMP_MONEY = STARTING_MONEY;
         PLAYER_WIN_COUNT = 0;
         COMP_WIN_COUNT = 0;
-        MAX_MONEY_HELD = 0;
         CARDS_BOUGHT = 0;
         CUSTOM_PATTERN_NAMES = "";
         CUSTOM_PATTERNS_REPR = "";
@@ -211,7 +223,7 @@ public class BINGO {
 
         USER_CARD_COUNT = COMP_CARD_COUNT = 1;
 
-        do {
+        prep: do {
             // INITIALIZATION OF PER-ROUND VARIABLES
             USER_CARDS_REPR = "";
             USER_CARD_PATTERNS_REPR = "";
@@ -271,9 +283,9 @@ public class BINGO {
             System.out.println(BINGOASCII);
 
             // first game
-            if (ROUND_COUNT == 0) {
+            if (ROUND_COUNT == 1) {
                 System.out.println("You start with P" + STARTING_MONEY
-                        + ", but you get to have one card for free in your first game!\n");
+                        + ", but you get to have one card for free on your first game!\n");
             }
 
             // WINNING PATTERNS
@@ -282,25 +294,28 @@ public class BINGO {
             WINNING_PATTERN_COUNT = occurenceOf(SEPARATOR_STRING, WINNING_PATTERNS_REPR);
 
             if (CUSTOM_PATTERN_COUNT != 0) {
-                CUSTOM_PATTERN_NAMES = CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2);
+                CUSTOM_PATTERN_NAMES_FMT = CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2);
             } else {
-                CUSTOM_PATTERN_NAMES = "N/A";
+                CUSTOM_PATTERN_NAMES_FMT = "N/A";
             }
 
             System.out.println(
-                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES);
+                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES_FMT);
 
             // MAIN GAME LOOP
             printInteractive("\nTara BINGO!");
             bingoGameLoop();
             ROUND_COUNT++;
 
+            cls();
+            System.out.println(BINGOASCII);
+
             if (USER_MONEY < CARD_COST) {
-                printInteractive("\nGAME OVER! You don't have enough money to buy more cards!");
+                printInteractive("GAME OVER! You don't have enough money to buy more cards!");
                 System.out.println();
                 break;
             } else if (COMP_MONEY < CARD_COST) {
-                printInteractive("\nYOU WIN! Computer can't afford to buy any more cards!");
+                printInteractive("YOU WIN! Computer can't afford to buy any more cards!");
                 System.out.println();
                 break;
             }
@@ -321,13 +336,13 @@ public class BINGO {
             cls();
             System.out.println("RANDOM DEFAULT PATTERN: " + RANDOM_DEFAULT_PATTERN_NAME);
             System.out.println(
-                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES);
+                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES_FMT);
 
             // ! update first before checking for winning patterns!
-            System.out.println("\n**** " + USERNAME + "'S " + plurality("CARD", USER_CARD_COUNT, true) + " ****");
+            System.out.println("\n**** " + USERNAME + "'S " + plurality("CARD", USER_CARD_COUNT, true) + " ****\n");
             printCardsUpdatePatterns(USERNAME);
 
-            System.out.println("\n**** " + COMP_NAME + "'S " + plurality("CARD", COMP_CARD_COUNT, true) + " ****");
+            System.out.println("**** " + COMP_NAME + "'S " + plurality("CARD", COMP_CARD_COUNT, true) + " ****\n");
             printCardsUpdatePatterns(COMP_NAME);
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
@@ -568,7 +583,7 @@ public class BINGO {
                 }
                 System.out.println("\n");
             }
-            System.out.println("\n\n");
+            System.out.println("\n");
         }
     }
 
