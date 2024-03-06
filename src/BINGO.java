@@ -36,7 +36,7 @@ public class BINGO {
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSB_INDEX = LENGTH - 1;
-    static final int CARDS_PER_LINE = 2;
+    static final int CARDS_PER_LINE = 3;
 
     static final double CARD_COST = 5;
     static final double PRIZE_PER_WIN = 20;
@@ -103,7 +103,7 @@ public class BINGO {
     static double MAX_MONEY_HELD;
 
     // TODO turn off when submitting
-    static final boolean BRUTEFORCE_FOR_DEBUGGING = false;
+    static final boolean BRUTEFORCE_FOR_DEBUGGING = true;
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
@@ -151,6 +151,7 @@ public class BINGO {
             letsPlayBingo();
             cls();
 
+            System.out.println(BINGOASCII);
             System.out.println("\t==== POST-GAME STATISTICS ====\n");
             System.out.println("> You held on for " + ROUND_COUNT + plurality(" round", ROUND_COUNT) + "!");
             System.out.println("> Maximum money held at some point: P" + MAX_MONEY_HELD);
@@ -159,8 +160,8 @@ public class BINGO {
 
         } while (!isYesWhenPrompted("\nExit the program?"));
 
-        System.out.println(BINGOSHAKE + "\n");
-        System.out.println("This was BINGO! Goodbye!");
+        System.out.println("\n" + BINGOSHAKE + "\n");
+        System.out.println("\n\nThis was BINGO! Thank you for playing and goodbye!");
     }
 
     static void letsPlayBingo() throws IOException, InterruptedException {
@@ -208,8 +209,7 @@ public class BINGO {
 
         cls();
 
-        USER_CARD_COUNT = 2;
-        COMP_CARD_COUNT = 1;
+        USER_CARD_COUNT = COMP_CARD_COUNT = 1;
 
         do {
             // INITIALIZATION OF PER-ROUND VARIABLES
@@ -495,21 +495,45 @@ public class BINGO {
             cardCount = COMP_CARD_COUNT;
         }
 
+        // update card repr
+        for (int i = 0; i < cardCount; i++) {
+            patternBits = 0;
+            cardSubIndex = i * LENGTH;
+
+            for (int j = 0; j < LENGTH; j++) {
+                currentNumRepr = cardRepr.charAt(j + cardSubIndex);
+                currentNum = getReprNumber(currentNumRepr);
+
+                isMiddle = currentNumRepr == FREE_SPACE;
+                isMarked = ((isPlayer)) ? USER_MARKED_NUM_REPR.indexOf(currentNumRepr) != -1
+                        : ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1;
+
+                if (isMarked || isMiddle)
+                    patternBits |= 1 << (LENGTH - j - 1);
+            }
+
+            if (player.equals(COMP_NAME)) {
+                COMP_CARD_PATTERNS_REPR += patternBits + SEPARATOR_STRING;
+            } else {
+                USER_CARD_PATTERNS_REPR += patternBits + SEPARATOR_STRING;
+            }
+        }
+
         int subStart, subEnd;
         int cardsToPrintPerLine;
-        char currChar;
+        int cardsLeft = cardCount;
         String perLineReprs;
 
-        
-        int linesToPrint = (int) Math.ceil(cardCount / CARDS_PER_LINE);
+        int linesToPrint = (int) Math.ceil(cardCount / (double) CARDS_PER_LINE);
 
-        // for line
+        // fuck me... what the hell is wrong with me? why do I like suffering?
         for (int ln = 0; ln < linesToPrint; ln++) {
-            cardsToPrintPerLine = CARDS_PER_LINE - (cardCount % CARDS_PER_LINE);
+            cardsToPrintPerLine = (cardsLeft >= CARDS_PER_LINE) ? CARDS_PER_LINE : cardsLeft;
+            cardsLeft -= cardsToPrintPerLine;
 
-            subStart = BINGO_MAX * cardsToPrintPerLine * ln + (2 * ln);
-            subEnd = subStart + BINGO_MAX * cardsToPrintPerLine;
-            perLineReprs = cardRepr.substring(subStart, subEnd + 1);
+            subStart = LENGTH * cardsToPrintPerLine * ln;
+            subEnd = subStart + LENGTH * cardsToPrintPerLine;
+            perLineReprs = cardRepr.substring(subStart, subEnd);
 
             // for reprs in line
             for (int i = 0; i < cardsToPrintPerLine; i++) {
@@ -522,55 +546,29 @@ public class BINGO {
             for (int row = 0; row < 5; row++) {
                 for (int i = 0; i < cardsToPrintPerLine; i++) {
                     for (int col = 0; col < 5; col++) {
-                        currChar = perLineReprs.charAt(col + ((BINGO_MAX + 1) * i) + ((row) * 5));
+                        currentNumRepr = perLineReprs.charAt(col + (LENGTH * i) + ((row) * 5));
+                        currentNum = getReprNumber(currentNumRepr);
 
-                        System.out.print(currChar);
+                        isMiddle = currentNumRepr == FREE_SPACE;
+                        isMarked = ((isPlayer)) ? USER_MARKED_NUM_REPR.indexOf(currentNumRepr) != -1
+                                : ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1;
 
-                        if ((col + 1) % 5 == 0) {
-                            System.out.print(GRID_SEP + GRID_SEP);
+                        if (currentNumRepr == FREE_SPACE) {
+                            System.out.print("FS" + GRID_SEP);
+                        } else if (isMarked || isMiddle) {
+                            System.out.print("(" + currentNum + ")" + GRID_SEP);
+                        } else {
+                            System.out.print(currentNum + GRID_SEP);
+                        }
+
+                        if (col % 5 == 4) {
+                            System.out.print(GRID_SEP);
                         }
                     }
                 }
-                System.out.println();
+                System.out.println("\n");
             }
-            System.out.println("\n");
-        }
-
-        // Use conditionals to further control the printing of the card.
-        for (int i = 0; i < cardCount; i++) {
-            patternBits = 0;
-            cardSubIndex = i * LENGTH;
-            System.out.println("Card no. " + (i + 1));
-            System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
-
-            for (int j = 0; j < LENGTH; j++) {
-                currentNumRepr = cardRepr.charAt(j + cardSubIndex);
-                currentNum = getReprNumber(currentNumRepr);
-
-                isMiddle = currentNumRepr == FREE_SPACE;
-                isMarked = ((isPlayer)) ? USER_MARKED_NUM_REPR.indexOf(currentNumRepr) != -1
-                        : ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1;
-
-                if (isMarked || isMiddle) {
-                    System.out.print(isMiddle ? "FS" : ("(" + currentNum + ")"));
-                    patternBits |= 1 << (LENGTH - j - 1);
-                } else {
-                    System.out.print(currentNum);
-                }
-
-                if (j % 5 == 4) {
-                    System.out.print('\n');
-                } else {
-                    System.out.print(GRID_SEP);
-                }
-            }
-
-            if (player.equals(COMP_NAME)) {
-                COMP_CARD_PATTERNS_REPR += patternBits + SEPARATOR_STRING;
-            } else {
-                USER_CARD_PATTERNS_REPR += patternBits + SEPARATOR_STRING;
-            }
-            System.out.println();
+            System.out.println("\n\n");
         }
     }
 
