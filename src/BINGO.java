@@ -36,6 +36,7 @@ public class BINGO {
     static final int LENGTH = 25;
     static final int MIDDLE = 12;
     static final int MSB_INDEX = LENGTH - 1;
+    static final int CARDS_PER_LINE = 4;
 
     static final double CARD_COST = 5;
     static final double PRIZE_PER_WIN = 20;
@@ -84,6 +85,7 @@ public class BINGO {
     static String WINNING_PATTERNS_REPR;
     static String CUSTOM_PATTERNS_REPR;
     static String CUSTOM_PATTERN_NAMES;
+    static String CUSTOM_PATTERN_NAMES_FMT;
     static String USER_CARDS_REPR;
     static String COMP_CARDS_REPR;
     static String USER_CARD_PATTERNS_REPR;
@@ -106,6 +108,7 @@ public class BINGO {
 
     static String BINGO = "BINGO";
     static String BINGOASCII = """
+
             _______  ___   __    _  _______  _______  __
             |  _    ||   | |  |  | ||       ||       ||  |
             | |_|   ||   | |   |_| ||    ___||   _   ||  |
@@ -113,10 +116,13 @@ public class BINGO {
             |  _   | |   | |  _    ||   ||  ||  |_|  ||__|
             | |_|   ||   | | | |   ||   |_| ||       | __
             |_______||___| |_|  |__||_______||_______||__|
+
                 """;
 
     // SHAKER TOO BIG?
     static String BINGOSHAKE = """
+
+
                   @@@
                 @@  @@
                @@   @@@@
@@ -142,7 +148,9 @@ public class BINGO {
                   @            @@@@                 @@
                     @@@            @@@@@         @@
                        @@@               @@@@@@@@
-            """;
+
+
+                       """;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -150,31 +158,37 @@ public class BINGO {
             letsPlayBingo();
             cls();
 
+            System.out.println(BINGOASCII);
             System.out.println("\t==== POST-GAME STATISTICS ====\n");
             System.out.println("> You held on for " + ROUND_COUNT + plurality(" round", ROUND_COUNT) + "!");
             System.out.println("> Maximum money held at some point: P" + MAX_MONEY_HELD);
             System.out.println("> Total number of cards bought: " + CARDS_BOUGHT);
             System.out.println("> Wins / Losses: " + PLAYER_WIN_COUNT + " / " + COMP_WIN_COUNT);
 
+            System.out.print("\n\n(ENTER)");
+            SCANNER.nextLine();
+
+            cls();
+            System.out.println(BINGOASCII);
+
         } while (!isYesWhenPrompted("\nExit the program?"));
 
-        System.out.println(BINGOSHAKE + "\n");
-        System.out.println("This was BINGO! Goodbye!");
+        System.out.println("\n" + BINGOSHAKE + "\n");
+        System.out.println("\n\nThis was BINGO! Thank you for playing and goodbye!");
     }
 
     static void letsPlayBingo() throws IOException, InterruptedException {
         cls();
-        // WELCOME SCREEN
 
+        // WELCOME SCREEN
         System.out.println(BINGOSHAKE);
         System.out.println(BINGOASCII);
         System.out.println("WELCOME TO BINGO!");
 
+        USER_MONEY = COMP_MONEY = MAX_MONEY_HELD = STARTING_MONEY;
         ROUND_COUNT = 1;
-        USER_MONEY = COMP_MONEY = STARTING_MONEY;
         PLAYER_WIN_COUNT = 0;
         COMP_WIN_COUNT = 0;
-        MAX_MONEY_HELD = 0;
         CARDS_BOUGHT = 0;
         CUSTOM_PATTERN_NAMES = "";
         CUSTOM_PATTERNS_REPR = "";
@@ -209,7 +223,7 @@ public class BINGO {
 
         USER_CARD_COUNT = COMP_CARD_COUNT = 1;
 
-        do {
+        prep: do {
             // INITIALIZATION OF PER-ROUND VARIABLES
             USER_CARDS_REPR = "";
             USER_CARD_PATTERNS_REPR = "";
@@ -269,9 +283,9 @@ public class BINGO {
             System.out.println(BINGOASCII);
 
             // first game
-            if (ROUND_COUNT == 0) {
+            if (ROUND_COUNT == 1) {
                 System.out.println("You start with P" + STARTING_MONEY
-                        + ", but you get to have one card for free in your first game!\n");
+                        + ", but you get to have one card for free on your first game!\n");
             }
 
             // WINNING PATTERNS
@@ -280,25 +294,28 @@ public class BINGO {
             WINNING_PATTERN_COUNT = occurenceOf(SEPARATOR_STRING, WINNING_PATTERNS_REPR);
 
             if (CUSTOM_PATTERN_COUNT != 0) {
-                CUSTOM_PATTERN_NAMES = CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2);
+                CUSTOM_PATTERN_NAMES_FMT = CUSTOM_PATTERN_NAMES.substring(0, CUSTOM_PATTERN_NAMES.length() - 2);
             } else {
-                CUSTOM_PATTERN_NAMES = "N/A";
+                CUSTOM_PATTERN_NAMES_FMT = "N/A";
             }
 
             System.out.println(
-                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES);
+                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES_FMT);
 
             // MAIN GAME LOOP
             printInteractive("\nTara BINGO!");
             bingoGameLoop();
             ROUND_COUNT++;
 
+            cls();
+            System.out.println(BINGOASCII);
+
             if (USER_MONEY < CARD_COST) {
-                printInteractive("\nGAME OVER! You don't have enough money to buy more cards!");
+                printInteractive("GAME OVER! You don't have enough money to buy more cards!");
                 System.out.println();
                 break;
             } else if (COMP_MONEY < CARD_COST) {
-                printInteractive("\nYOU WIN! Computer can't afford to buy any more cards!");
+                printInteractive("YOU WIN! Computer can't afford to buy any more cards!");
                 System.out.println();
                 break;
             }
@@ -319,13 +336,13 @@ public class BINGO {
             cls();
             System.out.println("RANDOM DEFAULT PATTERN: " + RANDOM_DEFAULT_PATTERN_NAME);
             System.out.println(
-                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES);
+                    "CUSTOM " + plurality("PATTERN", CUSTOM_PATTERN_COUNT, true) + ": " + CUSTOM_PATTERN_NAMES_FMT);
 
             // ! update first before checking for winning patterns!
-            System.out.println("\n**** " + USERNAME + "'S " + plurality("CARD", USER_CARD_COUNT, true) + " ****");
+            System.out.println("\n**** " + USERNAME + "'S " + plurality("CARD", USER_CARD_COUNT, true) + " ****\n");
             printCardsUpdatePatterns(USERNAME);
 
-            System.out.println("\n**** " + COMP_NAME + "'S " + plurality("CARD", COMP_CARD_COUNT, true) + " ****");
+            System.out.println("**** " + COMP_NAME + "'S " + plurality("CARD", COMP_CARD_COUNT, true) + " ****\n");
             printCardsUpdatePatterns(COMP_NAME);
 
             // Randomize in a 50-50 chance who to check first, which in turn is the one to
@@ -390,13 +407,13 @@ public class BINGO {
             System.out.print(letterMembership + " " + randomNumber + "!");
 
             if (randomNumber == 65)
-                System.out.print("Pensionado!");
+                System.out.print(" Pensionado!");
 
             if (randomNumber == 69)
                 System.out.print(" Nice.");
 
             if (randomNumber == 70)
-                System.out.print("Kalbo!");
+                System.out.print(" Kalbo!");
 
             System.out.println("\n");
 
@@ -406,7 +423,7 @@ public class BINGO {
                 numberIsInCardSaysUser = isYesWhenPrompted("Suliton ko, may " + randomNumber + " ka?");
             }
 
-            System.out.println("");
+            System.out.println("\n");
 
             if (USER_CARDS_REPR.indexOf(randomNumberRepr) != -1) {
                 System.out.print("May ara ka " + randomNumber + ". ");
@@ -481,47 +498,35 @@ public class BINGO {
         int cardCount;
         int cardSubIndex;
         char currentNumRepr;
-        String card_repr;
+        String cardRepr;
         boolean isMarked, isMiddle;
         boolean isPlayer = player.equals(USERNAME);
 
         if (isPlayer) {
             USER_CARD_PATTERNS_REPR = "";
-            card_repr = USER_CARDS_REPR;
+            cardRepr = USER_CARDS_REPR;
             cardCount = USER_CARD_COUNT;
         } else {
             COMP_CARD_PATTERNS_REPR = "";
-            card_repr = COMP_CARDS_REPR;
+            cardRepr = COMP_CARDS_REPR;
             cardCount = COMP_CARD_COUNT;
         }
 
-        // Use conditionals to further control the printing of the card.
+        // update card repr
         for (int i = 0; i < cardCount; i++) {
             patternBits = 0;
             cardSubIndex = i * LENGTH;
-            System.out.println("Card no. " + (i + 1));
-            System.out.println("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
 
             for (int j = 0; j < LENGTH; j++) {
-                currentNumRepr = card_repr.charAt(j + cardSubIndex);
+                currentNumRepr = cardRepr.charAt(j + cardSubIndex);
                 currentNum = getReprNumber(currentNumRepr);
 
                 isMiddle = currentNumRepr == FREE_SPACE;
                 isMarked = ((isPlayer)) ? USER_MARKED_NUM_REPR.indexOf(currentNumRepr) != -1
                         : ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1;
 
-                if (isMarked || isMiddle) {
-                    System.out.print(isMiddle ? "FS" : ("(" + currentNum + ")"));
+                if (isMarked || isMiddle)
                     patternBits |= 1 << (LENGTH - j - 1);
-                } else {
-                    System.out.print(currentNum);
-                }
-
-                if (j % 5 == 4) {
-                    System.out.print('\n');
-                } else {
-                    System.out.print(GRID_SEP);
-                }
             }
 
             if (player.equals(COMP_NAME)) {
@@ -529,7 +534,58 @@ public class BINGO {
             } else {
                 USER_CARD_PATTERNS_REPR += patternBits + SEPARATOR_STRING;
             }
+        }
+
+        int subStart, subEnd;
+        int cardsToPrintPerLine;
+        int cardsLeft = cardCount;
+        String perLineReprs;
+
+        int linesToPrint = (int) Math.ceil(cardCount / (double) CARDS_PER_LINE);
+
+        // fuck me... what the hell is wrong with me? why do I like suffering?
+        for (int ln = 0; ln < linesToPrint; ln++) {
+            cardsToPrintPerLine = (cardsLeft >= CARDS_PER_LINE) ? CARDS_PER_LINE : cardsLeft;
+            cardsLeft -= cardsToPrintPerLine;
+
+            subStart = LENGTH * cardsToPrintPerLine * ln;
+            subEnd = subStart + LENGTH * cardsToPrintPerLine;
+            perLineReprs = cardRepr.substring(subStart, subEnd);
+
+            // for reprs in line
+            for (int i = 0; i < cardsToPrintPerLine; i++) {
+                System.out.print("B" + GRID_SEP + "I" + GRID_SEP + "N" + GRID_SEP + "G" + GRID_SEP + "O");
+                System.out.print(GRID_SEP + GRID_SEP);
+            }
+
             System.out.println();
+
+            for (int row = 0; row < 5; row++) {
+                for (int i = 0; i < cardsToPrintPerLine; i++) {
+                    for (int col = 0; col < 5; col++) {
+                        currentNumRepr = perLineReprs.charAt(col + (LENGTH * i) + ((row) * 5));
+                        currentNum = getReprNumber(currentNumRepr);
+
+                        isMiddle = currentNumRepr == FREE_SPACE;
+                        isMarked = ((isPlayer)) ? USER_MARKED_NUM_REPR.indexOf(currentNumRepr) != -1
+                                : ROLLED_NUMBERS_REPR.indexOf(currentNumRepr) != -1;
+
+                        if (currentNumRepr == FREE_SPACE) {
+                            System.out.print("FS" + GRID_SEP);
+                        } else if (isMarked || isMiddle) {
+                            System.out.print("(" + currentNum + ")" + GRID_SEP);
+                        } else {
+                            System.out.print(currentNum + GRID_SEP);
+                        }
+
+                        if (col % 5 == 4) {
+                            System.out.print(GRID_SEP);
+                        }
+                    }
+                }
+                System.out.println("\n");
+            }
+            System.out.println("\n");
         }
     }
 
